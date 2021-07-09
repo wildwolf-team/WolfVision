@@ -1,6 +1,7 @@
 #pragma once
 
 #include <CameraApi.h>
+#include <fmt/core.h>
 
 #include <iostream>
 /*---工业相机中使用到 opencv2.0 的 IplImage 需要包含此头文件 ---*/

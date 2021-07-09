@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fmt/core.h>
+
 #include <iostream>
 #include <opencv2/opencv.hpp>
 

@@ -1,8 +1,9 @@
 #pragma once
 
+#include <fmt/core.h>
+
 #include <iostream>
 #include <opencv2/opencv.hpp>
-
 namespace abstract_roi {
 class Abstract_ImageRoi {
  protected:

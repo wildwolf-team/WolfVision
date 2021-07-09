@@ -2,6 +2,7 @@
 
 #include <errno.h>  // ERROR数字定义
 #include <fcntl.h>  // 文件控制定义
+#include <fmt/core.h>
 #include <string.h>
 #include <sys/select.h>
 #include <termios.h>  // POSIX终端控制定义

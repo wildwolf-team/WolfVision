@@ -1,4 +1,5 @@
 #pragma once
+#include <fmt/core.h>
 
 #include <algorithm>
 #include <iostream>

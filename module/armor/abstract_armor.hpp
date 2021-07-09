@@ -1,7 +1,6 @@
 #pragma once
 
+#include <fmt/core.h>
+
 #include <iostream>
-
-namespace abstract_armor {
-
-}
+namespace abstract_armor {}

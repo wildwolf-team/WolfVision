@@ -1,5 +1,5 @@
 # Create project
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.16.0)
 project(WolfVision VERSION 2021.7.9 LANGUAGES CXX)
 
 # Specialize CMake build flags for different build types
@@ -46,6 +46,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         message(FATAL_ERROR "Not supported architecture for MVSDK: ${ARCHITECTURE}")
     endif()
     set_property(TARGET MVSDK PROPERTY IMPORTED_LOCATION ${MIMDVISION_SDK_LIBRARY})
+
+    # Add mindvision lib to build target
+    list(APPEND EXTRA_LIBS MVSDK)
 
     # Add mindvision include path
     list(APPEND EXTRA_INCLUDES 3rdparty/mindvision/linux/include)
@@ -122,6 +125,9 @@ target_link_libraries(WolfVision
 
 # Set WolfVision compile features to standared c+20
 target_compile_features(WolfVision PUBLIC cxx_std_20)
+
+# Set WolfVision linking time optimization to true
+set_target_properties(WolfVision PROPERTIES INTERPROCEDURAL_OPTIMIZATION True)
 
 # Set built binary to ~/bin
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
