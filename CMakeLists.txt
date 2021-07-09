@@ -126,6 +126,9 @@ target_link_libraries(WolfVision
 # Set WolfVision compile features to standared c+20
 target_compile_features(WolfVision PUBLIC cxx_std_20)
 
+# Set WolfVision linking time optimization to true
+set_target_properties(WolfVision PROPERTIES INTERPROCEDURAL_OPTIMIZATION True)
+
 # Set built binary to ~/bin
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 
