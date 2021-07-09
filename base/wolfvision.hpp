@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <opencv2/opencv.hpp>
 
 #include "basic_armor.hpp"
 #include "mv_video_capture.hpp"
