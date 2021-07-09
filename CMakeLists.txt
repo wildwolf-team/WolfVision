@@ -47,6 +47,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     endif()
     set_property(TARGET MVSDK PROPERTY IMPORTED_LOCATION ${MIMDVISION_SDK_LIBRARY})
 
+    # Add mindvision lib to build target
+    list(APPEND EXTRA_LIBS MVSDK)
+
     # Add mindvision include path
     list(APPEND EXTRA_INCLUDES 3rdparty/mindvision/linux/include)
 endif()
