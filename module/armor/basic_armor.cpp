@@ -196,6 +196,7 @@ uart::Write_Data RM_ArmorDetector::run_Armor(cv::Mat &_src_img,
     imshow("armor_draw_img", draw_img_);
     draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
+  return;
 }
 /**
  * @brief 判断大小

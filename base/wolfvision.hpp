@@ -13,9 +13,9 @@ class Connector {
       mindvision::RM_VideoCapture(mindvision::CameraParam(
           0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
   basic_armor::RM_ArmorDetector armor_ =
-      basic_armor::RM_ArmorDetector("module/armor/armor_config.xml");
+      basic_armor::RM_ArmorDetector("configs/armor/basic_armor_config.xml");
   uart::SerialPort serial_ =
-      uart::SerialPort("devices/serial/serial_config.xml");
+      uart::SerialPort("configs/serial/uart_serial_config.xml");
 
  public:
   void run();

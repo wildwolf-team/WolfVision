@@ -141,8 +141,8 @@ class RM_ArmorDetector {
   cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
 
   basic_pnp::RM_Solvepnp pnp_ =
-      basic_pnp::RM_Solvepnp("devices/camera/cameraParams/cameraParams_407.xml",
-                             "module/angle_solve/pnp_config.xml");
+      basic_pnp::RM_Solvepnp("configs/camera/cameraParams/cameraParams_407.xml",
+                             "configs/angle_solve/basic_pnp_config.xml");
 
   Armor_Data armor_data_;
 
