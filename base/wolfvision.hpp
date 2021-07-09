@@ -2,6 +2,4 @@
 
 #include <iostream>
 
-namespace wolfvision {
-    
-}
+namespace wolfvision {}
