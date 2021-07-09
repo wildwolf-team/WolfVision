@@ -30,7 +30,6 @@ struct Armor_Data {
   float light_width_aspect = 0;   // 左灯条宽和右灯条宽比值
 
   int distinguish = 0;  // 大小装甲板 小0 大1
-  serial_port::Write_Data write_data_;
 };
 
 struct Armor_Cfg {
@@ -96,8 +95,8 @@ struct Image_Cfg {
 class RM_ArmorDetector {
   // 装甲板
  public:
-  serial_port::Write_Data run_Armor(cv::Mat &_src_img,
-                                    serial_port::Receive_Data _receive_data);
+  uart::Write_Data run_Armor(cv::Mat &_src_img,
+                             uart::Receive_Data _receive_data);
   bool light_Judge(int i, int j);  // 判断左右灯条能否组成装甲板
   int average_Color();             // 计算图像颜色平均值
   bool fitting_Armor();            // 拟合装甲板
@@ -141,9 +140,9 @@ class RM_ArmorDetector {
   cv::Mat light_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
   cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
 
-  angle_solve::RM_Solvepnp pnp_ = angle_solve::RM_Solvepnp(
-      "devices/camera/cameraParams/cameraParams_407.xml",
-      "module/angle_solve/pnp_config.xml");
+  basic_pnp::RM_Solvepnp pnp_ =
+      basic_pnp::RM_Solvepnp("devices/camera/cameraParams/cameraParams_407.xml",
+                             "module/angle_solve/pnp_config.xml");
 
   Armor_Data armor_data_;
 
