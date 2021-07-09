@@ -4,5 +4,11 @@
     "C_Cpp.default.cStandard": "c17",
     "files.associations": {
         "iostream": "cpp"
-    }
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.defaultFormatter": "ms-vscode.cmake-tools",
+    "files.exclude": {
+        "3rdparty": true
+    },
 }
