@@ -12,7 +12,7 @@ WildWolf Team RoboMaster-2021 Visual &amp; Algorithm Group Code Framework.
 | CMake          | [`3.21.0`](https://cmake.org/) |
 | GCC            | [`11.1.0`](https://ftp.gnu.org/gnu/gcc/gcc-11.1.0/) |
 | GDB            | [`10.2`](https://www.gnu.org/software/gdb/download/) |
-| Mindvision-SDK | [`2.1.0`](http://mindvision.com.cn/rjxz/list_12.aspx) |
+| MindVision-SDK | [`2.1.0`](http://mindvision.com.cn/rjxz/list_12.aspx) |
 
 ## Contribute
 
