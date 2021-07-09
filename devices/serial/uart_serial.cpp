@@ -275,7 +275,9 @@ void SerialPort::rmSerialWrite(const Write_Data _write_data) {
 
     std::cout << "write_buff_=  " << write_buff_[0] << "  "
               << static_cast<int>(write_buff_[1]) << "  "
-              << static_ca  // namespace uart_reduction_) / 100 << "  "
+              << static_cast<int>(write_buff_[2]) << "  "
+              << static_cast<int>(write_buff_[3]) << "  "
+              << float(yaw_reduction_) / 100 << "  "
               << static_cast<int>(write_buff_[6]) << "  "
               << float(pitch_reduction_) / 100 << "  "
               << float(depth_reduction_) << "  "

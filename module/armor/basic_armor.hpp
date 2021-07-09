@@ -7,8 +7,8 @@
 #include <vector>
 
 #include "abstract_armor.hpp"
-#include "devices/serial/uart_serial.hpp"
-#include "module/angle_solve/basic_pnp.hpp"
+#include "basic_pnp.hpp"
+#include "uart_serial.hpp"
 namespace basic_armor {
 struct Armor_Data {
   cv::RotatedRect armor_rect;

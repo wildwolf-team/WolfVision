@@ -1,14 +1,15 @@
 #pragma once
 
-#include <errno.h>  //ERROR数字定义
-#include <fcntl.h>  //文件控制定义
+#include <errno.h>  // ERROR数字定义
+#include <fcntl.h>  // 文件控制定义
 #include <string.h>
 #include <sys/select.h>
-#include <termios.h>  //POSIX终端控制定义
-#include <unistd.h>   //UNIX标准定义
+#include <termios.h>  // POSIX终端控制定义
+#include <unistd.h>   // UNIX标准定义
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <string>
 
 namespace uart {
 /**
@@ -20,7 +21,6 @@ enum BuffLength {
   // 发送
   CRC_BUFF_LENGTH = 11,    // 写入 CRC 校验的 BUFF 长度
   WRITE_BUFF_LENGTH = 13,  // 写入串口的 BUFF 长度
-
 };
 enum color {
   BLUE,
@@ -63,7 +63,6 @@ enum Robot_ID {
 typedef struct Serial_Config {
   int set_bandrate = 0;
   int show_serial_information = 0;
-
 } Serial_Cfg;
 /**
  * @brief   串口信息接收结构体
@@ -138,7 +137,7 @@ class SerialPort {
   Receive_Data receive_data_;
   Receive_Data last_receive_data_;
   Write_Data write_data_;
-  //串口标志量
+  // 串口标志量
   int fd;
   int transform_arr_[4];
   unsigned char write_buff_[WRITE_BUFF_LENGTH];
@@ -147,19 +146,19 @@ class SerialPort {
   unsigned char receive_buff_temp_[REC_INFO_LENGTH * 2];
   // 高低八位的数据还原
   // 发送
-  int16_t yaw_reduction_;  // TODO:是否可以改为 uint16_t
+  int16_t yaw_reduction_;
   int16_t pitch_reduction_;
   int16_t depth_reduction_;
 
   // 接收
-  int16_t angle_reduction_;  // TODO:是否可以改为 uint16_t
+  int16_t angle_reduction_;
   int16_t acceleration_reduction_;
 
-  //交接返回值
+  // 交接返回值
   unsigned char exchangebyte_;
   int16_t exchangebit_;
 
-  //接收反馈信息
+  // 接收反馈信息
   ssize_t read_message_;
   ssize_t write_message_;
 
@@ -177,7 +176,7 @@ class SerialPort {
 
  public:
   /** ---------- 函数声明 ---------- **/
-  SerialPort(std::string _serial_config);
+  explicit SerialPort(std::string _serial_config);
   ~SerialPort();
   inline Receive_Data returnReceive() { return receive_data_; }
 
@@ -214,7 +213,7 @@ class SerialPort {
     return exchangebit_;
   }
 
-  //自定义串口发送
+  // 自定义串口发送
   void rmSerialWrite(const int& _yaw, const int16_t& yaw, const int& _pitch,
                      const int16_t& pitch, const int16_t& depth,
                      const int& data_type = 0, const int& is_shooting = 0);
@@ -226,11 +225,11 @@ class SerialPort {
                            const int _depth, int _data_type = 0,
                            const int _is_shooting = 0);
   void displayReceiveInformation();
-  //接收并处理串口数据
+  // 接收并处理串口数据
   void rmReceiveData();
-  //判断是否接受到数据
+  // 判断是否接受到数据
   bool isEmpty();
-  //更新串口接受数据
+  // 更新串口接受数据
   void updateReceiveInformation();
 };
 }  // namespace uart
