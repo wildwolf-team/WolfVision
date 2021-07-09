@@ -1,7 +1,9 @@
 #pragma once
 
+#include <algorithm>
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <vector>
 namespace abstract_pnp {
 struct Solvepnp_Cfg {
   int company = 1;
@@ -24,19 +26,18 @@ struct Solvepnp_Cfg {
  *
  */
 enum ARMOR {
-  //小装甲板
+  // 小装甲板
   SMALL_ARMOR_HEIGHT = 60,
   SMALL_ARMOR_WIDTH = 140,
-  //大装甲板
+  // 大装甲板
   BIG_ARMOR_WIDTH = 245,
   BIG_ARMOR_HEIGHT = 60,
-  //灯条
+  // 灯条
   LIGHT_SIZE_W = 10,
   LIGHT_SIZE_H = 55,
-  //大神符
+  // 大神符
   BUFF_ARMOR_WIDTH = 250,
-  BUFF_ARMOR_HEIGHT = 65
-
+  BUFF_ARMOR_HEIGHT = 65,
 };
 
 class Abstract_Solvepnp {
@@ -56,11 +57,11 @@ class Abstract_Solvepnp {
     reference_Obj_.push_back(cv::Point3f(100, 0.0, 0.0));
     reference_Obj_.push_back(cv::Point3f(0.0, 100, 0.0));
     reference_Obj_.push_back(cv::Point3f(0.0, 0.0, 100));
-    //设相机坐标系绕X轴你是逆时针旋转θ后与云台坐标系的各个轴向平行
+    // 设相机坐标系绕X轴你是逆时针旋转θ后与云台坐标系的各个轴向平行
     static double theta = 0;
     static double r_data[] = {1,          0, 0,           0,         cos(theta),
                               sin(theta), 0, -sin(theta), cos(theta)};
-    //设相机坐标系的原点在云台坐标系中的坐标为(x0,y0,z0)
+    // 设相机坐标系的原点在云台坐标系中的坐标为(x0,y0,z0)
     static double t_data[] = {static_cast<double>(pnp_config_.ptz_camera_x),
                               static_cast<double>(pnp_config_.ptz_camera_y),
                               static_cast<double>(pnp_config_.ptz_camera_z)};
@@ -83,7 +84,7 @@ class Abstract_Solvepnp {
     std::vector<cv::Point3f> object_3d;
     float half_x;
     float half_y;
-    //判断赋值
+    // 判断赋值
     switch (_armor_type) {
       case 0:
         half_x = ARMOR::SMALL_ARMOR_WIDTH * 0.5;
@@ -103,7 +104,7 @@ class Abstract_Solvepnp {
         break;
     }
 
-    //赋值
+    // 赋值
     object_3d.push_back(cv::Point3f(-half_x, -half_y, 0));
     object_3d.push_back(cv::Point3f(half_x, -half_y, 0));
     object_3d.push_back(cv::Point3f(half_x, half_y, 0));
@@ -123,7 +124,7 @@ class Abstract_Solvepnp {
     float half_x = _width * 0.5;
     float half_y = _heigth * 0.5;
 
-    //赋值
+    // 赋值
     object_3d.push_back(cv::Point3f(-half_x, -half_y, 0));
     object_3d.push_back(cv::Point3f(half_x, -half_y, 0));
     object_3d.push_back(cv::Point3f(half_x, half_y, 0));
@@ -140,9 +141,9 @@ class Abstract_Solvepnp {
     std::vector<cv::Point2f> target2d;
     static cv::Point2f vertex[4];
     static cv::Point2f lu, ld, ru, rd;
-
-    _rect.points(vertex);  // box的点存储到vertex中
-    //对顶点点进行排序
+    // box的点存储到vertex中
+    _rect.points(vertex);
+    // 对顶点点进行排序
     std::sort(vertex, vertex + 4,
               [](const cv::Point2f &p1, const cv::Point2f &p2) {
                 return p1.x < p2.x;
@@ -204,8 +205,7 @@ class Abstract_Solvepnp {
    *
    * @return cv::Mat
    */
-  cv::Mat camera_Ptz(cv::Mat &_t, double _ptz_camera_x, double _ptz_camera_y,
-                     double _ptz_camera_z) {
+  cv::Mat camera_Ptz(cv::Mat &_t) {
     cv::Mat position_in_ptz = r_camera_ptz * _t - t_camera_ptz;
 
     return position_in_ptz;
@@ -256,12 +256,13 @@ class Abstract_Solvepnp {
     float y_temp, y_actual, dy;
     // 重力补偿枪口抬升角度
     float a = 0.0;
-    const float gravity = 10000.f / _company;  //重力加速度单位（mm/s^2）
+    // 重力加速度单位（mm/s^2）
+    const float gravity = 10000.f / _company;
     y_temp = _tvec_y;
     // 迭代求抬升高度
     for (int i = 0; i < 20; i++) {
       // 计算枪口抬升角度
-      a = (float)atan2(y_temp, _dist);
+      a = static_cast<float>(atan2(y_temp, _dist));
       // 计算实际落点
       float t;
       t = _dist / _ballet_speed * cos(a);
@@ -290,7 +291,7 @@ class Abstract_Solvepnp {
                         const int _company, const float _barrel_ptz_offset_x,
                         const float _barrel_ptz_offset_y) {
     cv::Point3f angle;
-    //计算子弹下坠补偿时间
+    // 计算子弹下坠补偿时间
     const double *_xyz = (const double *)_pos_in_ptz.data;
     double down_t = 0.0;
     if (_bullet_speed > 10e-3) {
@@ -300,7 +301,7 @@ class Abstract_Solvepnp {
     double offset_gravity = 0.5 * 9.8 * down_t * down_t * 1000;
     double xyz[3] = {_xyz[0], _xyz[1] - offset_gravity, _xyz[2]};  // !!!!!
 
-    //计算角度
+    // 计算角度
     if (_barrel_ptz_offset_y != 0.f) {
       double alpha = 0.0, Beta = 0.0;
       alpha = asin(static_cast<double>(_barrel_ptz_offset_y) /
