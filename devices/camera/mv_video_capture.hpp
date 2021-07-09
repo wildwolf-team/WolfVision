@@ -68,7 +68,7 @@ struct Camera_Resolution {
 struct CameraParam {
   int camera_mode;
   int camera_exposuretime;
-  Camera_Resolution resolution;
+  mindvision::Camera_Resolution resolution;
 
   /**
    * @brief Construct a new User Param object
@@ -107,7 +107,7 @@ class RM_VideoCapture {
    * @brief Construct a new RM_VideoCapture::RM_VideoCapture object
    * @param[in] _camera_param 相机参数结构体
    */
-  explicit RM_VideoCapture(const CameraParam &_camera_param);
+  explicit RM_VideoCapture(const mindvision::CameraParam &_camera_param);
   RM_VideoCapture();
   /**
    * @brief Destroy the rm videocapture::rm videocapture object
