@@ -1,9 +1,7 @@
 #include "wolfvision.hpp"
 
-namespace wolfvision {
-
-}
-
 int main() {
+    fmt::print("WolfVision built on g++ version: {}\n", __VERSION__);
+
     return 0;
 }
