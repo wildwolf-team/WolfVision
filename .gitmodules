@@ -1,0 +1,7 @@
+
+[submodule "3rdparty/fmt"]
+	path = 3rdparty/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "3rdparty/cpplint"]
+	path = 3rdparty/cpplint
+	url = https://github.com/cpplint/cpplint.git

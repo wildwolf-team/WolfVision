@@ -1,0 +1,8 @@
+{
+    "C_Cpp.clang_format_fallbackStyle": "Google",
+    "C_Cpp.default.cppStandard": "c++20",
+    "C_Cpp.default.cStandard": "c17",
+    "files.associations": {
+        "iostream": "cpp"
+    }
+}

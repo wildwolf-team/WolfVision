@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<opencv_storage>
+
+<!--
+/**
+  * @brief 串口波特率
+  * 1  B115200
+  * 10 B921600
+  */
+-->
+<SET_BANDRATE>1</SET_BANDRATE>
+<!--
+/**
+  * @brief 打印串口数据
+  * 0 关闭
+  * 1 开启
+  */
+-->
+<SHOW_SERIAL_INFORMATION>1</SHOW_SERIAL_INFORMATION>
+</opencv_storage>

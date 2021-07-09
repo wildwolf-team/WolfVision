@@ -1,0 +1,8 @@
+git-lfs
+gcc
+gdb
+cmake
+libpthread-stubs0-dev
+libopencv-dev
+libfmt-dev
+python3-dev
