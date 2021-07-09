@@ -40,7 +40,7 @@ struct Camera_Resolution {
    * @param[in] _cols   相机分辨率 宽
    * @param[in] _rows   相机分辨率 高
    */
-  Camera_Resolution(const mindvision::RESOLUTION _resolution) {
+  explicit Camera_Resolution(const mindvision::RESOLUTION _resolution) {
     switch (_resolution) {
       case mindvision::RESOLUTION::RESOLUTION_1280_X_1024: {
         cols = 1280;
@@ -86,19 +86,19 @@ struct CameraParam {
 
 class RM_VideoCapture {
  private:
-  unsigned char *g_pRgbBuffer;  //处理后数据缓存区
+  unsigned char *g_pRgbBuffer;  // 处理后数据缓存区
 
   int iCameraCounts = 1;
   int iStatus = -1;
   tSdkCameraDevInfo tCameraEnumList;
   int hCamera;
-  tSdkCameraCapbility tCapability;  //设备描述信息
+  tSdkCameraCapbility tCapability;  // 设备描述信息
   tSdkFrameHead sFrameInfo;
   BYTE *pbyBuffer;
   IplImage *iplImage = nullptr;
   int channel = 3;
   BOOL AEstate = FALSE;
-  tSdkImageResolution pImageResolution;  //相机分辨率信息
+  tSdkImageResolution pImageResolution;  // 相机分辨率信息
 
   bool iscamera0_open = false;
 
@@ -107,7 +107,7 @@ class RM_VideoCapture {
    * @brief Construct a new RM_VideoCapture::RM_VideoCapture object
    * @param[in] _camera_param 相机参数结构体
    */
-  RM_VideoCapture(const CameraParam &_camera_param);
+  explicit RM_VideoCapture(const CameraParam &_camera_param);
   RM_VideoCapture();
   /**
    * @brief Destroy the rm videocapture::rm videocapture object
