@@ -131,9 +131,6 @@ class Abstract_Solvepnp {
    * @return std::vector<cv::Point3f>
    */
   std::vector<cv::Point3f> initialize_3d_Points(int _armor_type) {
-    std::vector<cv::Point3f> object_3d;
-    float half_x;
-    float half_y;
     // 判断赋值
     switch (_armor_type) {
       case 0:

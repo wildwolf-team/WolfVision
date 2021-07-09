@@ -47,8 +47,4 @@ void Connector::run() {
 }
 }  // namespace wolfvision
 
-int main() {
-  wolfvision::Connector connector;
-  connector.run();
-  return 0;
-}
+int main() { return 0; }
