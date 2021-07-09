@@ -6,44 +6,55 @@
 #include <vector>
 namespace abstract_pnp {
 struct Solvepnp_Cfg {
+  /**
+   * @brief 重力补偿算法单位
+   * 1 mm
+   * 10 cm
+   * 100 dm
+   * 1000 m
+   */
   int company = 1;
-
-  int draw_xyz = 0;
-
+  /**
+    @brief: 相机与云台的X轴偏移 左负右正
+    @brief: 相机与云台的Y轴偏移 上负下正
+    @brief: 相机与云台的Z轴偏移 前正后负
+    @note:  云台相对于相机来讲  相机作为参考点
+  */
   double ptz_camera_x = 0.0;
   double ptz_camera_y = 0.0;
   double ptz_camera_z = 0.0;
-
+  /**
+    @brief: 云台与枪管的X轴偏移 左负右正
+    @brief: 云台与枪管的Y轴偏移 上负下正
+    @brief: 云台与枪管的Z轴偏移 前正后负
+  */
   float barrel_ptz_offset_x = 0.0;
   float barrel_ptz_offset_y = 0.0;
-
+  /**
+    @brief: 固定yaw补偿 （右正左负）
+    @brief: 固定pitch补偿 （下正上负）
+  */
   float offset_armor_pitch = 0.0;
   float offset_armor_yaw = 0.0;
-};
-
-/**
- * @brief 装甲板实际长度单位（mm）
- *
- */
-enum ARMOR {
   // 小装甲板
-  SMALL_ARMOR_HEIGHT = 60,
-  SMALL_ARMOR_WIDTH = 140,
+  int small_armor_height = 60, small_armor_width = 140;
   // 大装甲板
-  BIG_ARMOR_WIDTH = 245,
-  BIG_ARMOR_HEIGHT = 60,
+  int big_armor_width = 245, big_armor_height = 60;
   // 灯条
-  LIGHT_SIZE_W = 10,
-  LIGHT_SIZE_H = 55,
+  int light_size_width = 10, light_size_height = 55;
   // 大神符
-  BUFF_ARMOR_WIDTH = 250,
-  BUFF_ARMOR_HEIGHT = 65,
+  int buff_armor_width = 250, buff_armor_height = 65;
 };
 
 class Abstract_Solvepnp {
  private:
   cv::Mat pnp_config_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
   std::vector<cv::Point3f> reference_Obj_;
+
+  std::vector<cv::Point3f> big_object_3d_;
+  std::vector<cv::Point3f> small_object_3d_;
+  std::vector<cv::Point3f> buff_object_3d_;
+
   double theta = 0.0;
   double r_data[9];
   double t_data[3];
@@ -68,6 +79,45 @@ class Abstract_Solvepnp {
 
     r_camera_ptz = cv::Mat(3, 3, CV_64FC1, r_data);
     t_camera_ptz = cv::Mat(3, 1, CV_64FC1, t_data);
+
+    big_object_3d_.push_back(cv::Point3f(-pnp_config_.big_armor_width * 0.5,
+                                         -pnp_config_.big_armor_height * 0.5,
+                                         0));
+    big_object_3d_.push_back(cv::Point3f(pnp_config_.big_armor_width * 0.5,
+                                         -pnp_config_.big_armor_height * 0.5,
+                                         0));
+    big_object_3d_.push_back(cv::Point3f(pnp_config_.big_armor_width * 0.5,
+                                         pnp_config_.big_armor_height * 0.5,
+                                         0));
+    big_object_3d_.push_back(cv::Point3f(-pnp_config_.big_armor_width * 0.5,
+                                         pnp_config_.big_armor_height * 0.5,
+                                         0));
+
+    small_object_3d_.push_back(
+        cv::Point3f(-pnp_config_.small_armor_width * 0.5,
+                    -pnp_config_.small_armor_height * 0.5, 0));
+    small_object_3d_.push_back(
+        cv::Point3f(pnp_config_.small_armor_width * 0.5,
+                    -pnp_config_.small_armor_height * 0.5, 0));
+    small_object_3d_.push_back(cv::Point3f(pnp_config_.small_armor_width * 0.5,
+                                           pnp_config_.small_armor_height * 0.5,
+                                           0));
+    small_object_3d_.push_back(cv::Point3f(-pnp_config_.small_armor_width * 0.5,
+                                           pnp_config_.small_armor_height * 0.5,
+                                           0));
+
+    buff_object_3d_.push_back(cv::Point3f(-pnp_config_.buff_armor_width * 0.5,
+                                          -pnp_config_.buff_armor_height * 0.5,
+                                          0));
+    buff_object_3d_.push_back(cv::Point3f(pnp_config_.buff_armor_width * 0.5,
+                                          -pnp_config_.buff_armor_height * 0.5,
+                                          0));
+    buff_object_3d_.push_back(cv::Point3f(pnp_config_.buff_armor_width * 0.5,
+                                          pnp_config_.buff_armor_height * 0.5,
+                                          0));
+    buff_object_3d_.push_back(cv::Point3f(-pnp_config_.buff_armor_width * 0.5,
+                                          pnp_config_.buff_armor_height * 0.5,
+                                          0));
   }
   ~Abstract_Solvepnp() = default;
   /**
@@ -87,29 +137,18 @@ class Abstract_Solvepnp {
     // 判断赋值
     switch (_armor_type) {
       case 0:
-        half_x = ARMOR::SMALL_ARMOR_WIDTH * 0.5;
-        half_y = ARMOR::SMALL_ARMOR_HEIGHT * 0.5;
+        return small_object_3d_;
         break;
       case 1:
-        half_x = ARMOR::BIG_ARMOR_WIDTH * 0.5;
-        half_y = ARMOR::BIG_ARMOR_HEIGHT * 0.5;
+        return big_object_3d_;
         break;
       case 2:
-        half_x = ARMOR::BUFF_ARMOR_WIDTH * 0.5;
-        half_y = ARMOR::BUFF_ARMOR_HEIGHT * 0.5;
+        return buff_object_3d_;
         break;
       default:
-        half_x = ARMOR::SMALL_ARMOR_WIDTH * 0.5;
-        half_y = ARMOR::SMALL_ARMOR_HEIGHT * 0.5;
+        return small_object_3d_;
         break;
     }
-
-    // 赋值
-    object_3d.push_back(cv::Point3f(-half_x, -half_y, 0));
-    object_3d.push_back(cv::Point3f(half_x, -half_y, 0));
-    object_3d.push_back(cv::Point3f(half_x, half_y, 0));
-    object_3d.push_back(cv::Point3f(-half_x, half_y, 0));
-    return object_3d;
   }
   /**
    * @brief 初始化3d点
@@ -141,8 +180,8 @@ class Abstract_Solvepnp {
     std::vector<cv::Point2f> target2d;
     static cv::Point2f vertex[4];
     static cv::Point2f lu, ld, ru, rd;
-    // box的点存储到vertex中
-    _rect.points(vertex);
+
+    _rect.points(vertex);  // box的点存储到vertex中
     // 对顶点点进行排序
     std::sort(vertex, vertex + 4,
               [](const cv::Point2f &p1, const cv::Point2f &p2) {
@@ -170,6 +209,7 @@ class Abstract_Solvepnp {
     target2d.push_back(ld);
     return target2d;
   }
+
   /**
    * @brief 初始化2d点
    *
@@ -180,6 +220,7 @@ class Abstract_Solvepnp {
     cv::RotatedRect box = this->rect_Change_Rotatedrect(_rect);
     return this->initialize_2d_Points(box);
   }
+
   /**
    * @brief 矩形转旋转矩形
    *
@@ -232,6 +273,7 @@ class Abstract_Solvepnp {
              cv::Scalar(0, 255, 0), 2);
     cv::line(_draw_img, reference_Img[0], reference_Img[3],
              cv::Scalar(255, 0, 0), 2);
+
     imshow("pnp_draw", _draw_img);
   }
   /**
@@ -256,8 +298,7 @@ class Abstract_Solvepnp {
     float y_temp, y_actual, dy;
     // 重力补偿枪口抬升角度
     float a = 0.0;
-    // 重力加速度单位（mm/s^2）
-    const float gravity = 10000.f / _company;
+    const float gravity = 10000.f / _company;  // 重力加速度单位（mm/s^2）
     y_temp = _tvec_y;
     // 迭代求抬升高度
     for (int i = 0; i < 20; i++) {
@@ -283,13 +324,10 @@ class Abstract_Solvepnp {
    * @param _bullet_speed 子弹速度
    * @param _company 重力补偿单位
    * 1 mm 10 cm 100 dm 1000 m
-   * @param _barrel_ptz_offset_x 云台与枪管的X轴偏移
-   * @param _barrel_ptz_offset_y 云台与枪管的Y轴偏移
    * @return cv::Point3f
    */
   cv::Point3f get_Angle(const cv::Mat &_pos_in_ptz, const int _bullet_speed,
-                        const int _company, const float _barrel_ptz_offset_x,
-                        const float _barrel_ptz_offset_y) {
+                        const int _company) {
     cv::Point3f angle;
     // 计算子弹下坠补偿时间
     const double *_xyz = (const double *)_pos_in_ptz.data;
@@ -299,18 +337,19 @@ class Abstract_Solvepnp {
     }
 
     double offset_gravity = 0.5 * 9.8 * down_t * down_t * 1000;
-    double xyz[3] = {_xyz[0], _xyz[1] - offset_gravity, _xyz[2]};  // !!!!!
+    double xyz[3] = {_xyz[0], _xyz[1] - offset_gravity, _xyz[2]};
 
     // 计算角度
-    if (_barrel_ptz_offset_y != 0.f) {
+    if (pnp_config_.barrel_ptz_offset_y != 0.f) {
       double alpha = 0.0, Beta = 0.0;
-      alpha = asin(static_cast<double>(_barrel_ptz_offset_y) /
+      alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_y) /
                    sqrt(xyz[1] * xyz[1] + xyz[2] * xyz[2]));
 
       if (xyz[1] < 0) {
         Beta = atan(-xyz[1] / xyz[2]);
         angle.y = static_cast<float>(-(alpha + Beta));  // camera coordinate
-      } else if (xyz[1] < static_cast<double>(_barrel_ptz_offset_y)) {
+      } else if (xyz[1] <
+                 static_cast<double>(pnp_config_.barrel_ptz_offset_y)) {
         Beta = atan(xyz[1] / xyz[2]);
         angle.y = static_cast<float>(-(alpha - Beta));
       } else {
@@ -320,14 +359,15 @@ class Abstract_Solvepnp {
     } else {
       angle.y = static_cast<float>(atan2(xyz[1], xyz[2]));
     }
-    if (_barrel_ptz_offset_x != 0.f) {
+    if (pnp_config_.barrel_ptz_offset_x != 0.f) {
       double alpha = 0.0, Beta = 0.0;
-      alpha = asin(static_cast<double>(_barrel_ptz_offset_x) /
+      alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_x) /
                    sqrt(xyz[0] * xyz[0] + xyz[2] * xyz[2]));
       if (xyz[0] > 0) {
         Beta = atan(-xyz[0] / xyz[2]);
         angle.x = static_cast<float>(-(alpha + Beta));  // camera coordinate
-      } else if (xyz[0] < static_cast<double>(_barrel_ptz_offset_x)) {
+      } else if (xyz[0] <
+                 static_cast<double>(pnp_config_.barrel_ptz_offset_x)) {
         Beta = atan(xyz[0] / xyz[2]);
         angle.x = static_cast<float>(-(alpha - Beta));
       } else {
@@ -347,6 +387,76 @@ class Abstract_Solvepnp {
 
     return angle;
   }
-};
+  /**
+   * @brief 计算yaw和pitch偏移量和depth
+   *
+   * @param _pos_in_ptz 世界坐标系
+   * @param _bullet_speed 子弹速度
+   * @param _company 重力补偿单位
+   * @param _depth
+   * 1 mm 10 cm 100 dm 1000 m
+   * @return cv::Point3f
+   */
+  cv::Point3f get_Angle(const cv::Mat &_pos_in_ptz, const int _bullet_speed,
+                        const int _company, const int _depth) {
+    cv::Point3f angle;
+    // 计算子弹下坠补偿时间
+    const double *_xyz = (const double *)_pos_in_ptz.data;
+    double down_t = 0.0;
+    if (_bullet_speed > 10e-3) {
+      down_t = _xyz[2] / (_bullet_speed * 1000);
+    }
 
+    double offset_gravity = 0.5 * 9.8 * down_t * down_t * 1000;
+    double xyz[3] = {_xyz[0], _xyz[1] - offset_gravity, _xyz[2]};  // !!!!!
+
+    // 计算角度
+    if (pnp_config_.barrel_ptz_offset_y != 0.f) {
+      double alpha = 0.0, Beta = 0.0;
+      alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_y) /
+                   sqrt(xyz[1] * xyz[1] + xyz[2] * xyz[2]));
+
+      if (xyz[1] < 0) {
+        Beta = atan(-xyz[1] / xyz[2]);
+        angle.y = static_cast<float>(-(alpha + Beta));  // camera coordinate
+      } else if (xyz[1] <
+                 static_cast<double>(pnp_config_.barrel_ptz_offset_y)) {
+        Beta = atan(xyz[1] / xyz[2]);
+        angle.y = static_cast<float>(-(alpha - Beta));
+      } else {
+        Beta = atan(xyz[1] / xyz[2]);
+        angle.y = static_cast<float>((Beta - alpha));  // camera coordinate
+      }
+    } else {
+      angle.y = static_cast<float>(atan2(xyz[1], xyz[2]));
+    }
+    if (pnp_config_.barrel_ptz_offset_x != 0.f) {
+      double alpha = 0.0, Beta = 0.0;
+      alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_x) /
+                   sqrt(xyz[0] * xyz[0] + xyz[2] * xyz[2]));
+      if (xyz[0] > 0) {
+        Beta = atan(-xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(-(alpha + Beta));  // camera coordinate
+      } else if (xyz[0] <
+                 static_cast<double>(pnp_config_.barrel_ptz_offset_x)) {
+        Beta = atan(xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(-(alpha - Beta));
+      } else {
+        Beta = atan(xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(Beta - alpha);  // camera coordinate
+      }
+    } else {
+      angle.x = static_cast<float>(atan2(xyz[0], xyz[2]));
+    }
+    // depth
+    angle.z = _depth;
+    // yaw
+    angle.x = static_cast<float>(angle.x) * 180 / CV_PI;
+    // pitch
+    angle.y = static_cast<float>(angle.y) * 180 / CV_PI;
+    angle.y -= this->get_Pitch(_depth, xyz[1], _bullet_speed * 1000, _company);
+
+    return angle;
+  }
+};
 }  // namespace abstract_pnp

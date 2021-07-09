@@ -143,7 +143,8 @@ class RM_ArmorDetector {
   basic_pnp::RM_Solvepnp pnp_ =
       basic_pnp::RM_Solvepnp("configs/camera/cameraParams/cameraParams_407.xml",
                              "configs/angle_solve/basic_pnp_config.xml");
-
+  uart::SerialPort serial_ =
+      uart::SerialPort("configs/serial/uart_serial_config.xml");
   Armor_Data armor_data_;
 
   std::vector<Armor_Data> armor_;
