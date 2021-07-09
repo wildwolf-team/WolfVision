@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "abstract_armor.hpp"
-#include "device/serial/uart_serial.hpp"
+#include "devices/serial/uart_serial.hpp"
 #include "module/angle_solve/basic_pnp.hpp"
 namespace basic_armor {
 struct Armor_Data {
@@ -119,7 +119,7 @@ class RM_ArmorDetector {
     return armor_[_num].distinguish;
   }
 
-  inline size_t returnArmornum() { return armor_.size(); };
+  // inline size_t returnArmornum() { return armor_.size(); };
 
   RM_ArmorDetector() {}
   explicit RM_ArmorDetector(const std::string _armor_config);
