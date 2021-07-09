@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<!--~~~~~~~~~~~~~~ 1 图像处理部分 1 ~~~~~~~~~~~~~~--> 
+<!--~~~~~~~~~ Actual value = assignment~~~~~~~~~--> 
+<!--
+/**
+ * @brief: 灰度图调参
+ * 1 开启 0关闭
+ */
+-->
+<GRAY_EDIT>1</GRAY_EDIT>
+
+<!--
+/**
+ * @brief: COLOR调参
+ * 1 开启 0关闭
+ */
+-->
+<COLOR_EDIT>1</COLOR_EDIT>
+
+<!--
+/**
+ * @brief: 预处理选择
+ * 0 BGR 1 HSV
+ */
+-->
+<METHOD>0</METHOD>
+
+<!--
+/**
+ * @brief: BGR红蓝灰度参数
+ * @brief: RED_ARMOR_GRAY_TH   红色灰度 HSV通用
+ * @brief: RED_ARMOR_COLOR_TH  bgr红色阈值
+ * @brief: BLUE_ARMOR_GRAY_TH  蓝色灰度 HSV通用
+ * @brief: BLUE_ARMOR_COLOR_TH bgr蓝色阈值
+ */
+-->
+<RED_ARMOR_GRAY_TH>15</RED_ARMOR_GRAY_TH>
+<RED_ARMOR_COLOR_TH>60</RED_ARMOR_COLOR_TH>
+<BLUE_ARMOR_GRAY_TH>60</BLUE_ARMOR_GRAY_TH>
+<BLUE_ARMOR_COLOR_TH>90</BLUE_ARMOR_COLOR_TH>
+
+<!--
+/**
+ * @brief: HSV红参数
+ */
+-->
+<H_RED_MIN>0</H_RED_MIN>
+<H_RED_MAX>255</H_RED_MAX>
+<S_RED_MIN>0</S_RED_MIN>
+<S_RED_MAX>255</S_RED_MAX>
+<V_RED_MIN>64</V_RED_MIN>
+<V_RED_MAX>255</V_RED_MAX>
+
+<!--
+/**
+ * @brief: HSV蓝参数
+ */
+-->
+<H_BLUE_MIN>0</H_BLUE_MIN>
+<H_BLUE_MAX>60</H_BLUE_MAX>
+<S_BLUE_MIN>150</S_BLUE_MIN>
+<S_BLUE_MAX>255</S_BLUE_MAX>
+<V_BLUE_MIN>30</V_BLUE_MIN>
+<V_BLUE_MAX>255</V_BLUE_MAX>
+
+<!--~~~~~~~~~~~~~~ 1 图像处理部分 1 ~~~~~~~~~~~~~~-->
+
+<!--~~~~~~~~~~~~~~ 2 灯条查找部分 2 ~~~~~~~~~~~~~~--> 
+<!--~~~~~ Actual value =  assignment * 0.1 ~~~~~--> 
+<!--
+/**
+ * @brief: 绘制灯条
+ */ 0 关闭 1 开启
+-->
+<LIGHT_DRAW>0</LIGHT_DRAW>
+<!--
+/**
+ * @brief: 灯条调参
+ */ 0 关闭 1 开启
+-->
+<LIGHT_EDTI>0</LIGHT_EDTI>
+<!--
+/**
+ * @brief: 灯条宽高比范围
+ */
+-->
+<LIGHT_RATIO_W_H_MIN>30</LIGHT_RATIO_W_H_MIN>
+<LIGHT_RATIO_W_H_MAX>150</LIGHT_RATIO_W_H_MAX>
+
+<!--
+/**
+ * @brief: 灯条角度范围
+ */
+-->
+<LIGHT_ANGLE_MIN>0</LIGHT_ANGLE_MIN>
+<LIGHT_ANGLE_MAX>400</LIGHT_ANGLE_MAX>
+
+<!--
+/**
+ * @brief: 灯条长度范围
+ */
+-->
+<LIGHT_PERIMETER_MIN>200</LIGHT_PERIMETER_MIN>
+<LIGHT_PERIMETER_MAX>100000</LIGHT_PERIMETER_MAX>
+
+
+<!--~~~~~~~~~~~~~~ 2 灯条查找部分 2 ~~~~~~~~~~~~~~--> 
+
+<!--~~~~~~~~~~~~~~ 3 装甲拟合部分 3 ~~~~~~~~~~~~~~--> 
+<!--~~~~~ Actual value =  assignment * 0.1 ~~~~~--> 
+<!--
+/**
+ * @brief: 装甲板调参
+ * 0 关闭 1 开启
+ */
+-->
+<ARMOR_EDIT>1</ARMOR_EDIT>
+
+<!--
+/**
+ * @brief: 左右灯条高度比
+ */
+-->
+<ARMOR_HEIGHT_RATIO_MIN>7</ARMOR_HEIGHT_RATIO_MIN>
+<ARMOR_HEIGHT_RATIO_MAX>15</ARMOR_HEIGHT_RATIO_MAX>
+
+<!--
+/**
+ * @brief: 左右灯条宽度比
+ */
+-->
+<ARMOR_WIDTH_RATIO_MIN>7</ARMOR_WIDTH_RATIO_MIN>
+<ARMOR_WIDTH_RATIO_MAX>20</ARMOR_WIDTH_RATIO_MAX>
+<!--
+/**
+ * @brief: 左右灯条y的差值和高度不超过左右灯条平均高的1.0倍
+ */
+-->
+<ARMOR_Y_DIFFERENT>10</ARMOR_Y_DIFFERENT>
+<ARMOR_HEIGHT_DIFFERENT>5</ARMOR_HEIGHT_DIFFERENT>
+<!--
+/**
+ * @brief: 左右灯条角度差
+ */
+-->
+<ARMOR_ANGLE_DIFFERENT>80</ARMOR_ANGLE_DIFFERENT>
+<!--
+/**
+ * @brief: 装甲板范围
+ */
+-->
+<ARMOR_SMALL_ASPECT_MIN>5</ARMOR_SMALL_ASPECT_MIN>
+<ARMOR_TYPE_TH>29</ARMOR_TYPE_TH>
+<ARMOR_BIG_ASPECT_MAX>80</ARMOR_BIG_ASPECT_MAX>
+
+<!--~~~~~~~~~~~~~~ 3 装甲拟合部分 3 ~~~~~~~~~~~~~~--> 
+</opencv_storage>
