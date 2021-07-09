@@ -4,7 +4,6 @@
 
 namespace basic_roi {
 class ImageRoi : public abstract_roi::Abstract_ImageRoi {
- private:
  public:
   ImageRoi(/* args */) {}
   ~ImageRoi() {}
