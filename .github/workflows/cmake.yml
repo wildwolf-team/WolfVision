@@ -3,8 +3,21 @@ name: CMake
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - ".vscode"
+      - "docs"
+      - "README.md"
+      - "LICENSE"
+      - "_config.yml"
+      
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - ".vscode"
+      - "docs"
+      - "README.md"
+      - "LICENSE"
+      - "_config.yml"
 
 env:
   BUILD_TYPE: Release
