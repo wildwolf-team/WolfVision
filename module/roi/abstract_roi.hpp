@@ -67,4 +67,5 @@ class Abstract_ImageRoi {
                            _input_r_rect.size, _input_r_rect.angle);
   }
 };
+
 }  // namespace abstract_roi

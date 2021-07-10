@@ -78,4 +78,5 @@ cv::Rect ImageRoi::makeRectSafe_Tailor(const cv::Mat &_input_img,
 
   return cv::Rect(tl.x, tl.y, width, height);
 }
-}
+
+}  // namespace basic_roi

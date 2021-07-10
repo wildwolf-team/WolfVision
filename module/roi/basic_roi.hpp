@@ -17,4 +17,5 @@ class ImageRoi : public abstract_roi::Abstract_ImageRoi {
   cv::Rect makeRectSafe_Tailor(const cv::Mat &_input_img,
                                const cv::Rect &_r_rect);
 };
+
 }  // namespace basic_roi
