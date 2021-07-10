@@ -3,12 +3,13 @@
 #include <fmt/core.h>
 
 #include <iostream>
-#include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
 
 namespace abstract_roi {
+
 class Abstract_ImageRoi {
  protected:
-  cv::Mat roi_img_;
+  cv::Mat     roi_img_;
   cv::Point2d tl_;
 
  public:
