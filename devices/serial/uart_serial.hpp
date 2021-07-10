@@ -6,10 +6,14 @@
 #include <unistd.h>
 
 #include <fmt/core.h>
+#include <fmt/color.h>
 
 #include <opencv2/opencv.hpp>
 
 namespace uart {
+
+auto idntifier_green = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "uart_serial");
+auto idntifier_red   = fmt::format(fg(fmt::color::red)   | fmt::emphasis::bold, "uart_serial");
 
 enum BufferLength {
   // The recieve length of the array obtained after decoding

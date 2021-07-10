@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fmt/core.h>
+#include <fmt/color.h>
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc/imgproc_c.h>
@@ -8,6 +9,9 @@
 #include <CameraApi.h>
 
 namespace mindvision {
+
+auto idntifier_green = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "mv_video_capture");
+auto idntifier_red   = fmt::format(fg(fmt::color::red)   | fmt::emphasis::bold, "mv_video_capture");
 
 enum EXPOSURETIME {
   EXPOSURE_5000 = 5000,

@@ -37,9 +37,9 @@ SerialPort::SerialPort(std::string _serial_config) {
   for (size_t i = 0; i != sizeof(DeviceName) / sizeof(char*); ++i) {
     fd = open(DeviceName[i], O_RDWR | O_NONBLOCK | O_NOCTTY | O_NDELAY);
     if (fd == -1) {
-      fmt::print("[uart_serial] Open serial device failed: {}\n", DeviceName[i]);
+      fmt::print("[{}] Open serial device failed: {}\n", idntifier_red, DeviceName[i]);
     } else {
-      fmt::print("[uart_serial] Open serial device success: {}\n", DeviceName[i]);
+      fmt::print("[{}] Open serial device success: {}\n", idntifier_green, DeviceName[i]);
 
       break;
     }
@@ -74,7 +74,7 @@ SerialPort::SerialPort(std::string _serial_config) {
 }
 
 SerialPort::~SerialPort(void) {
-  if (!close(fd)) { fmt::print("[uart_serial] Close serial device success: {}\n", fd); }
+  if (!close(fd)) { fmt::print("[{}] Close serial device success: {}\n", idntifier_green, fd); }
 }
 
 /* Receiving protocol:
@@ -95,7 +95,7 @@ void SerialPort::receiveData() {
   for (size_t i = 0; i != sizeof(receive_buff_temp_); ++i) {
     if (receive_buff_temp_[i] == 'S' && receive_buff_temp_[i + sizeof(receive_buff_) - 1] == 'E') {
       if (serial_config_.show_serial_information == 1) {
-        fmt::print("[uart_serial] receiveData() ->");
+        fmt::print("[{}] receiveData() ->", idntifier_green);
 
         for (size_t j = 0; j != sizeof(receive_buff_); ++j) {
           receive_buff_[j] = receive_buff_temp_[i + j];
@@ -146,7 +146,7 @@ void SerialPort::writeData(const int&     _yaw,   const int16_t& yaw,
     pitch_reduction_ = mergeIntoBytes(write_buff_[8],  write_buff_[7]);
     depth_reduction_ = mergeIntoBytes(write_buff_[10], write_buff_[9]);
 
-    fmt::print("[uart_serial] writeData() ->");
+    fmt::print("[{}] writeData() ->", idntifier_green);
     for (size_t i = 0; i != 4; ++i) { fmt::print(" {}", write_buff_[i]);  }
     fmt::print(" {} {} {} {}",
       static_cast<float>(yaw_reduction_) / 100,
