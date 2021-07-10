@@ -251,7 +251,7 @@ void SerialPort::getDataForSend(const int&     data_type, const int&     is_shoo
 }
 
 bool SerialPort::isEmpty() {
-  if (receive_buff_[0] != '0' || receive_buff_[REC_INFO_LENGTH * 2 - 1] != '0') {
+  if (receive_buff_[0] != '0' || receive_buff_[REC_INFO_LENGTH - 1] != '0') {
     return false;
   } else {
     return true;
