@@ -52,7 +52,7 @@ enum RobotID {
 };
 
 struct Serial_Config {
-  int set_bandrate            = 0;
+  int set_baudrate            = 0;
   int show_serial_information = 0;
 } Serial_Cfg;
 

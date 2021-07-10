@@ -26,7 +26,7 @@ const unsigned char CRC8Tab[] = {
 SerialPort::SerialPort(std::string _serial_config) {
   cv::FileStorage fs_serial(_serial_config, cv::FileStorage::READ);
 
-  fs_serial["SET_BANDRATE"]            >> serial_config_.set_bandrate;
+  fs_serial["SET_BAUDRATE"]            >> serial_config_.set_baudrate;
   fs_serial["SHOW_SERIAL_INFORMATION"] >> serial_config_.show_serial_information;
 
   const char* DeviceName[] = {"", "/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2"};
@@ -45,7 +45,7 @@ SerialPort::SerialPort(std::string _serial_config) {
     }
   }
 
-  switch (serial_config_.set_bandrate) {
+  switch (serial_config_.set_baudrate) {
     case 1:
       cfsetospeed(&newstate, B115200);
       cfsetispeed(&newstate, B115200);
