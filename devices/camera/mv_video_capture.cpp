@@ -10,11 +10,11 @@ VideoCapture::VideoCapture(const CameraParam &_camera_param) {
 
     iscamera0_open = true;
 
-    fmt::print("[mv_video_capture] Using mindvision industrial camera: {}", _camera_param.camera_mode);
+    fmt::print("[mv_video_capture] Using mindvision industrial camera: {}\n", _camera_param.camera_mode);
   } else {
     iscamera0_open = false;
 
-    fmt::print("[mv_video_capture] Not using mindvision industrial camera: {}", _camera_param.camera_mode);
+    fmt::print("[mv_video_capture] Not using mindvision industrial camera: {}\n", _camera_param.camera_mode);
   }
 }
 
@@ -23,7 +23,7 @@ VideoCapture::~VideoCapture() {
     CameraUnInit(hCamera);
     free(g_pRgbBuffer);
 
-    fmt::print("[mv_video_capture] Release mindvision industrial camera success: {}", iStatus);
+    fmt::print("[mv_video_capture] Release mindvision industrial camera success: {}\n", iStatus);
   }
 }
 
@@ -57,7 +57,7 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS, const int _CAMER
   iStatus = CameraEnumerateDevice(&tCameraEnumList, &iCameraCounts);
 
   if (iCameraCounts == 0) {
-    fmt::print("[mv_video_capture] Error, no mindvision industrial camera detected: {}", iCameraCounts);
+    fmt::print("[mv_video_capture] Error, no mindvision industrial camera detected: {}\n", iCameraCounts);
 
     return -1;
   }
@@ -65,12 +65,12 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS, const int _CAMER
   iStatus = CameraInit(&tCameraEnumList, -1, -1, &hCamera);
 
   if (iStatus != CAMERA_STATUS_SUCCESS) {
-    fmt::print("[mv_video_capture] Error, Init mindvision industrial camera failed: {}", iStatus);
+    fmt::print("[mv_video_capture] Error, Init mindvision industrial camera failed: {}\n", iStatus);
 
     return -1;
   }
 
-  fmt::print("[mv_video_capture] Info, Init mindvision industrial camera success: {}", iStatus);
+  fmt::print("[mv_video_capture] Info, Init mindvision industrial camera success: {}\n", iStatus);
 
   CameraGetCapability(hCamera, &tCapability);
 
@@ -88,7 +88,7 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS, const int _CAMER
 
   CameraSetImageResolution(hCamera, &pImageResolution);
 
-  fmt::print("[mv_video_capture] Info, camera status: {}, {}", CameraGetAeState(hCamera, &AEstate), CameraGetAeState(hCamera, FALSE));
+  fmt::print("[mv_video_capture] Info, camera status: {}, {}\n", CameraGetAeState(hCamera, &AEstate), CameraGetAeState(hCamera, FALSE));
 
   CameraSetExposureTime(hCamera, _CAMERA_EXPOSURETIME);
   CameraPlay(hCamera);

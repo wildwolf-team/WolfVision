@@ -11,7 +11,11 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Don't build test by default
+set(BUILD_TEST False)
+
 # Prefer posix threads
+set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 set(THREADS_PREFER_PTHREAD_FLAG True)
 find_package(Threads REQUIRED)
 
@@ -123,8 +127,8 @@ target_link_libraries(WolfVision
     ${EXTRA_LIBS}
 )
 
-# Set WolfVision compile features to standared c+20
-target_compile_features(WolfVision PUBLIC cxx_std_20)
+# Set WolfVision compile cxx_std features
+target_compile_features(WolfVision PUBLIC cxx_std_${CMAKE_CXX_STANDARD})
 
 # Set WolfVision linking time optimization to true
 set_target_properties(WolfVision PROPERTIES INTERPROCEDURAL_OPTIMIZATION True)
@@ -135,5 +139,11 @@ set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 # Set built library to ~/lib
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 
-# Add test_camera directory
-add_subdirectory(test/test_camera)
+# Set configs folder absolute path
+set(CONFIG_FILE_PATH ${PROJECT_SOURCE_DIR}/configs)
+target_compile_definitions(WolfVision PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
+
+if(BUILD_TEST)
+    # Add test_camera directory
+    add_subdirectory(test/test_camera)
+endif()

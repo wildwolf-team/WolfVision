@@ -7,10 +7,12 @@ include_directories(wv-test-camera EXTRA_INCLUDES)
 # Add shared library link to target
 target_link_libraries(wv-test-camera
     PUBLIC
+    Threads::Threads
     fmt::fmt-header-only
+    ${OpenCV_LIBS}
 
     PRIVATE
-    wv-mv-video-capture
+    ${EXTRA_LIBS}
 )
 
 add_test(NAME test-wv-test-camera COMMAND COMMAND wv-test-camera)
