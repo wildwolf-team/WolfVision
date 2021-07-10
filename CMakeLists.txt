@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16.0)
 project(WolfVision VERSION 2021.7.9 LANGUAGES CXX)
 
 # Specialize CMake build flags for different build types
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
