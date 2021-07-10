@@ -31,7 +31,11 @@ Before start coding, please finish project configuration first:
 sudo bash scripts/autoconfig.sh
 ```
 
-After configuration, enjoy coding follow [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html).
+After configuration, enjoy coding follow [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html), linting by command:
+
+```shell
+bash scripts/cpplint-pre-commit.sh
+```
 
 ### Commit Lint
 

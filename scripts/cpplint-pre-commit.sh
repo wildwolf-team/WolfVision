@@ -12,9 +12,10 @@ exec 1>&2
 cpplint='python3 3rdparty/cpplint/cpplint.py'
 sum=0
 filters='-build/include_order,-build/namespaces,-legal/copyright,-runtime/references'
+linelength=200
 
 for file in $(git diff-index --name-status $against -- | grep -E '\.[ch](pp)?$' | awk '{print $2}' | awk '$0 !~ /3rdparty/'); do
-    $cpplint --filter=$filters $file
+    $cpplint --filter=$filters --linelength=$linelength $file
     sum=$(expr ${sum} + $?)
 done
 
