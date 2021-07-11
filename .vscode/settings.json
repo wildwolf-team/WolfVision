@@ -5,7 +5,7 @@
     "files.associations": {
         "iostream": "cpp"
     },
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.formatOnPaste": true,
     "editor.defaultFormatter": "ms-vscode.cmake-tools",
     "files.exclude": {
