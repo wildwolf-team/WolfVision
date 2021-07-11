@@ -6,24 +6,21 @@
 namespace abstract_roi {
 
 class ROI {
- protected:
-  cv::Mat     roi_img_;
-  cv::Point2d tl_;
-
  public:
   ROI() : tl_(cv::Point2d(0, 0)) {}
 
   virtual ~ROI() {}
 
-  cv::Mat cutROIRect(const cv::Mat &_input_img, const cv::Rect &_rect) {
+  cv::Mat cutROIRect(const cv::Mat& _input_img,
+                     const cv::Rect& _rect) {
     tl_ = _rect.tl();
     _input_img(_rect).copyTo(roi_img_);
 
     return roi_img_;
   }
 
-  cv::Mat cutROIRotatedRect(const cv::Mat         &_input_img,
-                            const cv::RotatedRect &_rect) {
+  cv::Mat cutROIRotatedRect(const cv::Mat&         _input_img,
+                            const cv::RotatedRect& _rect) {
     int roi_w = MAX(_rect.size.width, _rect.size.height);
     int roi_h = MIN(_rect.size.width, _rect.size.height);
     cv::RotatedRect r_rect =
@@ -51,21 +48,29 @@ class ROI {
     return roi_img_r_rect;
   }
 
-  inline cv::Point2d coordMapping(const cv::Point &_input_point) {
-    return cv::Point(_input_point.x + this->tl_.x,
-                     _input_point.y + this->tl_.y);
+  inline cv::Point2d coordMapping(const cv::Point& _input_point) {
+    return cv::Point(_input_point.x + tl_.x,
+                     _input_point.y + tl_.y);
   }
 
-  inline cv::Rect rectMapping(const cv::Rect &_input_rect) {
+  inline cv::Rect rectMapping(const cv::Rect& _input_rect) {
     cv::Point convert_tl = coordMapping(_input_rect.tl());
-    return cv::Rect(convert_tl.x, convert_tl.y, _input_rect.size().width,
+
+    return cv::Rect(convert_tl.x,
+                    convert_tl.y,
+                    _input_rect.size().width,
                     _input_rect.size().height);
   }
 
-  inline cv::RotatedRect rotatedRectMapping(const cv::RotatedRect &_input_r_rect) {
+  inline cv::RotatedRect rotatedRectMapping(const cv::RotatedRect& _input_r_rect) {
     return cv::RotatedRect(coordMapping(_input_r_rect.center),
-                           _input_r_rect.size, _input_r_rect.angle);
+                           _input_r_rect.size,
+                           _input_r_rect.angle);
   }
+
+ protected:
+  cv::Mat     roi_img_;
+  cv::Point2d tl_;
 };
 
 }  // namespace abstract_roi

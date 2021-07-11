@@ -29,21 +29,6 @@ struct PnP_Config {
 };
 
 class PnP {
- private:
-  cv::Mat pnp_config_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
-
-  std::vector<cv::Point3f> reference_Obj_;
-  std::vector<cv::Point3f> big_object_3d_;
-  std::vector<cv::Point3f> small_object_3d_;
-  std::vector<cv::Point3f> buff_object_3d_;
-
-  double theta = 0.0;
-  double r_data[9];
-  double t_data[3];
-
-  cv::Mat r_camera_ptz;
-  cv::Mat t_camera_ptz;
-
  public:
   PnP_Config pnp_config_;
 
@@ -367,6 +352,21 @@ class PnP {
 
     return angle;
   }
+
+ private:
+  cv::Mat pnp_config_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
+
+  std::vector<cv::Point3f> reference_Obj_;
+  std::vector<cv::Point3f> big_object_3d_;
+  std::vector<cv::Point3f> small_object_3d_;
+  std::vector<cv::Point3f> buff_object_3d_;
+
+  double theta = 0.0;
+  double r_data[9];
+  double t_data[3];
+
+  cv::Mat r_camera_ptz;
+  cv::Mat t_camera_ptz;
 };
 
 }  // namespace abstract_pnp

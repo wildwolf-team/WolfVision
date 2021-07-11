@@ -26,7 +26,7 @@ class onnx_model {
 
   inline void layers(void);
     
-private:
+ private:
   cv::dnn::Net opencv_net_;
   const char*  model_path_;
   

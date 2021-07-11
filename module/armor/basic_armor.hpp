@@ -11,10 +11,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
-#include "uart_serial.hpp"
-
-#include "basic_pnp.hpp"
-
+#include "devices/serial/uart_serial.hpp"
+#include "module/angle_solve/basic_pnp.hpp"
 
 namespace basic_armor {
 
@@ -110,33 +108,24 @@ class Detector {
 
   float getDistance(cv::Point a, cv::Point b);
   bool  lightJudge(int i, int j);
-  int   averageColor();
   bool  fittingArmor();
   bool  findLight();
   void  finalArmor();
   void  freeMemory();
+  int   averageColor();
   int   motionDirection();
 
-  inline Armor_Data returnFinalArmor(int _num) { return armor_[_num]; }
-
-  inline cv::RotatedRect returnFinalArmorRotatedRect(int _num) {
-    return armor_[_num].armor_rect;
-  }
-
-  inline int returnFinalArmorDistinguish(int _num) {
-    return armor_[_num].distinguish;
-  }
-
-  inline bool returnSuccessArmor() { return armor_success; }
+  inline bool            returnSuccessArmor()                  { return armor_success; }
+  inline Armor_Data      returnFinalArmor(int _num)            { return armor_[_num]; }
+  inline int             returnFinalArmorDistinguish(int _num) { return armor_[_num].distinguish; }
+  inline cv::RotatedRect returnFinalArmorRotatedRect(int _num) { return armor_[_num].armor_rect; }
 
   void setImageConfig(Image_Config _image_config);
 
   void runImage(cv::Mat &_src_img, const int _my_color);
 
   cv::Mat bgrPretreat(cv::Mat &_src_img, const int _my_color);
-
   cv::Mat hsvPretreat(cv::Mat &_src_img, const int _my_color);
-
   cv::Mat grayPretreat(cv::Mat &_src_img, const int _my_color);
 
   cv::Mat fuseImage(cv::Mat _bin_gray_img, cv::Mat _bin_color_img);
@@ -155,17 +144,21 @@ class Detector {
   cv::Mat bin_color_img;
   cv::Mat light_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
   cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
-
-  basic_pnp::PnP   pnp_;
-  uart::SerialPort serial_;
-
-  std::vector<Armor_Data>      armor_;
-  std::vector<cv::RotatedRect> light_;
+  cv::Mat gray_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);
+  cv::Mat bgr_trackbar_   = cv::Mat::zeros(1, 300, CV_8UC1);
+  cv::Mat hsv_trackbar_   = cv::Mat::zeros(1, 300, CV_8UC1);
+  cv::Mat ele_            = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
 
   cv::Rect armor_roi;
 
   cv::Point lost_armor_center;
   cv::Point armor_center;
+
+  std::vector<Armor_Data>      armor_;
+  std::vector<cv::RotatedRect> light_;
+
+  basic_pnp::PnP   pnp_;
+  uart::SerialPort serial_;
 
   bool lost_armor_success = false;
   bool armor_success      = false;
@@ -177,11 +170,6 @@ class Detector {
   int armor_position      = 0;
   int armor_direction     = 0;
   int num                 = 0;
-
-  cv::Mat gray_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
-  cv::Mat bgr_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);
-  cv::Mat hsv_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);
-  cv::Mat ele_           = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
 };
 
 }  // namespace basic_armor
