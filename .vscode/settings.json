@@ -11,5 +11,5 @@
     "files.exclude": {
         "3rdparty": true
     },
-    "C_Cpp.clang_format_style": "Google",
+    "C_Cpp.clang_format_style": ".clang-format",
 }
