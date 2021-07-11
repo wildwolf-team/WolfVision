@@ -5,12 +5,14 @@ namespace mindvision {
 VideoCapture::VideoCapture(const CameraParam &_camera_param) {
   if (_camera_param.camera_mode == 0) {
     cameraInit(_camera_param.resolution.cols,
-      _camera_param.resolution.rows,
-      _camera_param.camera_exposuretime);
+               _camera_param.resolution.rows,
+               _camera_param.camera_exposuretime);
 
-    iscamera0_open = true;
+    if(iStatus == CAMERA_STATUS_SUCCESS) {
+      iscamera0_open = true;
 
-    fmt::print("[{}] Using mindvision industrial camera: {}\n", idntifier_green, _camera_param.camera_mode);
+      fmt::print("[{}] Using mindvision industrial camera: {}\n", idntifier_green, _camera_param.camera_mode);
+    }
   } else {
     iscamera0_open = false;
 
@@ -23,7 +25,7 @@ VideoCapture::~VideoCapture() {
     CameraUnInit(hCamera);
     free(g_pRgbBuffer);
 
-    fmt::print("[{}] Release mindvision industrial camera success: {}\n", idntifier_green, iStatus);
+    fmt::print("[{}] Released mindvision industrial camera: {}\n", idntifier_green, iStatus);
   }
 }
 
@@ -51,7 +53,9 @@ bool VideoCapture::isindustryimgInput() {
   return isindustry_camera_open;
 }
 
-int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS, const int _CAMERA_RESOLUTION_ROWS, const int _CAMERA_EXPOSURETIME) {
+int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
+                             const int _CAMERA_RESOLUTION_ROWS,
+                             const int _CAMERA_EXPOSURETIME) {
   CameraSdkInit(1);
 
   iStatus = CameraEnumerateDevice(&tCameraEnumList, &iCameraCounts);

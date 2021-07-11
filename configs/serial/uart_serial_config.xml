@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <opencv_storage>
+<!-- PREFERED_DEVICE - set prefered serial device path -->
+<PREFERED_DEVICE>/dev/ttyUSB0</PREFERED_DEVICE>
 <!-- 
   SET_BAUDRATE - default baudrate for serial
   - 1  B115200
