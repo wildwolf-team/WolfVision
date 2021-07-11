@@ -1,10 +1,12 @@
 #pragma once
 
+#include <vector>
+
 #include "abstract_object.hpp"
 
 namespace abstract_blade {
 class FanBlade : public abstract_object::Object {
-public:
+ public:
   FanBlade();
   ~FanBlade();
 
@@ -28,7 +30,7 @@ public:
    */
   int Length();
 
-private:
+ private:
   // 周长
   int length_;
 };
