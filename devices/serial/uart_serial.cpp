@@ -5,11 +5,11 @@ namespace uart {
 SerialPort::SerialPort(std::string _serial_config) {
   cv::FileStorage fs_serial(_serial_config, cv::FileStorage::READ);
 
-  fs_serial["PREFERED_DEVICE"]         >> serial_config_.prefered_device;
+  fs_serial["PREFERRED_DEVICE"]         >> serial_config_.preferred_device;
   fs_serial["SET_BAUDRATE"]            >> serial_config_.set_baudrate;
   fs_serial["SHOW_SERIAL_INFORMATION"] >> serial_config_.show_serial_information;
 
-  const char* DeviceName[] = {serial_config_.prefered_device.c_str(), "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3"};
+  const char* DeviceName[] = {serial_config_.preferred_device.c_str(), "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3"};
 
   struct termios newstate;
   bzero(&newstate, sizeof(newstate));

@@ -57,7 +57,7 @@ enum RobotID {
 };
 
 struct Serial_Config {
-  std::string prefered_device         = "/dev/ttyUSB0";
+  std::string preferred_device        = "/dev/ttyUSB0";
   int         set_baudrate            = 0;
   int         show_serial_information = 0;
 } Serial_Cfg;
