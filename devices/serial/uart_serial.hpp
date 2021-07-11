@@ -148,15 +148,15 @@ class SerialPort {
 
   inline uint8_t checksumCRC(unsigned char* buf, uint16_t len);
 
-  void getDataForCRC(const int& data_type, const int& is_shooting,
-                     const int& _yaw,      const int16_t& yaw,
-                     const int& _pitch,    const int16_t& pitch,
+  void getDataForCRC(const int&     data_type, const int&     is_shooting,
+                     const int&     _yaw,      const int16_t& yaw,
+                     const int&     _pitch,    const int16_t& pitch,
                      const int16_t& depth);
 
-  void getDataForSend(const int& data_type, const int& is_shooting,
-                      const int& _yaw,      const int16_t& yaw,
-                      const int& _pitch,    const int16_t& pitch,
-                      const int16_t& depth, const uint8_t& CRC);
+  void getDataForSend(const int&     data_type, const int&     is_shooting,
+                      const int&     _yaw,      const int16_t& yaw,
+                      const int&     _pitch,    const int16_t& pitch,
+                      const int16_t& depth, const uint8_t&     CRC);
 
  public:
   explicit SerialPort(std::string _serial_config);
@@ -215,7 +215,7 @@ class SerialPort {
   void updateReceiveInformation();
 };
 
-const static unsigned char CRC8Tab[] = {
+static constexpr unsigned char CRC8_Table[] = {
   0,   94,  188, 226, 97,  63,  221, 131, 194, 156, 126, 32,  163, 253, 31,
   65,  157, 195, 33,  127, 252, 162, 64,  30,  95,  1,   227, 189, 62,  96,
   130, 220, 35,  125, 159, 193, 66,  28,  254, 160, 225, 191, 93,  3,   128,
@@ -233,6 +233,7 @@ const static unsigned char CRC8Tab[] = {
   235, 181, 54,  104, 138, 212, 149, 203, 41,  119, 244, 170, 72,  22,  233,
   183, 85,  11,  136, 214, 52,  106, 43,  117, 151, 201, 74,  20,  246, 168,
   116, 42,  200, 150, 21,  75,  169, 247, 182, 232, 10,  84,  215, 137, 107,
-  53};
+  53
+};
 
 }  // namespace uart

@@ -189,7 +189,7 @@ Write_Data SerialPort::gainWriteData(const float _yaw,   const float _pitch,
 uint8_t SerialPort::checksumCRC(unsigned char* buf, uint16_t len) {
   uint8_t check = 0;
 
-  while (len--) { check = CRC8Tab[check ^ (*buf++)]; }
+  while (len--) { check = CRC8_Table[check ^ (*buf++)]; }
 
   return check;
 }
