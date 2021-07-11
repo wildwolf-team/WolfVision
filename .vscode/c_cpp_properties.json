@@ -11,7 +11,7 @@
                 "${workspaceFolder}/module/armor/**",
                 "${workspaceFolder}/module/buff/**",
                 "${workspaceFolder}/module/filter/**",
-                "${workspaceFolder}/module/object_detection/**",
+                "${workspaceFolder}/module/ml/**",
                 "${workspaceFolder}/utils/**"
             ],
             "defines": [],
