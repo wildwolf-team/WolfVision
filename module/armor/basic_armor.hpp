@@ -137,8 +137,8 @@ class RM_ArmorDetector {
   cv::Mat light_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
   cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
 
-  basic_pnp::RM_Solvepnp pnp_ =
-      basic_pnp::RM_Solvepnp("configs/camera/cameraParams/cameraParams_407.xml",
+  basic_pnp::PnP pnp_ =
+      basic_pnp::PnP("configs/camera/cameraParams/cameraParams_407.xml",
                              "configs/angle_solve/basic_pnp_config.xml");
   uart::SerialPort serial_ =
       uart::SerialPort("configs/serial/uart_serial_config.xml");
