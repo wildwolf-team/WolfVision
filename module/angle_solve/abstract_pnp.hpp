@@ -7,44 +7,40 @@
 #include <vector>
 namespace abstract_pnp {
 struct Solvepnp_Cfg {
-  /**
-   * @brief 重力补偿算法单位
-   * 1 mm
-   * 10 cm
-   * 100 dm
-   * 1000 m
-   */
-  int company = 1;
-  /**
-    @brief: 相机与云台的X轴偏移 左负右正
-    @brief: 相机与云台的Y轴偏移 上负下正
-    @brief: 相机与云台的Z轴偏移 前正后负
-    @note:  云台相对于相机来讲  相机作为参考点
-  */
-  double ptz_camera_x = 0.0;
-  double ptz_camera_y = 0.0;
-  double ptz_camera_z = 0.0;
-  /**
-    @brief: 云台与枪管的X轴偏移 左负右正
-    @brief: 云台与枪管的Y轴偏移 上负下正
-    @brief: 云台与枪管的Z轴偏移 前正后负
-  */
-  float barrel_ptz_offset_x = 0.0;
-  float barrel_ptz_offset_y = 0.0;
-  /**
-    @brief: 固定yaw补偿 （右正左负）
-    @brief: 固定pitch补偿 （下正上负）
-  */
-  float offset_armor_pitch = 0.0;
-  float offset_armor_yaw = 0.0;
-  // 小装甲板
-  int small_armor_height = 60, small_armor_width = 140;
-  // 大装甲板
-  int big_armor_width = 245, big_armor_height = 60;
-  // 灯条
-  int light_size_width = 10, light_size_height = 55;
-  // 大神符
-  int buff_armor_width = 250, buff_armor_height = 65;
+  int company;
+  double ptz_camera_x;
+  double ptz_camera_y;
+  double ptz_camera_z;
+  float barrel_ptz_offset_x;
+  float barrel_ptz_offset_y;
+  float offset_armor_pitch;
+  float offset_armor_yaw;
+  int small_armor_height;
+  int small_armor_width;
+  int big_armor_width;
+  int big_armor_height;
+  int light_size_width;
+  int light_size_height;
+  int buff_armor_width;
+  int buff_armor_height;
+  Solvepnp_Cfg() {
+    company = 1;
+    ptz_camera_x = 0.f;
+    ptz_camera_y = 0.f;
+    ptz_camera_z = 0.f;
+    barrel_ptz_offset_x = 0.f;
+    barrel_ptz_offset_y = 0.f;
+    offset_armor_pitch = 0.f;
+    offset_armor_yaw = 0.f;
+    small_armor_height = 140;
+    small_armor_width = 60;
+    big_armor_height = 60;
+    big_armor_width = 245;
+    light_size_width = 10;
+    light_size_height = 60;
+    buff_armor_width = 250;
+    buff_armor_height = 65;
+  }
 };
 
 class Abstract_Solvepnp {
