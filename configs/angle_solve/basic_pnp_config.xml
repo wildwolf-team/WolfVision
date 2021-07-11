@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<opencv_storage>
+
+<!--
+/**
+  * @brief 重力补偿算法单位
+  * 1 mm 
+  * 10 cm
+  * 100 dm
+  * 1000 m
+  */
+-->
+
+<COMPANY>1</COMPANY>
+
+<!--
+/**
+  * @brief 是否绘制坐标系
+  * 0 不绘制
+  * 1 绘制
+  */
+  -->
+<DRAW_XYZ>0</DRAW_XYZ>
+<!--
+/**
+  @brief: 相机与云台的X轴偏移 左负右正
+  @brief: 相机与云台的Y轴偏移 上负下正
+  @brief: 相机与云台的Z轴偏移 前正后负
+  @note:  云台相对于相机来讲  相机作为参考点
+*/ 
+-->
+<PTZ_CAMERA_X>0.0</PTZ_CAMERA_X>
+<PTZ_CAMERA_Y>0.0</PTZ_CAMERA_Y>
+<PTZ_CAMERA_Z>0.0</PTZ_CAMERA_Z>
+
+
+<!-- 
+/**
+  @brief: 云台与枪管的X轴偏移 左负右正
+  @brief: 云台与枪管的Y轴偏移 上负下正
+  @brief: 云台与枪管的Z轴偏移 前正后负
+*/ 
+-->
+<PTZ_BARREL_X>0.0</PTZ_BARREL_X>
+<PTZ_BARREL_Y>0.0</PTZ_BARREL_Y>
+<PTZ_BARREL_Z>0.0</PTZ_BARREL_Z>
+
+<!-- 
+/**
+  @brief: 固定yaw补偿 （右正左负）
+  @brief: 固定pitch补偿 （下正上负）
+*/ 
+-->
+<OFFSET_ARMOR_PITCH>0.0</OFFSET_ARMOR_PITCH>
+<OFFSET_ARMOR_YAW>0.0</OFFSET_ARMOR_YAW>
+
+
+</opencv_storage>
