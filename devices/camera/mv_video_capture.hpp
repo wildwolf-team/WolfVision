@@ -69,6 +69,21 @@ struct CameraParam {
 };
 
 class VideoCapture {
+ public:
+  VideoCapture() = default;
+  explicit VideoCapture(const mindvision::CameraParam &_camera_param);
+
+  ~VideoCapture();
+
+  bool isindustryimgInput();
+  void cameraReleasebuff();
+
+  int cameraInit(const int _CAMERA_RESOLUTION_COLS,
+                 const int _CAMERA_RESOLUTION_ROWS,
+                 const int _CAMERA_EXPOSURETIME);
+
+  inline cv::Mat image() const { return cv::cvarrToMat(iplImage, true); }
+
  private:
   unsigned char* g_pRgbBuffer;
 
@@ -85,21 +100,6 @@ class VideoCapture {
   BYTE*               pbyBuffer;
   BOOL                AEstate  = FALSE;
   IplImage*           iplImage = nullptr;
-
- public:
-  VideoCapture() = default;
-  explicit VideoCapture(const mindvision::CameraParam &_camera_param);
-
-  ~VideoCapture();
-
-  bool isindustryimgInput();
-  void cameraReleasebuff();
-
-  int cameraInit(const int _CAMERA_RESOLUTION_COLS,
-                 const int _CAMERA_RESOLUTION_ROWS,
-                 const int _CAMERA_EXPOSURETIME);
-
-  inline cv::Mat image() const { return cv::cvarrToMat(iplImage, true); }
 };
 
 }  // namespace mindvision

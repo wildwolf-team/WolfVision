@@ -13,7 +13,7 @@ namespace basic_pnp {
 auto idntifier_green = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "basic_pnp");
 auto idntifier_red   = fmt::format(fg(fmt::color::red)   | fmt::emphasis::bold, "basic_pnp");
 
-typedef struct PnP_Information {
+struct PnP_Information {
   float yaw_angle;
   float pitch_angle;
   int   depth;
@@ -23,19 +23,9 @@ typedef struct PnP_Information {
     pitch_angle = 0.f;
     depth       = 0;
   }
-} PnP_Info;
+};
 
 class PnP : public abstract_pnp::PnP {
- private:
-  cv::Mat cameraMatrix_, distCoeffs_;
-  cv::Mat rvec_ = cv::Mat::zeros(3, 3, CV_64FC1);
-  cv::Mat tvec_ = cv::Mat::zeros(3, 1, CV_64FC1);
-
-  std::vector<cv::Point2f> target_2d_;
-  std::vector<cv::Point3f> object_3d_;
-
-  PnP_Info pnp_info_;
-
  public:
   PnP() = default;
   explicit PnP(std::string _camera_path, std::string _pnp_config_path);
@@ -107,6 +97,16 @@ class PnP : public abstract_pnp::PnP {
   void solvePnP(int                      _ballet_speed,
                 int                      _armor_type,
                 std::vector<cv::Point2f> _target_2d);
+
+ private:
+  PnP_Information pnp_info_;
+
+  cv::Mat cameraMatrix_, distCoeffs_;
+  cv::Mat rvec_ = cv::Mat::zeros(3, 3, CV_64FC1);
+  cv::Mat tvec_ = cv::Mat::zeros(3, 1, CV_64FC1);
+
+  std::vector<cv::Point2f> target_2d_;
+  std::vector<cv::Point3f> object_3d_;
 };
 
 }  // namespace basic_pnp

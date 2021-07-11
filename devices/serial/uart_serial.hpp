@@ -60,7 +60,7 @@ struct Serial_Config {
   std::string preferred_device        = "/dev/ttyUSB0";
   int         set_baudrate            = 0;
   int         show_serial_information = 0;
-} Serial_Cfg;
+};
 
 // Serial port information receiving structure
 struct Receive_Data {
@@ -120,44 +120,6 @@ struct Write_Data {
 };
 
 class SerialPort {
- private:
-  Serial_Config serial_config_;
-  Receive_Data  receive_data_;
-  Receive_Data  last_receive_data_;
-  Write_Data    write_data_;
-
-  int           fd;
-  int           transform_arr_[4];
-  unsigned char write_buff_[WRITE_BUFF_LENGTH];
-  unsigned char crc_buff_[CRC_BUFF_LENGTH];
-  unsigned char receive_buff_[REC_INFO_LENGTH];
-  unsigned char receive_buff_temp_[REC_INFO_LENGTH * 2];
-  unsigned char exchangebyte_;
-
-  int16_t yaw_reduction_;
-  int16_t pitch_reduction_;
-  int16_t depth_reduction_;
-
-  int16_t angle_reduction_;
-  int16_t acceleration_reduction_;
-
-  int16_t exchangebit_;
-
-  ssize_t read_message_;
-  ssize_t write_message_;
-
-  inline uint8_t checksumCRC(unsigned char* buf, uint16_t len);
-
-  void getDataForCRC(const int&     data_type, const int&     is_shooting,
-                     const int&     _yaw,      const int16_t& yaw,
-                     const int&     _pitch,    const int16_t& pitch,
-                     const int16_t& depth);
-
-  void getDataForSend(const int&     data_type, const int&     is_shooting,
-                      const int&     _yaw,      const int16_t& yaw,
-                      const int&     _pitch,    const int16_t& pitch,
-                      const int16_t& depth, const uint8_t&     CRC);
-
  public:
   SerialPort() = default;
   explicit SerialPort(std::string _serial_config);
@@ -214,6 +176,44 @@ class SerialPort {
   bool isEmpty();
 
   void updateReceiveInformation();
+
+ private:
+  Serial_Config serial_config_;
+  Receive_Data  receive_data_;
+  Receive_Data  last_receive_data_;
+  Write_Data    write_data_;
+
+  int           fd;
+  int           transform_arr_[4];
+  unsigned char write_buff_[WRITE_BUFF_LENGTH];
+  unsigned char crc_buff_[CRC_BUFF_LENGTH];
+  unsigned char receive_buff_[REC_INFO_LENGTH];
+  unsigned char receive_buff_temp_[REC_INFO_LENGTH * 2];
+  unsigned char exchangebyte_;
+
+  int16_t yaw_reduction_;
+  int16_t pitch_reduction_;
+  int16_t depth_reduction_;
+
+  int16_t angle_reduction_;
+  int16_t acceleration_reduction_;
+
+  int16_t exchangebit_;
+
+  ssize_t read_message_;
+  ssize_t write_message_;
+
+  inline uint8_t checksumCRC(unsigned char* buf, uint16_t len);
+
+  void getDataForCRC(const int&     data_type, const int&     is_shooting,
+                     const int&     _yaw,      const int16_t& yaw,
+                     const int&     _pitch,    const int16_t& pitch,
+                     const int16_t& depth);
+
+  void getDataForSend(const int&     data_type, const int&     is_shooting,
+                      const int&     _yaw,      const int16_t& yaw,
+                      const int&     _pitch,    const int16_t& pitch,
+                      const int16_t& depth, const uint8_t&     CRC);
 };
 
 static constexpr unsigned char CRC8_Table[] = {
