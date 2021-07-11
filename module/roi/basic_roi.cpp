@@ -1,13 +1,15 @@
 #include "basic_roi.hpp"
 
 namespace basic_roi {
-cv::Rect ImageRoi::makeRectSafe_Fixed(const cv::Mat &_input_img,
-                                      const cv::RotatedRect &_r_rect) {
-  int width = _r_rect.boundingRect().width;
+
+cv::Rect ROI::makeRectSafeFixed(const cv::Mat         &_input_img,
+                                const cv::RotatedRect &_r_rect) {
+  int width  = _r_rect.boundingRect().width;
   int height = _r_rect.boundingRect().height;
 
   cv::Point tl =
-      cv::Point(_r_rect.center.x - width * 0.5f, _r_rect.center.y * 0.5f);
+    cv::Point(_r_rect.center.x - width * 0.5f, _r_rect.center.y * 0.5f);
+
   if (tl.x < 0) {
     tl.x = 0;
   }
@@ -26,9 +28,9 @@ cv::Rect ImageRoi::makeRectSafe_Fixed(const cv::Mat &_input_img,
   return cv::Rect(tl.x, tl.y, width, height);
 } 
 
-cv::Rect ImageRoi::makeRectSafe_Tailor(const cv::Mat &_input_img,
-                                       const cv::RotatedRect &_r_rect) {
-  int width = _r_rect.boundingRect().width;
+cv::Rect ROI::makeRectSafeTailor(const cv::Mat         &_input_img,
+                                 const cv::RotatedRect &_r_rect) {
+  int width  = _r_rect.boundingRect().width;
   int height = _r_rect.boundingRect().height;
 
   cv::Point tl =
@@ -53,9 +55,9 @@ cv::Rect ImageRoi::makeRectSafe_Tailor(const cv::Mat &_input_img,
   return cv::Rect(tl.x, tl.y, width, height);
 }
 
-cv::Rect ImageRoi::makeRectSafe_Tailor(const cv::Mat &_input_img,
-                                       const cv::Rect &_r_rect) {
-  int width = _r_rect.width;
+cv::Rect ROI::makeRectSafeTailor(const cv::Mat  &_input_img,
+                                 const cv::Rect &_r_rect) {
+  int width  = _r_rect.width;
   int height = _r_rect.height;
 
   cv::Point tl = _r_rect.tl();

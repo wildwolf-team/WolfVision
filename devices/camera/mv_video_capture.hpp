@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fmt/core.h>
+#include <fmt/color.h>
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc/imgproc_c.h>
@@ -8,6 +9,9 @@
 #include <CameraApi.h>
 
 namespace mindvision {
+
+auto idntifier_green = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "mv_video_capture");
+auto idntifier_red   = fmt::format(fg(fmt::color::red)   | fmt::emphasis::bold, "mv_video_capture");
 
 enum EXPOSURETIME {
   EXPOSURE_5000 = 5000,
@@ -30,26 +34,22 @@ struct Camera_Resolution {
 
   explicit Camera_Resolution(const mindvision::RESOLUTION _resolution) {
     switch (_resolution) {
-      case mindvision::RESOLUTION::RESOLUTION_1280_X_1024: {
+      case mindvision::RESOLUTION::RESOLUTION_1280_X_1024:
         cols = 1280;
         rows = 1024;
         break;
-      }
-      case mindvision::RESOLUTION::RESOLUTION_1280_X_800: {
+      case mindvision::RESOLUTION::RESOLUTION_1280_X_800: 
         cols = 1280;
         rows = 800;
         break;
-      }
-      case mindvision::RESOLUTION::RESOLUTION_640_X_480: {
+      case mindvision::RESOLUTION::RESOLUTION_640_X_480:
         cols = 640;
         rows = 480;
         break;
-      }
-      default: {
+      default:
         cols = 1280;
         rows = 800;
         break;
-      }
     }
   }
 };
@@ -60,8 +60,12 @@ struct CameraParam {
 
   mindvision::Camera_Resolution resolution;
 
-  CameraParam(const int _camera_mode, const mindvision::RESOLUTION _resolution, const mindvision::EXPOSURETIME _camera_exposuretime)
-    : camera_mode(_camera_mode), camera_exposuretime(_camera_exposuretime), resolution(_resolution){}
+  CameraParam(const int _camera_mode,
+              const mindvision::RESOLUTION _resolution,
+              const mindvision::EXPOSURETIME _camera_exposuretime)
+    : camera_mode(_camera_mode),
+      camera_exposuretime(_camera_exposuretime),
+      resolution(_resolution) {}
 };
 
 class VideoCapture {
@@ -90,7 +94,9 @@ class VideoCapture {
   bool isindustryimgInput();
   void cameraReleasebuff();
 
-  int cameraInit(const int _CAMERA_RESOLUTION_COLS, const int _CAMERA_RESOLUTION_ROWS, const int _CAMERA_EXPOSURETIME);
+  int cameraInit(const int _CAMERA_RESOLUTION_COLS,
+                 const int _CAMERA_RESOLUTION_ROWS,
+                 const int _CAMERA_EXPOSURETIME);
 
   inline cv::Mat image() const { return cv::cvarrToMat(this->iplImage, true); }
 };

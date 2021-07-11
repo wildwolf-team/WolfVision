@@ -1,7 +1,9 @@
 #pragma once
 
 #include <fmt/core.h>
+#include <fmt/color.h>
 
-namespace wolfvision {
-    
-}
+#include <opencv2/core.hpp>
+
+#include "devices/camera/mv_video_capture.hpp"
+#include "devices/serial/uart_serial.hpp"
