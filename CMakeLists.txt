@@ -2,6 +2,7 @@
 cmake_minimum_required(VERSION 3.16.0)
 project(WolfVision VERSION 2021.7.9 LANGUAGES CXX)
 
+# Check system platform
 if(NOT CMAKE_SYSTEM_NAME STREQUAL Linux)
     message(FATAL_ERROR "Not supported platform: ${CMAKE_SYSTEM_NAME}")
 endif()
