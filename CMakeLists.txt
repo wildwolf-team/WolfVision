@@ -108,8 +108,10 @@ list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/filter)
 add_library(wv-basic-kalman SHARED module/filter/basic_kalman.cpp)
 list(APPEND WV_EXTRA_LIBS wv-basic-kalman)
 
-list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/object_detection)
-add_library(wv-yolov4-dnn SHARED module/object_detection/yolov4_dnn.cpp)
+list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/ml)
+add_library(wv-onnx-inferring SHARED module/ml/onnx_inferring.cpp)
+list(APPEND WV_EXTRA_LIBS wv-onnx-inferring)
+add_library(wv-yolov4-dnn SHARED module/ml/yolov4_dnn.cpp)
 list(APPEND WV_EXTRA_LIBS wv-yolov4-dnn)
 
 list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/roi)
