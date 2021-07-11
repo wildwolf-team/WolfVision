@@ -5,26 +5,25 @@
 
 namespace abstract_roi {
 
-class Abstract_ImageRoi {
+class ROI {
  protected:
   cv::Mat     roi_img_;
   cv::Point2d tl_;
 
  public:
-  Abstract_ImageRoi() : tl_(cv::Point2d(0, 0)) { 
-  }
+  ROI() : tl_(cv::Point2d(0, 0)) {}
 
-  virtual ~Abstract_ImageRoi() {}
+  virtual ~ROI() {}
 
-  cv::Mat cutRoi_Rect(const cv::Mat &_input_img, const cv::Rect &_rect) {
-    this->tl_ = _rect.tl();
+  cv::Mat cutROIRect(const cv::Mat &_input_img, const cv::Rect &_rect) {
+    tl_ = _rect.tl();
     _input_img(_rect).copyTo(roi_img_);
 
     return roi_img_;
   }
 
-  cv::Mat cutRoi_RotatedRect(const cv::Mat &_input_img,
-                             const cv::RotatedRect &_rect) {
+  cv::Mat cutROIRotatedRect(const cv::Mat         &_input_img,
+                            const cv::RotatedRect &_rect) {
     int roi_w = MAX(_rect.size.width, _rect.size.height);
     int roi_h = MIN(_rect.size.width, _rect.size.height);
     cv::RotatedRect r_rect =
@@ -40,10 +39,14 @@ class Abstract_ImageRoi {
     verdst[3] = cv::Point2f(roi_w, roi_h);
 
     cv::Mat roi_img_r_rect = cv::Mat(roi_h, roi_w, CV_8UC1);
-    cv::Mat warpMatrix = getPerspectiveTransform(verices, verdst);
-    warpPerspective(_input_img, roi_img_r_rect, warpMatrix,
-                    roi_img_r_rect.size(), cv::INTER_LINEAR,
-                    cv::BORDER_CONSTANT);
+    cv::Mat warpMatrix     = cv::getPerspectiveTransform(verices, verdst);
+
+    cv::warpPerspective(_input_img,
+                        roi_img_r_rect,
+                        warpMatrix,
+                        roi_img_r_rect.size(),
+                        cv::INTER_LINEAR,
+                        cv::BORDER_CONSTANT);
 
     return roi_img_r_rect;
   }
@@ -59,7 +62,7 @@ class Abstract_ImageRoi {
                     _input_rect.size().height);
   }
 
-  inline cv::RotatedRect r_rectMapping(const cv::RotatedRect &_input_r_rect) {
+  inline cv::RotatedRect rotatedRectMapping(const cv::RotatedRect &_input_r_rect) {
     return cv::RotatedRect(coordMapping(_input_r_rect.center),
                            _input_r_rect.size, _input_r_rect.angle);
   }
