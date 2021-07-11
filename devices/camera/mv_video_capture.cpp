@@ -8,7 +8,7 @@ VideoCapture::VideoCapture(const CameraParam &_camera_param) {
                _camera_param.resolution.rows,
                _camera_param.camera_exposuretime);
 
-    if(iStatus == CAMERA_STATUS_SUCCESS) {
+    if (iStatus == CAMERA_STATUS_SUCCESS) {
       iscamera0_open = true;
 
       fmt::print("[{}] Using mindvision industrial camera: {}\n", idntifier_green, _camera_param.camera_mode);
@@ -40,7 +40,8 @@ bool VideoCapture::isindustryimgInput() {
         cvReleaseImageHeader(&iplImage);
       }
 
-      iplImage = cvCreateImageHeader(cvSize(sFrameInfo.iWidth, sFrameInfo.iHeight), IPL_DEPTH_8U, channel);
+      iplImage =
+        cvCreateImageHeader(cvSize(sFrameInfo.iWidth, sFrameInfo.iHeight), IPL_DEPTH_8U, channel);
 
       cvSetData(iplImage, g_pRgbBuffer, sFrameInfo.iWidth * channel);
     }
@@ -78,7 +79,10 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
 
   CameraGetCapability(hCamera, &tCapability);
 
-  g_pRgbBuffer = static_cast<unsigned char *>(malloc(tCapability.sResolutionRange.iHeightMax * tCapability.sResolutionRange.iWidthMax * 3));
+  g_pRgbBuffer =
+    static_cast<unsigned char*>(
+      malloc(tCapability.sResolutionRange.iHeightMax *
+             tCapability.sResolutionRange.iWidthMax  * 3));
 
   CameraGetImageResolution(hCamera, &pImageResolution);
 

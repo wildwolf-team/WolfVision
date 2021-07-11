@@ -2,6 +2,6 @@
 
 #include <fmt/core.h>
 
-namespace abstract_dnn {
+namespace yolov4_dnn {
 
 }

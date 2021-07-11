@@ -10,44 +10,33 @@
 
 namespace abstract_pnp {
 
-struct PNP_Config {
+struct PnP_Config {
   int    company      = 1;
+
   double ptz_camera_x = 0.0;
   double ptz_camera_y = 0.0;
   double ptz_camera_z = 0.0;
+
   float  barrel_ptz_offset_x = 0.0;
   float  barrel_ptz_offset_y = 0.0;
   float  offset_armor_pitch  = 0.0;
   float  offset_armor_yaw    = 0.0;
+
   int    small_armor_height  = 60,  small_armor_width = 140;
   int    big_armor_width     = 245, big_armor_height  = 60;
   int    light_size_width    = 10,  light_size_height = 55;
   int    buff_armor_width    = 250, buff_armor_height = 65;
 };
 
-class PNP {
- private:
-  cv::Mat pnp_config_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
-  std::vector<cv::Point3f> reference_Obj_;
-  std::vector<cv::Point3f> big_object_3d_;
-  std::vector<cv::Point3f> small_object_3d_;
-  std::vector<cv::Point3f> buff_object_3d_;
-
-  double theta = 0.0;
-  double r_data[9];
-  double t_data[3];
-
-  cv::Mat r_camera_ptz;
-  cv::Mat t_camera_ptz;
-
+class PnP {
  public:
-  PNP_Config pnp_config_;
+  PnP_Config pnp_config_;
 
-  PNP() {
-    reference_Obj_.push_back(cv::Point3f(0.0, 0.0, 0.0));
-    reference_Obj_.push_back(cv::Point3f(100, 0.0, 0.0));
-    reference_Obj_.push_back(cv::Point3f(0.0, 100, 0.0));
-    reference_Obj_.push_back(cv::Point3f(0.0, 0.0, 100));
+  PnP() {
+    reference_Obj_.emplace_back(cv::Point3f(0.0, 0.0, 0.0));
+    reference_Obj_.emplace_back(cv::Point3f(100, 0.0, 0.0));
+    reference_Obj_.emplace_back(cv::Point3f(0.0, 100, 0.0));
+    reference_Obj_.emplace_back(cv::Point3f(0.0, 0.0, 100));
 
     static double theta = 0;
     static double r_data[] = {1, 0,           0,
@@ -60,47 +49,47 @@ class PNP {
     r_camera_ptz = cv::Mat(3, 3, CV_64FC1, r_data);
     t_camera_ptz = cv::Mat(3, 1, CV_64FC1, t_data);
 
-    big_object_3d_.push_back(
+    big_object_3d_.emplace_back(
       cv::Point3f(-pnp_config_.big_armor_width  * 0.5,
                   -pnp_config_.big_armor_height * 0.5, 0));
-    big_object_3d_.push_back(
+    big_object_3d_.emplace_back(
       cv::Point3f(pnp_config_.big_armor_width   * 0.5,
                   -pnp_config_.big_armor_height * 0.5, 0));
-    big_object_3d_.push_back(
+    big_object_3d_.emplace_back(
       cv::Point3f(pnp_config_.big_armor_width  * 0.5,
                   pnp_config_.big_armor_height * 0.5, 0));
-    big_object_3d_.push_back(
+    big_object_3d_.emplace_back(
       cv::Point3f(-pnp_config_.big_armor_width * 0.5,
                   pnp_config_.big_armor_height * 0.5, 0));
 
-    small_object_3d_.push_back(
+    small_object_3d_.emplace_back(
       cv::Point3f(-pnp_config_.small_armor_width  * 0.5,
                   -pnp_config_.small_armor_height * 0.5, 0));
-    small_object_3d_.push_back(
+    small_object_3d_.emplace_back(
       cv::Point3f(pnp_config_.small_armor_width   * 0.5,
                   -pnp_config_.small_armor_height * 0.5, 0));
-    small_object_3d_.push_back(
+    small_object_3d_.emplace_back(
       cv::Point3f(pnp_config_.small_armor_width  * 0.5,
                   pnp_config_.small_armor_height * 0.5, 0));
-    small_object_3d_.push_back(
+    small_object_3d_.emplace_back(
       cv::Point3f(-pnp_config_.small_armor_width * 0.5,
                   pnp_config_.small_armor_height * 0.5, 0));
 
-    buff_object_3d_.push_back(
+    buff_object_3d_.emplace_back(
       cv::Point3f(-pnp_config_.buff_armor_width  * 0.5,
                   -pnp_config_.buff_armor_height * 0.5, 0));
-    buff_object_3d_.push_back(
+    buff_object_3d_.emplace_back(
       cv::Point3f(pnp_config_.buff_armor_width   * 0.5,
                   -pnp_config_.buff_armor_height * 0.5, 0));
-    buff_object_3d_.push_back(
+    buff_object_3d_.emplace_back(
       cv::Point3f(pnp_config_.buff_armor_width  * 0.5,
                   pnp_config_.buff_armor_height * 0.5, 0));
-    buff_object_3d_.push_back(
+    buff_object_3d_.emplace_back(
       cv::Point3f(-pnp_config_.buff_armor_width * 0.5,
                   pnp_config_.buff_armor_height * 0.5, 0));
   }
 
-  ~PNP() = default;
+  ~PnP() = default;
 
   std::vector<cv::Point3f> initialize3DPoints(int _armor_type) {
     switch (_armor_type) {
@@ -120,26 +109,28 @@ class PNP {
   }
 
   std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth) {
-    std::vector<cv::Point3f> object_3d;
     float half_x = _width  * 0.5;
     float half_y = _heigth * 0.5;
 
-    object_3d.push_back(cv::Point3f(-half_x, -half_y, 0));
-    object_3d.push_back(cv::Point3f(half_x,  -half_y, 0));
-    object_3d.push_back(cv::Point3f(half_x,  half_y,  0));
-    object_3d.push_back(cv::Point3f(-half_x, half_y,  0));
+    std::vector<cv::Point3f> object_3d = {
+      cv::Point3f(-half_x, -half_y, 0),
+      cv::Point3f(half_x,  -half_y, 0),
+      cv::Point3f(half_x,  half_y,  0),
+      cv::Point3f(-half_x, half_y,  0)
+    };
 
     return object_3d;
   }
 
   std::vector<cv::Point2f> initialize2DPoints(cv::RotatedRect _rect) {
     std::vector<cv::Point2f> target2d;
+
     static cv::Point2f vertex[4];
     static cv::Point2f lu, ld, ru, rd;
 
     _rect.points(vertex);
     std::sort(vertex, vertex + 4,
-      [](const cv::Point2f &p1, const cv::Point2f &p2) {
+      [](const cv::Point2f& p1, const cv::Point2f& p2) {
           return p1.x < p2.x;
       });
 
@@ -158,10 +149,10 @@ class PNP {
       rd = vertex[2];
     }
 
-    target2d.push_back(lu);
-    target2d.push_back(ru);
-    target2d.push_back(rd);
-    target2d.push_back(ld);
+    target2d.emplace_back(lu);
+    target2d.emplace_back(ru);
+    target2d.emplace_back(rd);
+    target2d.emplace_back(ld);
 
     return target2d;
   }
@@ -169,7 +160,7 @@ class PNP {
   std::vector<cv::Point2f> initialize2DPoints(cv::Rect _rect) {
     cv::RotatedRect box = rectChangeRotatedrect(_rect);
 
-    return this->initialize2DPoints(box);
+    return initialize2DPoints(box);
   }
 
   cv::RotatedRect rectChangeRotatedrect(cv::Rect _rect) {
@@ -181,15 +172,13 @@ class PNP {
     return box;
   }
 
-  cv::Mat cameraPtz(cv::Mat &_t) {
-    cv::Mat position_in_ptz = r_camera_ptz * _t - t_camera_ptz;
-
-    return position_in_ptz;
+  cv::Mat cameraPtz(cv::Mat& _t) {
+    return r_camera_ptz * _t - t_camera_ptz;
   }
 
-  void drawCoordinate(cv::Mat &_draw_img,
-                      cv::Mat &_rvec,         cv::Mat &_tvec,
-                      cv::Mat &_cameraMatrix, cv::Mat &_distcoeffs) {
+  void drawCoordinate(cv::Mat& _draw_img,
+                      cv::Mat& _rvec,         cv::Mat& _tvec,
+                      cv::Mat& _cameraMatrix, cv::Mat& _distcoeffs) {
     std::vector<cv::Point2f> reference_Img;
 
     cv::projectPoints(reference_Obj_,
@@ -204,45 +193,47 @@ class PNP {
     cv::line(_draw_img, reference_Img[0], reference_Img[3],
              cv::Scalar(255, 0, 0), 2);
 
-    cv::imshow("[abstract_pnp] drawCoordinate", _draw_img);
+    cv::imshow("[abstract_pnp] drawCoordinate() -> _draw_img", _draw_img);
   }
 
-  float getPitch(float _dist, float _tvec_y, float _ballet_speed,
-                 const int _company = 1) {
+  float getPitch(float       _dist,
+                 float       _tvec_y,
+                 float       _ballet_speed,
+                 const int   _company = 1) {
     _dist         /= _company;
     _tvec_y       /= _company;
     _ballet_speed /= _company;
 
-    float y_temp, y_actual, dy;
-
-    float       a       = 0.0;
-    const float gravity = 10000.f / _company;
-
-    y_temp = _tvec_y;
+    float       y_temp   = _tvec_y;
+    float       y_actual = 0.f;
+    float       dy       = 0.f;
+    float       a        = 0.f;
+    const float gravity  = 10000.f / _company;
 
     for (size_t i = 0; i != 20; ++i) {
       a = static_cast<float>(atan2(y_temp, _dist));
-      float t;
-      t        = _dist / _ballet_speed * cos(a);
-      y_actual = _ballet_speed * sin(a) * t - gravity * t * t / 2;
-      dy       = _tvec_y - y_actual;
-      y_temp   = y_temp + dy;
 
-      if (fabsf(dy) < 0.01) { break; }
+      float t = _dist / _ballet_speed * cos(a);
+
+      y_actual  = _ballet_speed * sin(a) * t - gravity * t * t / 2;
+      dy        = _tvec_y - y_actual;
+      y_temp   += dy;
+
+      if (fabsf(dy) < 1e-2) { break; }
     }
 
     return a;
   }
 
-  cv::Point3f getAngle(const cv::Mat &_pos_in_ptz,
-                       const int     _bullet_speed,
-                       const int     _company) {
+  cv::Point3f getAngle(const cv::Mat& _pos_in_ptz,
+                       const int      _bullet_speed,
+                       const int      _company) {
     cv::Point3f angle;
 
     const double *_xyz  = reinterpret_cast<const double *>(_pos_in_ptz.data);
-    double       down_t = 0.0;
+    double       down_t = 0.f;
 
-    if (_bullet_speed > 10e-3) {
+    if (_bullet_speed > 1e-2) {
       down_t = _xyz[2] / (_bullet_speed * 1000);
     }
 
@@ -250,38 +241,40 @@ class PNP {
     double xyz[3]         = {_xyz[0], _xyz[1] - offset_gravity, _xyz[2]};
 
     if (pnp_config_.barrel_ptz_offset_y != 0.f) {
-      double alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_y) /
-                          sqrt(xyz[1] * xyz[1] + xyz[2] * xyz[2])),
-             Beta  = 0.f;
+      double alpha =
+        asin(static_cast<double>(pnp_config_.barrel_ptz_offset_y) /
+             sqrt(xyz[1] * xyz[1] + xyz[2] * xyz[2]));
+      double beta  = 0.f;
 
       if (xyz[1] < 0) {
-        Beta    = atan(-xyz[1] / xyz[2]);
-        angle.y = static_cast<float>(-(alpha + Beta));  // camera coordinate
+        beta    = atan(-xyz[1] / xyz[2]);
+        angle.y = static_cast<float>(-(alpha + beta));  // camera coordinate
       } else if (xyz[1] < static_cast<double>(pnp_config_.barrel_ptz_offset_y)) {
-        Beta    = atan(xyz[1] / xyz[2]);
-        angle.y = static_cast<float>(-(alpha - Beta));
+        beta    = atan(xyz[1] / xyz[2]);
+        angle.y = static_cast<float>(-(alpha - beta));
       } else {
-        Beta    = atan(xyz[1] / xyz[2]);
-        angle.y = static_cast<float>((Beta - alpha));  // camera coordinate
+        beta    = atan(xyz[1] / xyz[2]);
+        angle.y = static_cast<float>((beta - alpha));  // camera coordinate
       }
     } else {
       angle.y = static_cast<float>(atan2(xyz[1], xyz[2]));
     }
 
     if (pnp_config_.barrel_ptz_offset_x != 0.f) {
-      double alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_x) /
-                          sqrt(xyz[0] * xyz[0] + xyz[2] * xyz[2])),
-             Beta  = 0.f;
+      double alpha =
+        asin(static_cast<double>(pnp_config_.barrel_ptz_offset_x) /
+             sqrt(xyz[0] * xyz[0] + xyz[2] * xyz[2]));
+      double beta  = 0.f;
 
       if (xyz[0] > 0) {
-        Beta    = atan(-xyz[0] / xyz[2]);
-        angle.x = static_cast<float>(-(alpha + Beta));  // camera coordinate
+        beta    = atan(-xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(-(alpha + beta));  // camera coordinate
       } else if (xyz[0] < static_cast<double>(pnp_config_.barrel_ptz_offset_x)) {
-        Beta    = atan(xyz[0] / xyz[2]);
-        angle.x = static_cast<float>(-(alpha - Beta));
+        beta    = atan(xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(-(alpha - beta));
       } else {
-        Beta    = atan(xyz[0] / xyz[2]);
-        angle.x = static_cast<float>(Beta - alpha);  // camera coordinate
+        beta    = atan(xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(beta - alpha);  // camera coordinate
       }
     } else {
       angle.x = static_cast<float>(atan2(xyz[0], xyz[2]));
@@ -295,16 +288,16 @@ class PNP {
     return angle;
   }
 
-  cv::Point3f getAngle(const cv::Mat &_pos_in_ptz,
-                       const int     _bullet_speed,
-                       const int     _company,
-                       const int     _depth) {
+  cv::Point3f getAngle(const cv::Mat& _pos_in_ptz,
+                       const int      _bullet_speed,
+                       const int      _company,
+                       const int      _depth) {
     cv::Point3f angle;
 
     const double *_xyz  = reinterpret_cast<const double *>(_pos_in_ptz.data);
-    double       down_t = 0.0;
+    double       down_t = 0.f;
 
-    if (_bullet_speed > 10e-3) {
+    if (_bullet_speed > 1e-2) {
       down_t = _xyz[2] / (_bullet_speed * 1000);
     }
 
@@ -312,38 +305,41 @@ class PNP {
     double xyz[3]         = {_xyz[0], _xyz[1] - offset_gravity, _xyz[2]};
 
     if (pnp_config_.barrel_ptz_offset_y != 0.f) {
-      double alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_y) /
-                          sqrt(xyz[1] * xyz[1] + xyz[2] * xyz[2])),
-             Beta = 0.f;
+      double alpha =
+        asin(static_cast<double>(pnp_config_.barrel_ptz_offset_y) /
+             sqrt(xyz[1] * xyz[1] + xyz[2] * xyz[2]));
+      double beta  = 0.f;
 
       if (xyz[1] < 0) {
-        Beta    = atan(-xyz[1] / xyz[2]);
-        angle.y = static_cast<float>(-(alpha + Beta));  // camera coordinate
+        beta    = atan(-xyz[1] / xyz[2]);
+        angle.y = static_cast<float>(-(alpha + beta));  // camera coordinate
       } else if (xyz[1] < static_cast<double>(pnp_config_.barrel_ptz_offset_y)) {
-        Beta    = atan(xyz[1] / xyz[2]);
-        angle.y = static_cast<float>(-(alpha - Beta));
+        beta    = atan(xyz[1] / xyz[2]);
+        angle.y = static_cast<float>(-(alpha - beta));
       } else {
-        Beta    = atan(xyz[1] / xyz[2]);
-        angle.y = static_cast<float>((Beta - alpha));  // camera coordinate
+        beta    = atan(xyz[1] / xyz[2]);
+        angle.y = static_cast<float>((beta - alpha));  // camera coordinate
       }
     } else {
       angle.y = static_cast<float>(atan2(xyz[1], xyz[2]));
     }
 
     if (pnp_config_.barrel_ptz_offset_x != 0.f) {
-      double alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_x) /
-                          sqrt(xyz[0] * xyz[0] + xyz[2] * xyz[2])),
-             Beta = 0.f;
+      double alpha =
+        asin(static_cast<double>(pnp_config_.barrel_ptz_offset_x) /
+             sqrt(xyz[0] * xyz[0] + xyz[2] * xyz[2]));
+      double beta  = 0.f;
+
       if (xyz[0] > 0) {
-        Beta    = atan(-xyz[0] / xyz[2]);
-        angle.x = static_cast<float>(-(alpha + Beta));  // camera coordinate
+        beta    = atan(-xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(-(alpha + beta));  // camera coordinate
       } else if (xyz[0] <
                  static_cast<double>(pnp_config_.barrel_ptz_offset_x)) {
-        Beta    = atan(xyz[0] / xyz[2]);
-        angle.x = static_cast<float>(-(alpha - Beta));
+        beta    = atan(xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(-(alpha - beta));
       } else {
-        Beta    = atan(xyz[0] / xyz[2]);
-        angle.x = static_cast<float>(Beta - alpha);  // camera coordinate
+        beta    = atan(xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(beta - alpha);  // camera coordinate
       }
     } else {
       angle.x = static_cast<float>(atan2(xyz[0], xyz[2]));
@@ -356,6 +352,21 @@ class PNP {
 
     return angle;
   }
+
+ private:
+  cv::Mat pnp_config_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
+
+  std::vector<cv::Point3f> reference_Obj_;
+  std::vector<cv::Point3f> big_object_3d_;
+  std::vector<cv::Point3f> small_object_3d_;
+  std::vector<cv::Point3f> buff_object_3d_;
+
+  double theta = 0.0;
+  double r_data[9];
+  double t_data[3];
+
+  cv::Mat r_camera_ptz;
+  cv::Mat t_camera_ptz;
 };
 
 }  // namespace abstract_pnp

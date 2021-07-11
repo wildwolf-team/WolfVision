@@ -38,7 +38,7 @@ struct Camera_Resolution {
         cols = 1280;
         rows = 1024;
         break;
-      case mindvision::RESOLUTION::RESOLUTION_1280_X_800: 
+      case mindvision::RESOLUTION::RESOLUTION_1280_X_800:
         cols = 1280;
         rows = 800;
         break;
@@ -60,8 +60,8 @@ struct CameraParam {
 
   mindvision::Camera_Resolution resolution;
 
-  CameraParam(const int _camera_mode,
-              const mindvision::RESOLUTION _resolution,
+  CameraParam(const int                      _camera_mode,
+              const mindvision::RESOLUTION   _resolution,
               const mindvision::EXPOSURETIME _camera_exposuretime)
     : camera_mode(_camera_mode),
       camera_exposuretime(_camera_exposuretime),
@@ -69,24 +69,8 @@ struct CameraParam {
 };
 
 class VideoCapture {
- private:
-  unsigned char *g_pRgbBuffer;
-
-  int  iCameraCounts  = 1;
-  int  iStatus        = -1;
-  int  hCamera;
-  int  channel        = 3;
-  bool iscamera0_open = false;
-
-  tSdkCameraDevInfo   tCameraEnumList;
-  tSdkCameraCapbility tCapability;
-  tSdkFrameHead       sFrameInfo;
-  tSdkImageResolution pImageResolution;
-  BYTE                *pbyBuffer;
-  BOOL                AEstate   = FALSE;
-  IplImage            *iplImage = nullptr;
-
  public:
+  VideoCapture() = default;
   explicit VideoCapture(const mindvision::CameraParam &_camera_param);
 
   ~VideoCapture();
@@ -98,7 +82,24 @@ class VideoCapture {
                  const int _CAMERA_RESOLUTION_ROWS,
                  const int _CAMERA_EXPOSURETIME);
 
-  inline cv::Mat image() const { return cv::cvarrToMat(this->iplImage, true); }
+  inline cv::Mat image() const { return cv::cvarrToMat(iplImage, true); }
+
+ private:
+  unsigned char* g_pRgbBuffer;
+
+  int  iCameraCounts  = 1;
+  int  iStatus        = -1;
+  int  hCamera;
+  int  channel        = 3;
+  bool iscamera0_open = false;
+
+  tSdkCameraDevInfo   tCameraEnumList;
+  tSdkCameraCapbility tCapability;
+  tSdkFrameHead       sFrameInfo;
+  tSdkImageResolution pImageResolution;
+  BYTE*               pbyBuffer;
+  BOOL                AEstate  = FALSE;
+  IplImage*           iplImage = nullptr;
 };
 
 }  // namespace mindvision
