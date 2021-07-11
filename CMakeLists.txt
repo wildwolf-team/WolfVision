@@ -20,7 +20,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(BUILD_TEST False)
 
 # Prefer posix threads
-
 set(THREADS_PREFER_PTHREAD_FLAG True)
 find_package(Threads REQUIRED)
 
