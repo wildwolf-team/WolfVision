@@ -208,7 +208,7 @@ class PnP {
     cv::line(_draw_img, reference_Img[0], reference_Img[3],
              cv::Scalar(255, 0, 0), 2);
 
-    cv::imshow("[abstract_pnp] drawCoordinate", _draw_img);
+    cv::imshow("[abstract_pnp] drawCoordinate() -> _draw_img", _draw_img);
   }
 
   float getPitch(float       _dist,

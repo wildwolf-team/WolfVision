@@ -37,7 +37,8 @@ class PnP : public abstract_pnp::PnP {
   PnP_Info pnp_info_;
 
  public:
-  PnP(std::string _camera_path, std::string _pnp_config_path);
+  PnP() = default;
+  explicit PnP(std::string _camera_path, std::string _pnp_config_path);
 
   ~PnP() = default;
 

@@ -87,6 +87,7 @@ class VideoCapture {
   IplImage*           iplImage = nullptr;
 
  public:
+  VideoCapture() = default;
   explicit VideoCapture(const mindvision::CameraParam &_camera_param);
 
   ~VideoCapture();

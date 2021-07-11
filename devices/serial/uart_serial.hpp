@@ -159,6 +159,7 @@ class SerialPort {
                       const int16_t& depth, const uint8_t&     CRC);
 
  public:
+  SerialPort() = default;
   explicit SerialPort(std::string _serial_config);
 
   ~SerialPort();
