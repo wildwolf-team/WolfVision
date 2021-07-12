@@ -159,7 +159,7 @@ bool Detector::findLight() {
 }
 
 bool Detector::runBasicArmor(cv::Mat&           _src_img,
-                                   uart::Receive_Data _receive_data) {
+                             uart::Receive_Data _receive_data) {
   runImage(_src_img, _receive_data.my_color);
   draw_img_ = _src_img;
 
