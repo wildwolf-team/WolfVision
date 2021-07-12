@@ -2,13 +2,14 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "cmake configure project",
+            "label": "cmake configure ninja debug",
             "type": "shell",
             "command": "cmake",
             "args": [
                 "-B",
                 "${workspaceFolder}/build",
-                "-DCMAKE_BUILD_TYPE=Release"
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-GNinja"
             ],
             "group": "build",
             "presentation": {
@@ -16,14 +17,14 @@
             }
         },
         {
-            "label": "cmake build project",
+            "label": "cmake configure ninja release",
             "type": "shell",
             "command": "cmake",
             "args": [
-                "--build",
+                "-B",
                 "${workspaceFolder}/build",
-                "--config",
-                "Release"
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-GNinja"
             ],
             "group": "build",
             "presentation": {
@@ -31,12 +32,33 @@
             }
         },
         {
-            "label": "cmake build",
+            "label": "ninja build project",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "command": "ninja",
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "cmake ninja build debug",
             "type": "shell",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "cmake configure project",
-                "cmake build project"
+                "cmake configure ninja debug",
+                "ninja build project"
+            ]
+        },
+        {
+            "label": "cmake ninja build release",
+            "type": "shell",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "cmake configure ninja release",
+                "ninja build project"
             ]
         }
     ]
