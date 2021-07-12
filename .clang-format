@@ -1,0 +1,6 @@
+Language: Cpp
+BasedOnStyle: Google
+IndentPPDirectives: AfterHash
+IndentCaseLabels: false
+AlwaysBreakTemplateDeclarations: false
+DerivePointerAlignment: false

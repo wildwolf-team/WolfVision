@@ -21,6 +21,7 @@ set(BUILD_TEST False)
 
 # Prefer posix threads
 set(THREADS_PREFER_PTHREAD_FLAG True)
+set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 find_package(Threads REQUIRED)
 
 # Find and add opencv as required
@@ -94,10 +95,6 @@ add_library(wv-basic-armor SHARED module/armor/basic_armor.cpp)
 list(APPEND WV_EXTRA_LIBS wv-basic-armor)
 add_library(wv-fan-armor SHARED module/armor/fan_armor.cpp)
 list(APPEND WV_EXTRA_LIBS wv-fan-armor)
-
-list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/blade)
-add_library(wv-basic-blade SHARED module/blade/basic_blade.cpp)
-list(APPEND WV_EXTRA_LIBS wv-basic-blade)
 
 list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/buff)
 add_library(wv-basic-buff SHARED module/buff/basic_buff.cpp)
