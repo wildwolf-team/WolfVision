@@ -198,14 +198,14 @@ class Detector {
 
   bool           is_circle_;           // 是否找到圆心
   cv::Point2f    delta_height_point_;  // 获取装甲板的高度点差
-  cv::Point2f    roi_global_center_;   // ROI 圆心中点位置 (在原图中)
+  cv::Point2f    roi_global_center_;   // RoI 圆心中点位置 (在原图中)
   cv::Mat        result_img_;          // 二值图
   cv::Mat        roi_img_;             // 截取原图
-  basic_roi::ROI roi_tool_;            // ROI 截取工具
+  basic_roi::RoI roi_tool_;            // RoI 截取工具
 
   abstract_center_r::Center_R              center_r_;          // 候选圆心 R
   std::vector<std::vector<cv::Point>>      contours_r_;        // 中心R的遍历点集
-  cv::Point2f                              roi_local_center_;  // 截取 ROI 的图像中心点
+  cv::Point2f                              roi_local_center_;  // 截取 RoI 的图像中心点
   std::vector<abstract_center_r::Center_R> center_r_box_;      // 第一次筛选之后得到的待选中心R
   cv::Point2f                              final_center_r_;    // 最终圆心（假定/真实）
 

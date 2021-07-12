@@ -9,3 +9,5 @@
 #include "devices/serial/uart_serial.hpp"
 #include "module/armor/basic_armor.hpp"
 #include "module/buff/basic_buff.hpp"
+
+auto idntifier = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "wolfvision");

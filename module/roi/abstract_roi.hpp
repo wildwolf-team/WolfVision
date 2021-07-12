@@ -5,13 +5,13 @@
 
 namespace abstract_roi {
 
-class ROI {
+class RoI {
  public:
-  ROI() : tl_(cv::Point2d(0, 0)) {}
+  RoI() : tl_(cv::Point2d(0, 0)) {}
 
-  virtual ~ROI() {}
+  virtual ~RoI() {}
 
-  cv::Mat cutROIRect(const cv::Mat& _input_img,
+  cv::Mat cutRoIRect(const cv::Mat& _input_img,
                      const cv::Rect& _rect) {
     tl_ = _rect.tl();
     _input_img(_rect).copyTo(roi_img_);
@@ -19,7 +19,7 @@ class ROI {
     return roi_img_;
   }
 
-  cv::Mat cutROIRotatedRect(const cv::Mat&         _input_img,
+  cv::Mat cutRoIRotatedRect(const cv::Mat&         _input_img,
                             const cv::RotatedRect& _rect) {
     int roi_w = MAX(_rect.size.width, _rect.size.height);
     int roi_h = MIN(_rect.size.width, _rect.size.height);

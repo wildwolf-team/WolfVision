@@ -668,8 +668,8 @@ cv::Point2f Detector::findCircleR(cv::Mat&    _input_src_img,
   cv::Rect        roi = roi_R.boundingRect();
 
   roi         = roi_tool_.makeRectSafeTailor(_input_src_img, roi);
-  result_img_ = roi_tool_.cutROIRect(_input_bin_img, roi);
-  roi_img_    = roi_tool_.cutROIRect(_input_src_img, roi);
+  result_img_ = roi_tool_.cutRoIRect(_input_bin_img, roi);
+  roi_img_    = roi_tool_.cutRoIRect(_input_src_img, roi);
 
   cv::rectangle(_dst_img, roi, cv::Scalar(0, 255, 200), 2, 8, 0);
 

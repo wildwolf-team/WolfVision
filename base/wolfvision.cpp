@@ -1,8 +1,6 @@
 #include "wolfvision.hpp"
 
 int main() {
-  auto idntifier = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "wolfvision");
-
   fmt::print("[{}] WolfVision built on g++ version: {}\n", idntifier , __VERSION__);
   fmt::print("[{}] WolfVision config file path: {}\n", idntifier, CONFIG_FILE_PATH);
 
