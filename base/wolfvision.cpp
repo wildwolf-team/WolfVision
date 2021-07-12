@@ -22,6 +22,7 @@ int main() {
   basic_pnp::PnP pnp_ = basic_pnp::PnP(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_554.xml"),
     fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
+
   while (true) {
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
