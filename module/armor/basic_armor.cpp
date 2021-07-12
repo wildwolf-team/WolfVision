@@ -158,8 +158,8 @@ bool Detector::findLight() {
   return true;
 }
 
-uart::Write_Data Detector::getWriteData(cv::Mat&           _src_img,
-                                        uart::Receive_Data _receive_data) {
+uart::Write_Data Detector::writeBasicArmorData(cv::Mat&           _src_img,
+                                             uart::Receive_Data _receive_data) {
   runImage(_src_img, _receive_data.my_color);
   draw_img_ = _src_img;
 
@@ -195,6 +195,112 @@ uart::Write_Data Detector::getWriteData(cv::Mat&           _src_img,
                                pnp_.returnDepth(),
                                armor_.size(),
                                0);
+}
+
+uart::Write_Data Detector::writeSentryArmorData(cv::Mat&           _src_img,
+                                              uart::Receive_Data _receive_data,
+                                              int                _depth) {
+  runImage(_src_img, _receive_data.my_color);
+  draw_img_ = _src_img;
+
+  if (findLight()) {
+    if (fittingArmor()) {
+      finalArmor();
+
+      if (armor_config_.armor_draw == 1 ||
+          light_config_.light_draw == 1 ||
+          armor_config_.armor_edit == 1 ||
+          light_config_.light_edit == 1) {
+        cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
+
+        draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
+      }
+      lost_cnt_ = 10;
+      pnp_.solvePnP(_receive_data.bullet_velocity,
+                    armor_[0].distinguish,
+                    armor_[0].armor_rect,
+                    _depth);
+      return serial_.gainWriteData(pnp_.returnYawAngle(),
+                pnp_.returnPitchAngle(),
+                pnp_.returnDepth(),
+                armor_.size(),
+                0);
+    }
+  }
+  if (armor_config_.armor_draw == 1 ||
+      light_config_.light_draw == 1 ||
+      armor_config_.armor_edit == 1 ||
+      light_config_.light_edit == 1) {
+    cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
+
+    draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
+  }
+  if(lost_cnt_ > 0){
+    return serial_.gainWriteData(pnp_.returnYawAngle(),
+                pnp_.returnPitchAngle(),
+                pnp_.returnDepth(),
+                1,
+                0);
+    lost_cnt_--;
+  } else {
+    return serial_.gainWriteData(pnp_.returnYawAngle(),
+                pnp_.returnPitchAngle(),
+                pnp_.returnDepth(),
+                0,
+                0);
+  }
+}
+
+uart::Write_Data Detector::writeTopArmorData(cv::Mat&           _src_img,
+                                           uart::Receive_Data _receive_data) {
+  runImage(_src_img, _receive_data.my_color);
+  draw_img_ = _src_img;
+
+  if (findLight()) {
+    if (fittingArmor()) {
+      finalArmor();
+
+      if (armor_config_.armor_draw == 1 ||
+          light_config_.light_draw == 1 ||
+          armor_config_.armor_edit == 1 ||
+          light_config_.light_edit == 1) {
+        cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
+
+        draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
+      }
+      lost_cnt_ = 10;
+      pnp_.solvePnP(_receive_data.bullet_velocity,
+                    armor_[0].distinguish,
+                    armor_[0].armor_rect);
+      return serial_.gainWriteData(pnp_.returnYawAngle(),
+                pnp_.returnPitchAngle(),
+                pnp_.returnDepth(),
+                armor_.size(),
+                0);
+    }
+  }
+  if (armor_config_.armor_draw == 1 ||
+      light_config_.light_draw == 1 ||
+      armor_config_.armor_edit == 1 ||
+      light_config_.light_edit == 1) {
+    cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
+
+    draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
+  }
+  if(lost_cnt_ > 0){
+    return serial_.gainWriteData(pnp_.returnYawAngle(),
+                pnp_.returnPitchAngle(),
+                pnp_.returnDepth(),
+                1,
+                0);
+    lost_cnt_--;
+  } else {
+    return serial_.gainWriteData(pnp_.returnYawAngle(),
+                pnp_.returnPitchAngle(),
+                pnp_.returnDepth(),
+                0,
+                0);
+  }
 }
 
 void Detector::finalArmor() {

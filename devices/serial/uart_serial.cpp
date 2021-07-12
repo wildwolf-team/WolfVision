@@ -276,6 +276,9 @@ void SerialPort::updateReceiveInformation() {
     case BASE_MODE:
       receive_data_.now_run_mode = BASE_MODE;
       break;
+    case TOP_MODE:
+      receive_data_.now_run_mode = TOP_MODE;
+      break;
     default:
       receive_data_.now_run_mode = SUP_SHOOT;
       break;

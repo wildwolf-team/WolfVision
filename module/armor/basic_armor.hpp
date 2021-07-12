@@ -14,11 +14,14 @@
 #include "devices/serial/uart_serial.hpp"
 #include "module/angle_solve/basic_pnp.hpp"
 
+
 namespace basic_armor {
 
 auto idntifier_green = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "basic_armor");
 auto idntifier_red   = fmt::format(fg(fmt::color::red)   | fmt::emphasis::bold, "basic_armor");
 
+basic_pnp::PnP pnp_      = basic_pnp::PnP("configs/camera/mv_camera_config_407.xml", "configs/angle_solve/basic_pnp_config.xml");
+uart::SerialPort serial_ = uart::SerialPort("configs/serial/uart_serial_config.xml");
 struct Armor_Data {
   float width        = 0;
   float height       = 0;
@@ -103,9 +106,13 @@ class Detector {
 
   ~Detector() = default;
 
-  uart::Write_Data getWriteData(cv::Mat&           _src_img,
+  uart::Write_Data writeBasicArmorData(cv::Mat&           _src_img,
                                 uart::Receive_Data _receive_data);
-
+  uart::Write_Data writeSentryArmorData(cv::Mat&           _src_img,
+                                uart::Receive_Data _receive_data,
+                                int                _depth);
+  uart::Write_Data writeTopArmorData(cv::Mat&           _src_img,
+                                uart::Receive_Data _receive_data);
   float getDistance(cv::Point a, cv::Point b);
   bool  lightJudge(int i, int j);
   bool  fittingArmor();
@@ -157,13 +164,11 @@ class Detector {
   std::vector<Armor_Data>      armor_;
   std::vector<cv::RotatedRect> light_;
 
-  basic_pnp::PnP   pnp_;
-  uart::SerialPort serial_;
-
   bool lost_armor_success = false;
   bool armor_success      = false;
   bool switch_armor       = false;
 
+  int lost_cnt_           = 10;
   int lost_distance_armor = 0;
   int amplitude           = 0;
   int optimal_armor       = 0;
