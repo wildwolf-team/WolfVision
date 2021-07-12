@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <opencv_storage>
-<!--~~~~~~~~~~~~~~ 1 图像处理部分 1 ~~~~~~~~~~~~~~--> 
 <!--
   GRAY_EDIT - 是否调整灰度图参数
   - 1 Enable
@@ -21,16 +20,16 @@
 <METHOD>0</METHOD>
 <!--
   RED_ARMOR_GRAY_TH   - 红色灰度参数 
-  RED_ARMOR_COLOR_TH  - BGR红色参数
+  RED_ARMOR_COLOR_TH  - BGR 红色参数
   BLUE_ARMOR_GRAY_TH  - 蓝色灰度参数
-  BLUE_ARMOR_COLOR_TH - GBR蓝色参数
+  BLUE_ARMOR_COLOR_TH - GBR 蓝色参数
 -->
 <RED_ARMOR_GRAY_TH>30</RED_ARMOR_GRAY_TH>
 <RED_ARMOR_COLOR_TH>45</RED_ARMOR_COLOR_TH>
 <BLUE_ARMOR_GRAY_TH>80</BLUE_ARMOR_GRAY_TH>
 <BLUE_ARMOR_COLOR_TH>110</BLUE_ARMOR_COLOR_TH>
 <!--
-  - HSV红色参数
+  - HSV 红色参数
 -->
 <H_RED_MIN>0</H_RED_MIN>
 <H_RED_MAX>60</H_RED_MAX>
@@ -39,7 +38,7 @@
 <V_RED_MIN>30</V_RED_MIN>
 <V_RED_MAX>255</V_RED_MAX>
 <!--
-  - HSV蓝色参数
+  - HSV 蓝色参数
 -->
 <H_BLUE_MIN>90</H_BLUE_MIN>
 <H_BLUE_MAX>160</H_BLUE_MAX>
@@ -47,12 +46,6 @@
 <S_BLUE_MAX>255</S_BLUE_MAX>
 <V_BLUE_MIN>30</V_BLUE_MIN>
 <V_BLUE_MAX>255</V_BLUE_MAX>
-
-<!--~~~~~~~~~~~~~~ 1 图像处理部分 1 ~~~~~~~~~~~~~~-->
-
-
-
-<!--~~~~~~~~~~~~~~ 2 灯条查找部分 2 ~~~~~~~~~~~~~~--> 
 <!--
   LIGHT_EDTI - 是否调整灯条参数
   - 1 Enable
@@ -86,11 +79,6 @@
 -->
 <LIGHT_PERIMETER_MIN>25</LIGHT_PERIMETER_MIN>
 <LIGHT_PERIMETER_MAX>1000</LIGHT_PERIMETER_MAX>
-<!--~~~~~~~~~~~~~~ 2 灯条查找部分 2 ~~~~~~~~~~~~~~--> 
-
-
-
-<!--~~~~~~~~~~~~~~ 3 装甲拟合部分 3 ~~~~~~~~~~~~~~-->
 <!--
   ARMOR_EDIT - 是否调整装甲板参数
   - 1 Enable
@@ -135,9 +123,4 @@
 <ARMOR_SMALL_ASPECT_MIN>5</ARMOR_SMALL_ASPECT_MIN>
 <ARMOR_TYPE_TH>33</ARMOR_TYPE_TH>
 <ARMOR_BIG_ASPECT_MAX>60</ARMOR_BIG_ASPECT_MAX>
-
-<!--~~~~~~~~~~~~~~ 3 装甲拟合部分 3 ~~~~~~~~~~~~~~--> 
-
-
-
 </opencv_storage>
