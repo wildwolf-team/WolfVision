@@ -67,7 +67,7 @@ int main() {
       case uart::BASE_MODE:
         break;
       case uart::TOP_MODE:
-              if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
+        if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
           pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
                         basic_armor_.returnFinalArmorDistinguish(0),
                         basic_armor_.returnFinalArmorRotatedRect(0));
