@@ -27,6 +27,7 @@ find_package(Threads REQUIRED)
 # Find and add opencv as required
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+link_libraries(${OpenCV_LIBS})
 
 # Add fmtlib directory and include path for target
 add_subdirectory(3rdparty/fmt)
