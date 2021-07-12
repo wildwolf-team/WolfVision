@@ -14,7 +14,6 @@
 #include "devices/serial/uart_serial.hpp"
 #include "module/angle_solve/basic_pnp.hpp"
 
-
 namespace basic_armor {
 
 auto idntifier_green = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "basic_armor");
