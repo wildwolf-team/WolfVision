@@ -29,6 +29,7 @@ int main() {
     } else {
       cap_.read(src_img_);
     }
+
     if (!src_img_.empty()) {
       serial_.updateReceiveInformation();
       switch (serial_.returnReceiveMode()) {
