@@ -45,6 +45,7 @@ enum RunMode {
 
   SENTRY_MODE,
   BASE_MODE,
+  TOP_MODE,
 };
 
 // Describe the current robot ID information

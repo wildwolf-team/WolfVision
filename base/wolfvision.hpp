@@ -7,3 +7,5 @@
 
 #include "devices/camera/mv_video_capture.hpp"
 #include "devices/serial/uart_serial.hpp"
+#include "module/armor/basic_armor.hpp"
+#include "module/buff/basic_buff.hpp"
