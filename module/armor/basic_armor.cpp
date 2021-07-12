@@ -2,7 +2,7 @@
 
 namespace basic_armor {
 
-Detector::Detector(std::string _armor_config) {
+Detector::Detector(const std::string _armor_config) {
   cv::FileStorage fs_armor(_armor_config, cv::FileStorage::READ);
 
   fs_armor["GRAY_EDIT"]          >> image_config_.gray_edit;
@@ -136,7 +136,7 @@ bool Detector::findLight() {
         light_w_h > light_config_.ratio_w_h_min) {
       light_.emplace_back(box);
 
-      if (light_config_.light_draw == 1) {
+      if (light_config_.light_draw == 1 || light_config_.light_edit == 1) {
         cv::Point2f vertex[4];
         box.points(vertex);
 
@@ -158,108 +158,15 @@ bool Detector::findLight() {
   return true;
 }
 
-uart::Write_Data Detector::writeBasicArmorData(cv::Mat&           _src_img,
-                                             uart::Receive_Data _receive_data) {
+bool Detector::runBasicArmor(cv::Mat&           _src_img,
+                                   uart::Receive_Data _receive_data) {
   runImage(_src_img, _receive_data.my_color);
   draw_img_ = _src_img;
 
   if (findLight()) {
     if (fittingArmor()) {
       finalArmor();
-
-      if (armor_config_.armor_draw == 1 ||
-          light_config_.light_draw == 1 ||
-          armor_config_.armor_edit == 1 ||
-          light_config_.light_edit == 1) {
-        cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
-
-        draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
-      }
-
-      pnp_.solvePnP(_receive_data.bullet_velocity,
-                    armor_[0].distinguish,
-                    armor_[0].armor_rect);
-    }
-  }
-  if (armor_config_.armor_draw == 1 ||
-      light_config_.light_draw == 1 ||
-      armor_config_.armor_edit == 1 ||
-      light_config_.light_edit == 1) {
-    cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
-
-    draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
-  }
-
-  return serial_.gainWriteData(pnp_.returnYawAngle(),
-                               pnp_.returnPitchAngle(),
-                               pnp_.returnDepth(),
-                               armor_.size(),
-                               0);
-}
-
-uart::Write_Data Detector::writeSentryArmorData(cv::Mat&           _src_img,
-                                              uart::Receive_Data _receive_data,
-                                              int                _depth) {
-  runImage(_src_img, _receive_data.my_color);
-  draw_img_ = _src_img;
-
-  if (findLight()) {
-    if (fittingArmor()) {
-      finalArmor();
-
-      if (armor_config_.armor_draw == 1 ||
-          light_config_.light_draw == 1 ||
-          armor_config_.armor_edit == 1 ||
-          light_config_.light_edit == 1) {
-        cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
-
-        draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
-      }
       lost_cnt_ = 10;
-      pnp_.solvePnP(_receive_data.bullet_velocity,
-                    armor_[0].distinguish,
-                    armor_[0].armor_rect,
-                    _depth);
-      return serial_.gainWriteData(pnp_.returnYawAngle(),
-                pnp_.returnPitchAngle(),
-                pnp_.returnDepth(),
-                armor_.size(),
-                0);
-    }
-  }
-  if (armor_config_.armor_draw == 1 ||
-      light_config_.light_draw == 1 ||
-      armor_config_.armor_edit == 1 ||
-      light_config_.light_edit == 1) {
-    cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
-
-    draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
-  }
-  if (lost_cnt_ > 0) {
-    return serial_.gainWriteData(pnp_.returnYawAngle(),
-                pnp_.returnPitchAngle(),
-                pnp_.returnDepth(),
-                1,
-                0);
-    lost_cnt_--;
-  } else {
-    return serial_.gainWriteData(pnp_.returnYawAngle(),
-                pnp_.returnPitchAngle(),
-                pnp_.returnDepth(),
-                0,
-                0);
-  }
-}
-
-uart::Write_Data Detector::writeTopArmorData(cv::Mat&           _src_img,
-                                           uart::Receive_Data _receive_data) {
-  runImage(_src_img, _receive_data.my_color);
-  draw_img_ = _src_img;
-
-  if (findLight()) {
-    if (fittingArmor()) {
-      finalArmor();
-
       if (armor_config_.armor_draw == 1 ||
           light_config_.light_draw == 1 ||
           armor_config_.armor_edit == 1 ||
@@ -268,15 +175,7 @@ uart::Write_Data Detector::writeTopArmorData(cv::Mat&           _src_img,
 
         draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
       }
-      lost_cnt_ = 10;
-      pnp_.solvePnP(_receive_data.bullet_velocity,
-                    armor_[0].distinguish,
-                    armor_[0].armor_rect);
-      return serial_.gainWriteData(pnp_.returnYawAngle(),
-                pnp_.returnPitchAngle(),
-                pnp_.returnDepth(),
-                armor_.size(),
-                0);
+      return true;
     }
   }
   if (armor_config_.armor_draw == 1 ||
@@ -287,20 +186,7 @@ uart::Write_Data Detector::writeTopArmorData(cv::Mat&           _src_img,
 
     draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
-  if (lost_cnt_ > 0) {
-    return serial_.gainWriteData(pnp_.returnYawAngle(),
-                pnp_.returnPitchAngle(),
-                pnp_.returnDepth(),
-                1,
-                0);
-    lost_cnt_--;
-  } else {
-    return serial_.gainWriteData(pnp_.returnYawAngle(),
-                pnp_.returnPitchAngle(),
-                pnp_.returnDepth(),
-                0,
-                0);
-  }
+  return false;
 }
 
 void Detector::finalArmor() {

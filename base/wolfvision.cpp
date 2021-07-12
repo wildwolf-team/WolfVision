@@ -19,6 +19,9 @@ int main() {
   basic_armor::Detector basic_armor_ = basic_armor::Detector(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/armor/basic_armor_config.xml"));
 
+  basic_pnp::PnP pnp_ = basic_pnp::PnP(
+    fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_554.xml"),
+    fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
   while (true) {
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
@@ -29,17 +32,57 @@ int main() {
       serial_.updateReceiveInformation();
       switch (serial_.returnReceiveMode()) {
       case uart::SUP_SHOOT:
-        serial_.writeData(basic_armor_.writeBasicArmorData(src_img_, serial_.returnReceive()));
+        if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
+          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
+                        basic_armor_.returnFinalArmorDistinguish(0),
+                        basic_armor_.returnFinalArmorRotatedRect(0));
+        }
+
+        serial_.updataWriteData(pnp_.returnYawAngle(),
+                                pnp_.returnPitchAngle(),
+                                pnp_.returnDepth(),
+                                basic_armor_.returnArmorNum(),
+                                0);
         break;
       case uart::ENERGY_AGENCY:
         break;
       case uart::SENTRY_MODE:
-        serial_.writeData(basic_armor_.writeSentryArmorData(src_img_, serial_.returnReceive(), 3700));
+        if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
+          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
+                        basic_armor_.returnFinalArmorDistinguish(0),
+                        basic_armor_.returnFinalArmorRotatedRect(0));
+          serial_.updataWriteData(pnp_.returnYawAngle(),
+                                  pnp_.returnPitchAngle(),
+                                  pnp_.returnDepth(),
+                                  basic_armor_.returnArmorNum(),
+                                  0);
+        } else {
+          serial_.updataWriteData(pnp_.returnYawAngle(),
+                                  pnp_.returnPitchAngle(),
+                                  pnp_.returnDepth(),
+                                  basic_armor_.returnLostCnt() > 0 ? 1 : 0,
+                                  0);
+        }
         break;
       case uart::BASE_MODE:
         break;
       case uart::TOP_MODE:
-        serial_.writeData(basic_armor_.writeTopArmorData(src_img_, serial_.returnReceive()));
+              if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
+          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
+                        basic_armor_.returnFinalArmorDistinguish(0),
+                        basic_armor_.returnFinalArmorRotatedRect(0));
+          serial_.updataWriteData(pnp_.returnYawAngle(),
+                                  pnp_.returnPitchAngle(),
+                                  pnp_.returnDepth(),
+                                  basic_armor_.returnArmorNum(),
+                                  0);
+        } else {
+          serial_.updataWriteData(-pnp_.returnYawAngle(),
+                                  pnp_.returnPitchAngle(),
+                                  pnp_.returnDepth(),
+                                  basic_armor_.returnLostCnt() > 0 ? 1 : 0,
+                                  0);
+        }
         break;
       default:
         break;

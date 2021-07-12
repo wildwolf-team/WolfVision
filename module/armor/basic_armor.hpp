@@ -20,8 +20,6 @@ namespace basic_armor {
 auto idntifier_green = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "basic_armor");
 auto idntifier_red   = fmt::format(fg(fmt::color::red)   | fmt::emphasis::bold, "basic_armor");
 
-basic_pnp::PnP pnp_      = basic_pnp::PnP("configs/camera/mv_camera_config_407.xml", "configs/angle_solve/basic_pnp_config.xml");
-uart::SerialPort serial_ = uart::SerialPort("configs/serial/uart_serial_config.xml");
 struct Armor_Data {
   float width        = 0;
   float height       = 0;
@@ -103,15 +101,9 @@ struct Image_Config {
 class Detector {
  public:
   explicit Detector(const std::string _armor_config);
-
   ~Detector() = default;
 
-  uart::Write_Data writeBasicArmorData(cv::Mat&           _src_img,
-                                uart::Receive_Data _receive_data);
-  uart::Write_Data writeSentryArmorData(cv::Mat&           _src_img,
-                                uart::Receive_Data _receive_data,
-                                int                _depth);
-  uart::Write_Data writeTopArmorData(cv::Mat&           _src_img,
+  bool runBasicArmor(cv::Mat&           _src_img,
                                 uart::Receive_Data _receive_data);
   float getDistance(cv::Point a, cv::Point b);
   bool  lightJudge(int i, int j);
@@ -122,6 +114,8 @@ class Detector {
   int   averageColor();
   int   motionDirection();
 
+  inline int             returnLostCnt()                       { return lost_cnt_--; }
+  inline int             returnArmorNum()                      { return armor_.size(); }
   inline bool            returnSuccessArmor()                  { return armor_success; }
   inline Armor_Data      returnFinalArmor(int _num)            { return armor_[_num]; }
   inline int             returnFinalArmorDistinguish(int _num) { return armor_[_num].distinguish; }
@@ -157,6 +151,9 @@ class Detector {
   cv::Mat ele_            = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
 
   cv::Rect armor_roi;
+
+  basic_pnp::PnP pnp_;
+  uart::SerialPort serial_;
 
   cv::Point lost_armor_center;
   cv::Point armor_center;
