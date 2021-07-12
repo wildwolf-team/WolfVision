@@ -20,25 +20,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(BUILD_TEST False)
 
 # Prefer posix threads
+find_package(Threads REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG True)
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
-find_package(Threads REQUIRED)
 
 # Find and add opencv as required
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 link_libraries(${OpenCV_LIBS})
 
-# Add fmtlib directory and include path for target
+# Add fmtlib directory
 add_subdirectory(3rdparty/fmt)
-
 # Add fmtlib include to EXTRA_INCLUDES
 list(APPEND EXTRA_INCLUDES 3rdparty/fmt/include)
 
 # Add mindvision-sdk directory and include path for target
 add_library(MVSDK SHARED IMPORTED)
 get_filename_component(MVSDK_PATH 3rdparty/mindvision/linux REALPATH)
-
 # Check system architecture for mindvision-sdk library
 execute_process(COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE)
 message(STATUS "Checking platform architecture for MVSDK: ${ARCHITECTURE}")
@@ -54,10 +52,8 @@ else()
     message(FATAL_ERROR "Not supported architecture for MVSDK: ${ARCHITECTURE}")
 endif()
 set_property(TARGET MVSDK PROPERTY IMPORTED_LOCATION ${MIMDVISION_SDK_LIBRARY})
-
 # Add mindvision lib to build target
 list(APPEND EXTRA_LIBS MVSDK)
-
 # Add mindvision include path
 list(APPEND EXTRA_INCLUDES 3rdparty/mindvision/linux/include)
 
@@ -73,14 +69,12 @@ list(APPEND EXTRA_INCLUDES devices)
 list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/devices/camera)
 add_library(wv-mv-video-capture SHARED devices/camera/mv_video_capture.cpp)
 target_link_libraries(wv-mv-video-capture
-    PUBLIC
+    PRIVATE
     MVSDK
 )
 list(APPEND WV_EXTRA_LIBS wv-mv-video-capture)
 
 list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/devices/serial)
-add_library(wv-can-bus SHARED devices/serial/can_bus.cpp)
-list(APPEND WV_EXTRA_LIBS wv-can-bus)
 add_library(wv-uart-serial SHARED devices/serial/uart_serial.cpp)
 list(APPEND WV_EXTRA_LIBS wv-uart-serial)
 
@@ -108,8 +102,6 @@ list(APPEND WV_EXTRA_LIBS wv-basic-kalman)
 list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/ml)
 add_library(wv-onnx-inferring SHARED module/ml/onnx_inferring.cpp)
 list(APPEND WV_EXTRA_LIBS wv-onnx-inferring)
-add_library(wv-yolov4-dnn SHARED module/ml/yolov4_dnn.cpp)
-list(APPEND WV_EXTRA_LIBS wv-yolov4-dnn)
 
 list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/roi)
 add_library(wv-basic-roi SHARED module/roi/basic_roi.cpp)
@@ -152,7 +144,7 @@ set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 set(CONFIG_FILE_PATH ${PROJECT_SOURCE_DIR}/configs)
 target_compile_definitions(WolfVision PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
 
+# Add test_camera directory
 if(BUILD_TEST)
-    # Add test_camera directory
     add_subdirectory(test/test_camera)
 endif()
