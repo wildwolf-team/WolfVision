@@ -104,7 +104,7 @@ class Detector {
   ~Detector() = default;
 
   bool runBasicArmor(cv::Mat&           _src_img,
-                                uart::Receive_Data _receive_data);
+                     uart::Receive_Data _receive_data);
   float getDistance(cv::Point a, cv::Point b);
   bool  lightJudge(int i, int j);
   bool  fittingArmor();
