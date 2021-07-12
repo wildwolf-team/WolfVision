@@ -16,24 +16,18 @@ int main() {
 
   cv::VideoCapture cap_ = cv::VideoCapture(0);
 
-  basic_armor::Detector basic_armor_ = 
-    basic_armor::Detector(fmt::format("{}{}", CONFIG_FILE_PATH,"/armor/basic_armor_config.xml"));
+  basic_armor::Detector basic_armor_ = basic_armor::Detector(
+    fmt::format("{}{}", CONFIG_FILE_PATH, "/armor/basic_armor_config.xml"));
 
-  
-
-  while (true)
-  {
-    if(mv_capture_.isindustryimgInput()){
+  while (true) {
+    if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
-    }
-    else{
+    } else {
       cap_.read(src_img_);
     }
-    if(!src_img_.empty())
-    {
+    if (!src_img_.empty()) {
       serial_.updateReceiveInformation();
-      switch (serial_.returnReceiveMode())
-      {
+      switch (serial_.returnReceiveMode()) {
       case uart::SUP_SHOOT:
         serial_.writeData(basic_armor_.writeBasicArmorData(src_img_, serial_.returnReceive()));
         break;
@@ -53,6 +47,5 @@ int main() {
       basic_armor_.freeMemory();
     }
   }
-  
   return 0;
 }

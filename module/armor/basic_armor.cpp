@@ -235,7 +235,7 @@ uart::Write_Data Detector::writeSentryArmorData(cv::Mat&           _src_img,
 
     draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
-  if(lost_cnt_ > 0){
+  if (lost_cnt_ > 0) {
     return serial_.gainWriteData(pnp_.returnYawAngle(),
                 pnp_.returnPitchAngle(),
                 pnp_.returnDepth(),
@@ -287,7 +287,7 @@ uart::Write_Data Detector::writeTopArmorData(cv::Mat&           _src_img,
 
     draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
-  if(lost_cnt_ > 0){
+  if (lost_cnt_ > 0) {
     return serial_.gainWriteData(pnp_.returnYawAngle(),
                 pnp_.returnPitchAngle(),
                 pnp_.returnDepth(),
