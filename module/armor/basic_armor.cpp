@@ -175,6 +175,7 @@ bool Detector::runBasicArmor(cv::Mat&           _src_img,
 
         draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
       }
+
       return true;
     }
   }
