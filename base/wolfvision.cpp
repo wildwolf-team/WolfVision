@@ -89,8 +89,10 @@ int main() {
       default:
         break;
       }
+
       basic_armor_.freeMemory();
     }
   }
+
   return 0;
 }
