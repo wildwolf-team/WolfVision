@@ -110,7 +110,7 @@ class FPS {
   double        average;  //  平均帧率（去除前10帧）
   double        total;    //  总帧率
 
-  std::string name_;
+  std::string   name_;
 };
 
 }  // namespace fps
