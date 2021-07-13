@@ -17,6 +17,9 @@ int main() {
   basic_armor::Detector basic_armor_ = basic_armor::Detector(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/armor/basic_armor_config.xml"));
 
+  basic_buff::Detector basic_buff_ = basic_buff::Detector(
+    fmt::format("{}{}", CONFIG_FILE_PATH, "/buff/basic_buff_config.xml"));
+
   basic_pnp::PnP pnp_ = basic_pnp::PnP(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_554.xml"),
     fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));

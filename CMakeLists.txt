@@ -13,7 +13,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 # Use standard c++20
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add DEBUG marco to define if debug configured
@@ -23,9 +23,9 @@ add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
 set(BUILD_TEST False)
 
 # Prefer posix threads
-find_package(Threads REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG True)
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+find_package(Threads REQUIRED)
 
 # Find and add opencv as required
 find_package(OpenCV REQUIRED)
@@ -146,6 +146,7 @@ set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 # Set configs folder absolute path
 set(CONFIG_FILE_PATH ${PROJECT_SOURCE_DIR}/configs)
 target_compile_definitions(WolfVision PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
+target_compile_definitions(wv-basic-buff PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
 
 # Add test_camera directory
 if(BUILD_TEST)

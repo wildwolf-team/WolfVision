@@ -273,7 +273,8 @@ class Detector {
   cv::Point2f pre_center_;   // 最终预测点
 
  private:
-  basic_pnp::PnP buff_pnp_;
+  basic_pnp::PnP buff_pnp_ = basic_pnp::PnP(fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_994.xml"),
+    fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
 
   void updateLastData(const bool& _is_find_target);
 
