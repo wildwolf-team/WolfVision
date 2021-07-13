@@ -95,7 +95,8 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
   CameraSetImageResolution(hCamera, &pImageResolution);
 
   fmt::print("[{}] Info, camera status: {}, {}\n", idntifier_green, CameraGetAeState(hCamera, &AEstate), CameraGetAeState(hCamera, FALSE));
-
+  CameraGetAeState(hCamera, &AEstate);
+  CameraSetAeState(hCamera, FALSE);
   CameraSetExposureTime(hCamera, _CAMERA_EXPOSURETIME);
   CameraPlay(hCamera);
   CameraReleaseImageBuffer(hCamera, pbyBuffer);

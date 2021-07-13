@@ -29,8 +29,8 @@ enum BufferLength {
 
 // The color of our team
 enum Color {
-  BLUE,
   RED,
+  BLUE,
 };
 
 // Description of operation mode information
