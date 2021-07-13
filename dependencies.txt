@@ -1,5 +1,4 @@
 git
-git-lfs
 gcc
 g++
 gdb
@@ -8,6 +7,7 @@ ninja-build
 libpthread-stubs0-dev
 libopencv-dev
 libfmt-dev
+clang-format
 python3-dev
 mawk
 grep
