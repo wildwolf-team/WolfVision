@@ -8,11 +8,9 @@ VideoCapture::VideoCapture(const CameraParam &_camera_param) {
                _camera_param.resolution.rows,
                _camera_param.camera_exposuretime);
 
-    if (iStatus == CAMERA_STATUS_SUCCESS) {
       iscamera0_open = true;
 
       fmt::print("[{}] Using mindvision industrial camera: {}\n", idntifier_green, _camera_param.camera_mode);
-    }
   } else {
     iscamera0_open = false;
 
