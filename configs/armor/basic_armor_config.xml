@@ -5,7 +5,7 @@
   - 1 Enable
   - 0 Disable
 -->
-<GRAY_EDIT>0</GRAY_EDIT>
+<GRAY_EDIT>1</GRAY_EDIT>
 <!--
   COLOR_EDIT - 是否调整颜色参数
   - 1 Enable

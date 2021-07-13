@@ -21,9 +21,12 @@ int main() {
     fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_554.xml"),
     fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
 
+  cv::VideoCapture cap_ = cv::VideoCapture(0);
   while (true) {
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
+    } else {
+      cap_.read(src_img_);
     }
     if (!src_img_.empty()) {
       serial_.updateReceiveInformation();
