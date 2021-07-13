@@ -16,6 +16,9 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Add DEBUG marco to define if debug configured
+add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
+
 # Don't build test by default
 set(BUILD_TEST False)
 
