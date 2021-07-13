@@ -12,8 +12,6 @@ int main() {
   uart::SerialPort serial_ =
     uart::SerialPort(fmt::format("{}{}", CONFIG_FILE_PATH, "/serial/uart_serial_config.xml"));
 
-  cv::VideoCapture cap_ = cv::VideoCapture(0);
-
   basic_armor::Detector basic_armor_ = basic_armor::Detector(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/armor/basic_armor_config.xml"));
 
@@ -21,13 +19,13 @@ int main() {
     fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_554.xml"),
     fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
 
+  cv::VideoCapture cap_ = cv::VideoCapture(0);
   while (true) {
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
     } else {
       cap_.read(src_img_);
     }
-
     if (!src_img_.empty()) {
       serial_.updateReceiveInformation();
       switch (serial_.returnReceiveMode()) {
@@ -87,10 +85,12 @@ int main() {
       default:
         break;
       }
-
+      mv_capture_.cameraReleasebuff();
       basic_armor_.freeMemory();
+      if (cv::waitKey(1) == 'q') {
+        return 0;
+      }
     }
   }
-
   return 0;
 }
