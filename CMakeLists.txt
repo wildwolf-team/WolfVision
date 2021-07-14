@@ -27,6 +27,12 @@ find_package(Threads REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG True)
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 
+# Add librealsense
+find_package(realsense2 REQUIRED)
+include_directories(${realsense_INCLUDE_DIR})
+list(APPEND EXTRA_INCLUDES ${realsense_INCLUDE_DIR})
+link_libraries(${realsense2_LIBRARY})
+
 # Find and add opencv as required
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
@@ -74,6 +80,7 @@ add_library(wv-mv-video-capture SHARED devices/camera/mv_video_capture.cpp)
 target_link_libraries(wv-mv-video-capture
     PRIVATE
     MVSDK
+    ${realsense2_LIBRARY}
 )
 list(APPEND WV_EXTRA_LIBS wv-mv-video-capture)
 
