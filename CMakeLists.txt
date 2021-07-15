@@ -18,14 +18,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add DEBUG marco to define if debug configured
 add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
+add_compile_options("$<$<CONFIG:RELEASE>:-DRELEASE>")
 
 # Don't build test by default
 set(BUILD_TEST False)
 
 # Prefer posix threads
-find_package(Threads REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG True)
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+find_package(Threads REQUIRED)
 
 # Find and add opencv as required
 find_package(OpenCV REQUIRED)
@@ -96,6 +97,10 @@ list(APPEND WV_EXTRA_LIBS wv-fan-armor)
 
 list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/buff)
 add_library(wv-basic-buff SHARED module/buff/basic_buff.cpp)
+target_link_libraries(wv-basic-buff
+    PRIVATE
+    wv-fan-armor
+)
 list(APPEND WV_EXTRA_LIBS wv-basic-buff)
 
 list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/filter)
@@ -146,6 +151,7 @@ set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 # Set configs folder absolute path
 set(CONFIG_FILE_PATH ${PROJECT_SOURCE_DIR}/configs)
 target_compile_definitions(WolfVision PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
+target_compile_definitions(wv-basic-buff PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
 
 # Add test_camera directory
 if(BUILD_TEST)
