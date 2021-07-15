@@ -102,9 +102,11 @@ void Detector::runTask(cv::Mat&                  _input_img,
   if (is_find_target_) {
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
 
-    _send_info.yaw_angle   = buff_pnp_.returnYawAngle();
-    _send_info.pitch_angle = buff_pnp_.returnPitchAngle();
-    _send_info.depth       = buff_pnp_.returnDepth();
+    _send_info.yaw_angle =
+        buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
+    _send_info.pitch_angle =
+        buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
+    _send_info.depth = final_target_z_;
     _send_info.data_type   = is_find_target_;
 
     fmt::print("[{}] Info, yaw: {}, pitch: {}, depth: {}\n", idntifier_green, _send_info.yaw_angle,
@@ -140,9 +142,11 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
   if (is_find_target_) {
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
 
-    send_info.yaw_angle   = buff_pnp_.returnYawAngle();
-    send_info.pitch_angle = buff_pnp_.returnPitchAngle();
-    send_info.depth       = buff_pnp_.returnDepth();
+    send_info.yaw_angle =
+        buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
+    send_info.pitch_angle = 
+        buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
+    send_info.depth = final_target_z_;
     send_info.data_type   = is_find_target_;
 
     fmt::print("[{}] Info, yaw: {}, pitch: {}, depth: {}\n", idntifier_green, send_info.yaw_angle,
@@ -213,6 +217,9 @@ void Detector::readBuffConfig(const cv::FileStorage& _fs) {
   _fs["OFFSET_FIXED_RADIAN"] >> buff_config_.param.OFFSET_FIXED_RADIAN;
 
   _fs["OFFSET_TARGET_Z"] >> this->buff_config_.param.OFFSET_TARGET_Z;
+
+  _fs["OFFSET_ARMOR_YAW"] >> this->buff_config_.param.OFFSET_ARMOR_YAW;
+  _fs["OFFSET_ARMOR_PITCH"] >> this->buff_config_.param.OFFSET_ARMOR_PITCH;
 
   fmt::print("✔️ ✔️ ✔️ 🌈 能量机关初始化参数 读取成功 🌈 ✔️ ✔️ "
              "✔️\n");

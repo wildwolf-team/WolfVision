@@ -91,6 +91,10 @@ struct Buff_Param {
 
   // 模型深度补偿（左半边比右半边距离要远）
   float OFFSET_TARGET_Z;
+
+  // 固定补偿
+  float OFFSET_ARMOR_YAW;
+  float OFFSET_ARMOR_PITCH;
 };
 
 struct Buff_Ctrl {
