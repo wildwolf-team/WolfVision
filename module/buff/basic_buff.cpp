@@ -40,18 +40,18 @@ Detector::Detector(const std::string& _buff_config_path) {
   is_change_blade_      = false;
 
   current_direction_ = 0.f;
-  last_direction_    = 0.f;
-  find_cnt_          = 0;
-  d_angle_           = 1.f;
-  confirm_cnt_       = 0;
-  is_confirm_        = false;
+  // filter_direction_  = 0.f;
+  last_direction_ = 0.f;
+  find_cnt_       = 0;
+  d_angle_        = 1.f;
+  confirm_cnt_    = 0;
+  is_confirm_     = false;
 
   current_speed_  = 0.f;
   last_time_      = 0.0;
   last_last_time_ = 0.0;
 
-  barrel_buff_botton_h_ = (buff_config_.param.BUFF_H - buff_config_.param.BUFF_RADIUS) -
-                          (buff_config_.param.PLATFORM_H + buff_config_.param.BARREL_ROBOT_H);
+  barrel_buff_botton_h_    = (buff_config_.param.BUFF_H - buff_config_.param.BUFF_RADIUS) - (buff_config_.param.PLATFORM_H + buff_config_.param.BARREL_ROBOT_H);
   current_radian_          = 0.f;
   target_buff_h_           = 0.f;
   target_y_                = 0.f;
@@ -78,84 +78,104 @@ inline void Detector::getInput(cv::Mat& _input_img, const int& _my_color) {
 
 inline void Detector::displayDst() { imshow("[basic_buff] displayDst() -> dst_img_", dst_img_); }
 
-void Detector::runTask(cv::Mat&                  _input_img,
-                       const uart::Receive_Data& _receive_info,
-                       uart::Write_Data&         _send_info) {
+void Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_info, uart::Write_Data& _send_info) {
+  /* 获取基本信息 */
   getInput(_input_img, _receive_info.my_color);
-  imageProcessing(src_img_, my_color_, BGR_MODE);
 
+  /* 预处理 */
+  imageProcessing(src_img_, my_color_, static_cast<Processing_Mode>(buff_config_.ctrl.PROCESSING_MODE));
+
+  /* 查找目标 */
   findTarget(dst_img_, bin_img_, target_box_);
+
+  /* 判断目标是否为空 */
   is_find_target_ = isFindTarget(dst_img_, target_box_);
+
+  /* 查找圆心 */
   final_center_r_ = findCircleR(src_img_, bin_img_, dst_img_, is_find_target_);
 
+  /* 计算运转状态值:速度、方向、角度 */
   judgeCondition(is_find_target_);
 
-  final_forecast_quantity_ =
-      doPredict(static_cast<float>(_receive_info.bullet_velocity), is_find_target_);
+  /* 计算预测量 单位为弧度 */
+  final_forecast_quantity_ = doPredict(static_cast<float>(_receive_info.bullet_velocity), is_find_target_);
 
-  fmt::print("[{}] Info, early degrees: {}\n", idntifier_yellow,
-             final_forecast_quantity_ * 180 / CV_PI);
+  /* 计算获取最终目标（矩形、顶点） */
+  calculateTargetPointSet(final_forecast_quantity_, final_center_r_, target_2d_point_, dst_img_, is_find_target_);
 
-  calculateTargetPointSet(final_forecast_quantity_, final_center_r_, target_2d_point_, dst_img_,
-                          is_find_target_);
-
+  /* 计算云台角度 */
   if (is_find_target_) {
+    /* 计算云台角度 */
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
 
-    _send_info.yaw_angle =
-        buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
-    _send_info.pitch_angle =
-        buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
-    _send_info.depth = final_target_z_;
+    _send_info.yaw_angle   = buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
+    _send_info.pitch_angle = buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
+    _send_info.depth       = final_target_z_;
     _send_info.data_type   = is_find_target_;
 
-    fmt::print("[{}] Info, yaw: {}, pitch: {}, depth: {}\n", idntifier_yellow, _send_info.yaw_angle,
-               _send_info.pitch_angle, _send_info.depth);
+    fmt::print("[{}] Info, yaw: {}, pitch: {}, depth: {}\n", idntifier_yellow, _send_info.yaw_angle, _send_info.pitch_angle, _send_info.depth);
   } else {
     _send_info = uart::Write_Data();
   }
 
+  /* TODO(fqjun) :自动控制 */
+
+#ifndef RELEASE
   displayDst();
+#endif  // !RELEASE
+
+  /* 更新上一帧数据 */
   updateLastData(is_find_target_);
 }
 
 uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_info) {
   uart::Write_Data send_info;
 
+  /* 获取基本信息 */
   getInput(_input_img, _receive_info.my_color);
-  imageProcessing(src_img_, my_color_, BGR_MODE);
 
+  /* 预处理 */
+  imageProcessing(src_img_, my_color_, static_cast<Processing_Mode>(buff_config_.ctrl.PROCESSING_MODE));
+
+  /* 查找目标 */
   findTarget(dst_img_, bin_img_, target_box_);
+
+  /* 判断目标是否为空 */
   is_find_target_ = isFindTarget(dst_img_, target_box_);
+
+  /* 查找圆心 */
   final_center_r_ = findCircleR(src_img_, bin_img_, dst_img_, is_find_target_);
+
+  /* 计算运转状态值:速度、方向、角度 */
   judgeCondition(is_find_target_);
 
-  final_forecast_quantity_ =
-      doPredict(static_cast<float>(_receive_info.bullet_velocity), is_find_target_);
+  /* 计算预测量 单位为弧度 */
+  final_forecast_quantity_ = doPredict(static_cast<float>(_receive_info.bullet_velocity), is_find_target_);
 
-  fmt::print("[{}] Info, early degrees: {}\n", idntifier_yellow,
-             final_forecast_quantity_ * 180 / CV_PI);
+  /* 计算获取最终目标（矩形、顶点） */
+  calculateTargetPointSet(final_forecast_quantity_, final_center_r_, target_2d_point_, dst_img_, is_find_target_);
 
-  calculateTargetPointSet(final_forecast_quantity_, final_center_r_, target_2d_point_, dst_img_,
-                          is_find_target_);
-
+  /* 计算云台角度 */
   if (is_find_target_) {
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
 
-    send_info.yaw_angle =
-        buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
-    send_info.pitch_angle =
-        buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
-    send_info.depth = final_target_z_;
+    send_info.yaw_angle   = buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
+    send_info.pitch_angle = buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
+    send_info.depth       = final_target_z_;
     send_info.data_type   = is_find_target_;
 
-    fmt::print("[{}] Info, yaw: {}, pitch: {}, depth: {}\n", idntifier_yellow, send_info.yaw_angle,
-               send_info.pitch_angle, send_info.depth);
+    fmt::print("[{}] Info, yaw: {}, pitch: {}, depth: {}\n", idntifier_yellow, send_info.yaw_angle, send_info.pitch_angle, send_info.depth);
   } else {
     send_info = uart::Write_Data();
   }
 
+  /* TODO(fqjun) :自动控制 */
+
+#ifndef RELEASE
   displayDst();
+#endif  // !RELEASE
+
+  /* 更新上一帧数据 */
   updateLastData(is_find_target_);
 
   return send_info;
@@ -221,30 +241,26 @@ void Detector::readBuffConfig(const cv::FileStorage& _fs) {
   _fs["OFFSET_ARMOR_YAW"] >> this->buff_config_.param.OFFSET_ARMOR_YAW;
   _fs["OFFSET_ARMOR_PITCH"] >> this->buff_config_.param.OFFSET_ARMOR_PITCH;
 
-  fmt::print("✔️ ✔️ ✔️ 🌈 能量机关初始化参数 读取成功 🌈 ✔️ ✔️ "
-             "✔️\n");
+  fmt::print("✔️ ✔️ ✔️ 🌈 能量机关初始化参数 读取成功 🌈 ✔️ ✔️ ✔️\n");
 }
 
-void Detector::imageProcessing(cv::Mat&               _input_img,
-                               const int&             _my_color,
-                               const Processing_Mode& _process_mode) {
+void Detector::imageProcessing(cv::Mat& _input_img, const int& _my_color, const Processing_Mode& _process_mode) {
   cv::cvtColor(_input_img, gray_img_, cv::COLOR_BGR2GRAY);
 
   switch (_process_mode) {
-    case BGR_MODE:
-      fmt::print("[{}] Image pre-processing mode: BGR_MODE\n",
-                 idntifier_yellow);
-      bgrProcessing(_my_color);
-      break;
-    case HSV_MODE:
-      fmt::print("[{}] Image pre-processing mode: HSV_MODE\n", idntifier_yellow);
-      hsvProcessing(_my_color);
-      break;
-    default: {
-      fmt::print("[{}] Image pre-processing mode: DEFAULT_MODE\n", idntifier_yellow);
-      bgrProcessing(_my_color);
-      break;
-    }
+  case BGR_MODE:
+    fmt::print("[{}] Image pre-processing mode: BGR_MODE\n", process_yellow);
+    bgrProcessing(_my_color);
+    break;
+  case HSV_MODE:
+    fmt::print("[{}] Image pre-processing mode: HSV_MODE\n", process_yellow);
+    hsvProcessing(_my_color);
+    break;
+  default: {
+    fmt::print("[{}] Image pre-processing mode: DEFAULT_MODE\n", process_yellow);
+    bgrProcessing(_my_color);
+    break;
+  }
   }
 
 #ifndef RELEASE
@@ -268,97 +284,82 @@ void Detector::bgrProcessing(const int& _my_color) {
   cv::split(src_img_, split_img_);
 
   switch (_my_color) {
-    case uart::RED:
-      fmt::print("[{}] Image pre-processing color: RED\n", idntifier_yellow);
+  case uart::RED:
+    fmt::print("[{}] Image pre-processing color: RED\n", process_yellow);
 
-      /* my_color 为红色，则处理红色的情况，灰度图与 RGB 同样做红色处理 */
-      cv::subtract(split_img_[2], split_img_[0], bin_img_color_);  // r-b
-
-#ifndef RELEASE
-      if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-        std::string window_name = {"[basic_buff] bgrProcessing() -> trackbar"};
-
-        cv::namedWindow(window_name);
-        cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255,
-                           nullptr);
-        cv::createTrackbar("COLOR_TH_RED:", window_name, &buff_config_.param.RED_BUFF_COLOR_TH, 255,
-                           nullptr);
-
-        cv::imshow(window_name, trackbar_img_);
-        fmt::print("[{}] BGR红色预处理调参面板已打开 \n", idntifier_yellow);
-      }
-#endif  // !RELEASE
-
-      cv::threshold(gray_img_, bin_img_gray_, buff_config_.param.RED_BUFF_GRAY_TH, 255,
-                    cv::THRESH_BINARY);
-      cv::threshold(bin_img_color_, bin_img_color_, buff_config_.param.RED_BUFF_COLOR_TH, 255,
-                    cv::THRESH_BINARY);
-
-      break;
-    case uart::BLUE:
-      fmt::print("[{}] Image pre-processing color: BLUE\n", idntifier_yellow);
-
-      /* my_color 为蓝色，则处理蓝色的情况，灰度图与 RGB 同样做蓝色处理 */
-      cv::subtract(split_img_[0], split_img_[2], bin_img_color_);  // b-r
+    /* my_color 为红色，则处理红色的情况，灰度图与 RGB 同样做红色处理 */
+    cv::subtract(split_img_[2], split_img_[0], bin_img_color_);  // r-b
 
 #ifndef RELEASE
-      if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-        std::string window_name = {"[basic_buff] bgrProcessing() -> trackbar"};
+    if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
+      std::string window_name = {"[basic_buff] bgrProcessing() -> trackbar"};
 
-        cv::namedWindow(window_name);
-        cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255,
-                           nullptr);
-        cv::createTrackbar("COLOR_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_COLOR_TH,
-                           255, nullptr);
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("COLOR_TH_RED:", window_name, &buff_config_.param.RED_BUFF_COLOR_TH, 255, nullptr);
 
-        cv::imshow(window_name, trackbar_img_);
-        fmt::print("[{}] BGR蓝色预处理调参面板已打开 \n", idntifier_yellow);
-      }
+      cv::imshow(window_name, trackbar_img_);
+      fmt::print("[{}] BGR红色预处理调参面板已打开 \n", process_yellow);
+    }
 #endif  // !RELEASE
 
-      cv::threshold(gray_img_, bin_img_gray_, buff_config_.param.BLUE_BUFF_GRAY_TH, 255,
-                    cv::THRESH_BINARY);
-      cv::threshold(bin_img_color_, bin_img_color_, buff_config_.param.BLUE_BUFF_COLOR_TH, 255,
-                    cv::THRESH_BINARY);
+    cv::threshold(gray_img_, bin_img_gray_, buff_config_.param.RED_BUFF_GRAY_TH, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_img_color_, bin_img_color_, buff_config_.param.RED_BUFF_COLOR_TH, 255, cv::THRESH_BINARY);
 
-      break;
-    default:
-      fmt::print("[{}] Image pre-processing color: default\n", idntifier_yellow);
+    break;
+  case uart::BLUE:
+    fmt::print("[{}] Image pre-processing color: BLUE\n", process_yellow);
 
-      cv::subtract(split_img_[0], split_img_[2], bin_img_color1_);  // b-r
-      cv::subtract(split_img_[2], split_img_[0], bin_img_color2_);  // r-b
+    /* my_color 为蓝色，则处理蓝色的情况，灰度图与 RGB 同样做蓝色处理 */
+    cv::subtract(split_img_[0], split_img_[2], bin_img_color_);  // b-r
 
 #ifndef RELEASE
-      if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-        std::string window_name = {"[basic_buff] bgrProcessing() -> trackbar"};
+    if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
+      std::string window_name = {"[basic_buff] bgrProcessing() -> trackbar"};
 
-        cv::namedWindow(window_name);
-        cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255,
-                           nullptr);
-        cv::createTrackbar("COLOR_TH_RED:", window_name, &buff_config_.param.RED_BUFF_COLOR_TH, 255,
-                           nullptr);
-        cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255,
-                           nullptr);
-        cv::createTrackbar("COLOR_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_COLOR_TH,
-                           255, nullptr);
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("COLOR_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_COLOR_TH, 255, nullptr);
 
-        cv::imshow(window_name, trackbar_img_);
-        fmt::print("[{}] BGR红蓝两色预处理调参面板已打开 \n", idntifier_yellow);
-      }
+      cv::imshow(window_name, trackbar_img_);
+      fmt::print("[{}] BGR蓝色预处理调参面板已打开 \n", process_yellow);
+    }
 #endif  // !RELEASE
 
-      average_th_ = static_cast<int>(
-          (buff_config_.param.RED_BUFF_GRAY_TH + buff_config_.param.BLUE_BUFF_GRAY_TH) * 0.5);
+    cv::threshold(gray_img_, bin_img_gray_, buff_config_.param.BLUE_BUFF_GRAY_TH, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_img_color_, bin_img_color_, buff_config_.param.BLUE_BUFF_COLOR_TH, 255, cv::THRESH_BINARY);
 
-      cv::threshold(gray_img_, bin_img_gray_, average_th_, 255, cv::THRESH_BINARY);
-      cv::threshold(bin_img_color1_, bin_img_color1_, buff_config_.param.BLUE_BUFF_COLOR_TH, 255,
-                    cv::THRESH_BINARY);
-      cv::threshold(bin_img_color2_, bin_img_color2_, buff_config_.param.RED_BUFF_COLOR_TH, 255,
-                    cv::THRESH_BINARY);
+    break;
+  default:
+    fmt::print("[{}] Image pre-processing color: default\n", process_yellow);
 
-      cv::bitwise_or(bin_img_color1_, bin_img_color2_, bin_img_color_);
+    cv::subtract(split_img_[0], split_img_[2], bin_img_color1_);  // b-r
+    cv::subtract(split_img_[2], split_img_[0], bin_img_color2_);  // r-b
 
-      break;
+#ifndef RELEASE
+    if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
+      std::string window_name = {"[basic_buff] bgrProcessing() -> trackbar"};
+
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("COLOR_TH_RED:", window_name, &buff_config_.param.RED_BUFF_COLOR_TH, 255, nullptr);
+      cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("COLOR_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_COLOR_TH, 255, nullptr);
+
+      cv::imshow(window_name, trackbar_img_);
+      fmt::print("[{}] BGR红蓝两色预处理调参面板已打开 \n", process_yellow);
+    }
+#endif  // !RELEASE
+
+    average_th_ = static_cast<int>((buff_config_.param.RED_BUFF_GRAY_TH + buff_config_.param.BLUE_BUFF_GRAY_TH) * 0.5);
+
+    cv::threshold(gray_img_, bin_img_gray_, average_th_, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_img_color1_, bin_img_color1_, buff_config_.param.BLUE_BUFF_COLOR_TH, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_img_color2_, bin_img_color2_, buff_config_.param.RED_BUFF_COLOR_TH, 255, cv::THRESH_BINARY);
+
+    cv::bitwise_or(bin_img_color1_, bin_img_color2_, bin_img_color_);
+
+    break;
   }
 
   split_img_.clear();
@@ -369,148 +370,118 @@ void Detector::hsvProcessing(const int& _my_color) {
   cv::cvtColor(src_img_, hsv_img_, cv::COLOR_BGR2HSV_FULL);
 
   switch (_my_color) {
-    case uart::RED:
-      fmt::print("[{}] Image pre-processing color: RED\n", idntifier_yellow);
+  case uart::RED:
+    fmt::print("[{}] Image pre-processing color: RED\n", process_yellow);
 
 #ifndef RELEASE
-      if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-        std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
+    if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
+      std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
 
-        cv::namedWindow(window_name);
-        cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255,
-                           nullptr);
-        cv::createTrackbar("H_RED_MAX:", window_name, &buff_config_.param.H_RED_MAX, 360, nullptr);
-        cv::createTrackbar("H_RED_MIN:", window_name, &buff_config_.param.H_RED_MIN, 360, nullptr);
-        cv::createTrackbar("S_RED_MAX:", window_name, &buff_config_.param.S_RED_MAX, 255, nullptr);
-        cv::createTrackbar("S_RED_MIN:", window_name, &buff_config_.param.S_RED_MIN, 255, nullptr);
-        cv::createTrackbar("V_RED_MAX:", window_name, &buff_config_.param.V_RED_MAX, 255, nullptr);
-        cv::createTrackbar("V_RED_MIN:", window_name, &buff_config_.param.V_RED_MIN, 255, nullptr);
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("H_RED_MAX:", window_name, &buff_config_.param.H_RED_MAX, 360, nullptr);
+      cv::createTrackbar("H_RED_MIN:", window_name, &buff_config_.param.H_RED_MIN, 360, nullptr);
+      cv::createTrackbar("S_RED_MAX:", window_name, &buff_config_.param.S_RED_MAX, 255, nullptr);
+      cv::createTrackbar("S_RED_MIN:", window_name, &buff_config_.param.S_RED_MIN, 255, nullptr);
+      cv::createTrackbar("V_RED_MAX:", window_name, &buff_config_.param.V_RED_MAX, 255, nullptr);
+      cv::createTrackbar("V_RED_MIN:", window_name, &buff_config_.param.V_RED_MIN, 255, nullptr);
 
-        imshow(window_name, trackbar_img_);
-        fmt::print("[{}] HSV红色预处理调参面板已打开 \n", idntifier_yellow);
-      }
+      imshow(window_name, trackbar_img_);
+      fmt::print("[{}] HSV红色预处理调参面板已打开 \n", process_yellow);
+    }
 #endif  // !RELEASE
 
-      cv::inRange(hsv_img_,
-                  cv::Scalar(buff_config_.param.H_RED_MIN, buff_config_.param.S_RED_MIN,
-                             buff_config_.param.V_RED_MIN),
-                  cv::Scalar(buff_config_.param.H_RED_MAX, buff_config_.param.S_RED_MAX,
-                             buff_config_.param.V_RED_MAX),
-                  bin_img_color_);
+    cv::inRange(hsv_img_,
+                cv::Scalar(buff_config_.param.H_RED_MIN, buff_config_.param.S_RED_MIN, buff_config_.param.V_RED_MIN),
+                cv::Scalar(buff_config_.param.H_RED_MAX, buff_config_.param.S_RED_MAX, buff_config_.param.V_RED_MAX),
+                bin_img_color_);
 
-      cv::threshold(gray_img_, bin_img_gray_, buff_config_.param.RED_BUFF_GRAY_TH, 255,
-                    cv::THRESH_BINARY);
+    cv::threshold(gray_img_, bin_img_gray_, buff_config_.param.RED_BUFF_GRAY_TH, 255, cv::THRESH_BINARY);
 
-      break;
-    case uart::BLUE:
-      fmt::print("[{}] Image pre-processing color: BLUE\n", idntifier_yellow);
+    break;
+  case uart::BLUE:
+    fmt::print("[{}] Image pre-processing color: BLUE\n", process_yellow);
 
 #ifndef RELEASE
-      if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-        std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
+    if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
+      std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
 
-        cv::namedWindow(window_name);
-        cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255,
-                           nullptr);
-        cv::createTrackbar("H_BLUE_MAX:", window_name, &buff_config_.param.H_BLUE_MAX, 255,
-                           nullptr);
-        cv::createTrackbar("H_BLUE_MIN:", window_name, &buff_config_.param.H_BLUE_MIN, 255,
-                           nullptr);
-        cv::createTrackbar("S_BLUE_MAX:", window_name, &buff_config_.param.S_BLUE_MAX, 255,
-                           nullptr);
-        cv::createTrackbar("S_BLUE_MIN:", window_name, &buff_config_.param.S_BLUE_MIN, 255,
-                           nullptr);
-        cv::createTrackbar("V_BLUE_MAX:", window_name, &buff_config_.param.V_BLUE_MAX, 255,
-                           nullptr);
-        cv::createTrackbar("V_BLUE_MIN:", window_name, &buff_config_.param.V_BLUE_MIN, 255,
-                           nullptr);
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("H_BLUE_MAX:", window_name, &buff_config_.param.H_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("H_BLUE_MIN:", window_name, &buff_config_.param.H_BLUE_MIN, 255, nullptr);
+      cv::createTrackbar("S_BLUE_MAX:", window_name, &buff_config_.param.S_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("S_BLUE_MIN:", window_name, &buff_config_.param.S_BLUE_MIN, 255, nullptr);
+      cv::createTrackbar("V_BLUE_MAX:", window_name, &buff_config_.param.V_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("V_BLUE_MIN:", window_name, &buff_config_.param.V_BLUE_MIN, 255, nullptr);
 
-        cv::imshow(window_name, trackbar_img_);
-        fmt::print("[{}] HSV蓝色预处理调参面板已打开 \n", idntifier_yellow);
-      }
+      cv::imshow(window_name, trackbar_img_);
+      fmt::print("[{}] HSV蓝色预处理调参面板已打开 \n", process_yellow);
+    }
 #endif  // !RELEASE
 
-      cv::inRange(hsv_img_,
-                  cv::Scalar(buff_config_.param.H_BLUE_MIN, buff_config_.param.S_BLUE_MIN,
-                             buff_config_.param.V_BLUE_MIN),
-                  cv::Scalar(buff_config_.param.H_BLUE_MAX, buff_config_.param.S_BLUE_MAX,
-                             buff_config_.param.V_BLUE_MAX),
-                  bin_img_color_);
+    cv::inRange(hsv_img_,
+                cv::Scalar(buff_config_.param.H_BLUE_MIN, buff_config_.param.S_BLUE_MIN, buff_config_.param.V_BLUE_MIN),
+                cv::Scalar(buff_config_.param.H_BLUE_MAX, buff_config_.param.S_BLUE_MAX, buff_config_.param.V_BLUE_MAX),
+                bin_img_color_);
 
-      cv::threshold(gray_img_, bin_img_gray_, buff_config_.param.BLUE_BUFF_GRAY_TH, 255,
-                    cv::THRESH_BINARY);
+    cv::threshold(gray_img_, bin_img_gray_, buff_config_.param.BLUE_BUFF_GRAY_TH, 255, cv::THRESH_BINARY);
 
-      break;
-    default:
-      fmt::print("[{}] Image pre-processing color: default\n", idntifier_yellow);
+    break;
+  default:
+    fmt::print("[{}] Image pre-processing color: default\n", process_yellow);
 
 #ifndef RELEASE
-      if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-        std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
+    if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
+      std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
 
-        cv::namedWindow(window_name);
-        cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255,
-                           nullptr);
-        cv::createTrackbar("H_RED_MAX:", window_name, &buff_config_.param.H_RED_MAX, 360, nullptr);
-        cv::createTrackbar("H_RED_MIN:", window_name, &buff_config_.param.H_RED_MIN, 360, nullptr);
-        cv::createTrackbar("S_RED_MAX:", window_name, &buff_config_.param.S_RED_MAX, 255, nullptr);
-        cv::createTrackbar("S_RED_MIN:", window_name, &buff_config_.param.S_RED_MIN, 255, nullptr);
-        cv::createTrackbar("V_RED_MAX:", window_name, &buff_config_.param.V_RED_MAX, 255, nullptr);
-        cv::createTrackbar("V_RED_MIN:", window_name, &buff_config_.param.V_RED_MIN, 255, nullptr);
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("H_RED_MAX:", window_name, &buff_config_.param.H_RED_MAX, 360, nullptr);
+      cv::createTrackbar("H_RED_MIN:", window_name, &buff_config_.param.H_RED_MIN, 360, nullptr);
+      cv::createTrackbar("S_RED_MAX:", window_name, &buff_config_.param.S_RED_MAX, 255, nullptr);
+      cv::createTrackbar("S_RED_MIN:", window_name, &buff_config_.param.S_RED_MIN, 255, nullptr);
+      cv::createTrackbar("V_RED_MAX:", window_name, &buff_config_.param.V_RED_MAX, 255, nullptr);
+      cv::createTrackbar("V_RED_MIN:", window_name, &buff_config_.param.V_RED_MIN, 255, nullptr);
 
-        cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255,
-                           nullptr);
-        cv::createTrackbar("H_BLUE_MAX:", window_name, &buff_config_.param.H_BLUE_MAX, 255,
-                           nullptr);
-        cv::createTrackbar("H_BLUE_MIN:", window_name, &buff_config_.param.H_BLUE_MIN, 255,
-                           nullptr);
-        cv::createTrackbar("S_BLUE_MAX:", window_name, &buff_config_.param.S_BLUE_MAX, 255,
-                           nullptr);
-        cv::createTrackbar("S_BLUE_MIN:", window_name, &buff_config_.param.S_BLUE_MIN, 255,
-                           nullptr);
-        cv::createTrackbar("V_BLUE_MAX:", window_name, &buff_config_.param.V_BLUE_MAX, 255,
-                           nullptr);
-        cv::createTrackbar("V_BLUE_MIN:", window_name, &buff_config_.param.V_BLUE_MIN, 255,
-                           nullptr);
+      cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("H_BLUE_MAX:", window_name, &buff_config_.param.H_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("H_BLUE_MIN:", window_name, &buff_config_.param.H_BLUE_MIN, 255, nullptr);
+      cv::createTrackbar("S_BLUE_MAX:", window_name, &buff_config_.param.S_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("S_BLUE_MIN:", window_name, &buff_config_.param.S_BLUE_MIN, 255, nullptr);
+      cv::createTrackbar("V_BLUE_MAX:", window_name, &buff_config_.param.V_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("V_BLUE_MIN:", window_name, &buff_config_.param.V_BLUE_MIN, 255, nullptr);
 
-        imshow(window_name, trackbar_img_);
-        fmt::print("[{}] HSV红蓝两色预处理调参面板已打开 \n", idntifier_yellow);
-      }
+      imshow(window_name, trackbar_img_);
+      fmt::print("[{}] HSV红蓝两色预处理调参面板已打开 \n", process_yellow);
+    }
 #endif  // !RELEASE
 
-      average_th_ = static_cast<int>(
-          (buff_config_.param.RED_BUFF_GRAY_TH + buff_config_.param.BLUE_BUFF_GRAY_TH) * 0.5);
+    average_th_ = static_cast<int>((buff_config_.param.RED_BUFF_GRAY_TH + buff_config_.param.BLUE_BUFF_GRAY_TH) * 0.5);
 
-      cv::threshold(gray_img_, bin_img_gray_, average_th_, 255, cv::THRESH_BINARY);
+    cv::threshold(gray_img_, bin_img_gray_, average_th_, 255, cv::THRESH_BINARY);
 
-      cv::inRange(hsv_img_,
-                  cv::Scalar(buff_config_.param.H_RED_MIN, buff_config_.param.S_RED_MIN,
-                             buff_config_.param.V_RED_MIN),
-                  cv::Scalar(buff_config_.param.H_RED_MAX, buff_config_.param.S_RED_MAX,
-                             buff_config_.param.V_RED_MAX),
-                  bin_img_color2_);
-      cv::inRange(hsv_img_,
-                  cv::Scalar(buff_config_.param.H_BLUE_MIN, buff_config_.param.S_BLUE_MIN,
-                             buff_config_.param.V_BLUE_MIN),
-                  cv::Scalar(buff_config_.param.H_BLUE_MAX, buff_config_.param.S_BLUE_MAX,
-                             buff_config_.param.V_BLUE_MAX),
-                  bin_img_color1_);
+    cv::inRange(hsv_img_,
+                cv::Scalar(buff_config_.param.H_RED_MIN, buff_config_.param.S_RED_MIN, buff_config_.param.V_RED_MIN),
+                cv::Scalar(buff_config_.param.H_RED_MAX, buff_config_.param.S_RED_MAX, buff_config_.param.V_RED_MAX),
+                bin_img_color2_);
+    cv::inRange(hsv_img_,
+                cv::Scalar(buff_config_.param.H_BLUE_MIN, buff_config_.param.S_BLUE_MIN, buff_config_.param.V_BLUE_MIN),
+                cv::Scalar(buff_config_.param.H_BLUE_MAX, buff_config_.param.S_BLUE_MAX, buff_config_.param.V_BLUE_MAX),
+                bin_img_color1_);
 
-      cv::bitwise_or(bin_img_color1_, bin_img_color2_, bin_img_color_);
+    cv::bitwise_or(bin_img_color1_, bin_img_color2_, bin_img_color_);
 
-      break;
+    break;
   }
 }
 
-void Detector::findTarget(cv::Mat&                              _input_dst_img,
-                          cv::Mat&                              _input_bin_img,
-                          std::vector<abstract_target::Target>& _target_box) {
+void Detector::findTarget(cv::Mat& _input_dst_img, cv::Mat& _input_bin_img, std::vector<abstract_target::Target>& _target_box) {
   cv::findContours(_input_bin_img, contours_, hierarchy_, 2, cv::CHAIN_APPROX_NONE);
 
   for (size_t i = 0; i != contours_.size(); ++i) {
     // 用于寻找小轮廓，没有父轮廓的跳过，以及不满足6点拟合椭圆
-    if (hierarchy_[i][3] < 0 || contours_[i].size() < 6 ||
-        contours_[static_cast<uint>(hierarchy_[i][3])].size() < 6) {
+    if (hierarchy_[i][3] < 0 || contours_[i].size() < 6 || contours_[static_cast<uint>(hierarchy_[i][3])].size() < 6) {
       continue;
     }
 
@@ -522,8 +493,7 @@ void Detector::findTarget(cv::Mat&                              _input_dst_img,
 
     // 小轮廓面积条件
     small_rect_area_ = contourArea(contours_[i]);
-    if (small_rect_area_ < buff_config_.param.SMALL_TARGET_AREA_MIN ||
-        small_rect_area_ > buff_config_.param.SMALL_TARGET_AREA_MAX) {
+    if (small_rect_area_ < buff_config_.param.SMALL_TARGET_AREA_MIN || small_rect_area_ > buff_config_.param.SMALL_TARGET_AREA_MAX) {
       continue;
     }
 
@@ -535,8 +505,7 @@ void Detector::findTarget(cv::Mat&                              _input_dst_img,
 
     // 大轮廓面积条件
     big_rect_area_ = contourArea(contours_[static_cast<uint>(hierarchy_[i][3])]);
-    if (big_rect_area_ < buff_config_.param.BIG_TARGET_AREA_MIN ||
-        big_rect_area_ > buff_config_.param.BIG_TARGET_AREA_MAX) {
+    if (big_rect_area_ < buff_config_.param.BIG_TARGET_AREA_MIN || big_rect_area_ > buff_config_.param.BIG_TARGET_AREA_MAX) {
       continue;
     }
 
@@ -544,30 +513,27 @@ void Detector::findTarget(cv::Mat&                              _input_dst_img,
     small_target_.inputParams(contours_[i]);
     big_target_.inputParams(contours_[static_cast<uint>(hierarchy_[i][3])]);
     candidated_target_.inputParams(big_target_, small_target_);
-    big_target_.displayFanBlade(_input_dst_img);
 
     // 组合判断角度差
-    if (candidated_target_.diffAngle() >= buff_config_.param.DIFF_ANGLE_MAX ||
-        candidated_target_.diffAngle() <= buff_config_.param.DIFF_ANGLE_MIN) {
+    if (candidated_target_.diffAngle() >= buff_config_.param.DIFF_ANGLE_MAX || candidated_target_.diffAngle() <= buff_config_.param.DIFF_ANGLE_MIN) {
       continue;
     }
 
     // 判断内轮廓的长宽比是否正常
-    if (candidated_target_.getArmor().aspectRatio() >=
-            buff_config_.param.SMALL_TARGET_ASPECT_RATIO_MAX ||
-        candidated_target_.getArmor().aspectRatio() <=
-            buff_config_.param.SMALL_TARGET_ASPECT_RATIO_MIN) {
+    if (candidated_target_.getArmor().aspectRatio() >= buff_config_.param.SMALL_TARGET_ASPECT_RATIO_MAX ||
+        candidated_target_.getArmor().aspectRatio() <= buff_config_.param.SMALL_TARGET_ASPECT_RATIO_MIN) {
       continue;
     }
 
     // 判断内外轮廓的面积比是否正常
-    if (candidated_target_.areaRatio() <= buff_config_.param.AREA_RATIO_MIN ||
-        candidated_target_.areaRatio() >= buff_config_.param.AREA_RATIO_MAX) {
+    if (candidated_target_.areaRatio() <= buff_config_.param.AREA_RATIO_MIN || candidated_target_.areaRatio() >= buff_config_.param.AREA_RATIO_MAX) {
       continue;
     }
 
+#ifndef RELEASE
     small_target_.displayFanArmor(_input_dst_img);
     big_target_.displayFanBlade(_input_dst_img);
+#endif  // !RELEASE
 
     candidated_target_.setType(abstract_object::ACTION);
     candidated_target_.updateVertex(_input_dst_img);
@@ -576,13 +542,12 @@ void Detector::findTarget(cv::Mat&                              _input_dst_img,
     _target_box.push_back(candidated_target_);
   }
 
-  fmt::print("[{}] Number of fans: {}\n", idntifier_yellow, _target_box.size());
+  fmt::print("[{}] 扇叶数量: {}\n", target_yellow, _target_box.size());
 }
 
-bool Detector::isFindTarget(cv::Mat&                              _input_img,
-                            std::vector<abstract_target::Target>& _target_box) {
+bool Detector::isFindTarget(cv::Mat& _input_img, std::vector<abstract_target::Target>& _target_box) {
   if (_target_box.size() < 1) {
-    fmt::print("[{}] Info, XXX no target detected XXX \n", idntifier_yellow);
+    fmt::print("[{}] Info, XXX no target detected XXX \n", target_yellow);
 
     current_target_ = abstract_target::Target();
 
@@ -609,10 +574,12 @@ bool Detector::isFindTarget(cv::Mat&                              _input_img,
     ++inaction_cnt_;
 
     current_target_ = *iter;
+#ifndef RELEASE
     current_target_.displayInactionTarget(_input_img);
+#endif  // !RELEASE
   }
 
-  fmt::print("[{}] Number of hits/unhits: {}, {}\n", idntifier_yellow, inaction_cnt_, action_cnt_);
+  fmt::print("[{}] 未击打数量: {},  已击打数量: {}\n", target_yellow, inaction_cnt_, action_cnt_);
 
   contours_.clear();
   hierarchy_.clear();
@@ -629,16 +596,13 @@ bool Detector::isFindTarget(cv::Mat&                              _input_img,
   }
 }
 
-cv::Point2f Detector::findCircleR(cv::Mat&    _input_src_img,
-                                  cv::Mat&    _input_bin_img,
-                                  cv::Mat&    _dst_img,
-                                  const bool& _is_find_target) {
+cv::Point2f Detector::findCircleR(cv::Mat& _input_src_img, cv::Mat& _input_bin_img, cv::Mat& _dst_img, const bool& _is_find_target) {
   _input_src_img.copyTo(roi_img_);
   _input_bin_img.copyTo(result_img_);
 
   cv::Point2f center_r_point2f = cv::Point2f(0.f, 0.f);
 
-  if (!_is_find_target) {
+  if (!(_is_find_target)) {
     is_circle_        = false;
     roi_local_center_ = cv::Point2f(0.f, 0.f);
 
@@ -649,11 +613,9 @@ cv::Point2f Detector::findCircleR(cv::Mat&    _input_src_img,
   }
 
   delta_height_point_ = current_target_.deltaPoint();
-  roi_global_center_  = current_target_.getArmor().getRect().center -
-                       buff_config_.param.BIG_LENTH_R * delta_height_point_;
+  roi_global_center_  = current_target_.getArmor().getRect().center - buff_config_.param.BIG_LENTH_R * delta_height_point_;
 
-  if (roi_global_center_.x < 0 || roi_global_center_.y < 0 ||
-      roi_global_center_.x > _input_src_img.cols || roi_global_center_.y > _input_src_img.rows) {
+  if (roi_global_center_.x < 0 || roi_global_center_.y < 0 || roi_global_center_.x > _input_src_img.cols || roi_global_center_.y > _input_src_img.rows) {
     if (roi_global_center_.x < 0) {
       roi_global_center_.x = 1;
     }
@@ -668,16 +630,16 @@ cv::Point2f Detector::findCircleR(cv::Mat&    _input_src_img,
     }
   }
 
-  cv::RotatedRect roi_R(
-      roi_global_center_,
-      cv::Size(buff_config_.param.CENTER_R_ROI_SIZE, buff_config_.param.CENTER_R_ROI_SIZE), 0);
-  cv::Rect roi = roi_R.boundingRect();
+  cv::RotatedRect roi_R(roi_global_center_, cv::Size(buff_config_.param.CENTER_R_ROI_SIZE, buff_config_.param.CENTER_R_ROI_SIZE), 0);
+  cv::Rect        roi = roi_R.boundingRect();
 
   roi         = roi_tool_.makeRectSafeTailor(_input_src_img, roi);
   result_img_ = roi_tool_.cutRoIRect(_input_bin_img, roi);
   roi_img_    = roi_tool_.cutRoIRect(_input_src_img, roi);
 
+#ifndef RELEASE
   cv::rectangle(_dst_img, roi, cv::Scalar(0, 255, 200), 2, 8, 0);
+#endif  // !RELEASE
 
   is_circle_        = false;
   roi_local_center_ = cv::Point2f(roi_img_.cols * 0.5, roi_img_.rows * 0.5);  // 更新roi的中心点
@@ -685,8 +647,9 @@ cv::Point2f Detector::findCircleR(cv::Mat&    _input_src_img,
   // 查找轮廓
   cv::findContours(result_img_, contours_r_, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
 
-  fmt::print("[{}] Rectangular proportion/area: {} \n", idntifier_yellow, contours_r_.size());
+  fmt::print("[{}] 圆心目标遍历轮廓数量: {} \n", center_yellow, contours_r_.size());
 
+  // 选择并记录合适的圆心目标
   for (size_t i = 0; i != contours_r_.size(); ++i) {
     if (contours_r_[i].size() < 6) {
       continue;
@@ -694,67 +657,59 @@ cv::Point2f Detector::findCircleR(cv::Mat&    _input_src_img,
 
     center_r_.inputParams(contours_r_[i], roi_img_);
 
-    fmt::print("[{}] 矩形比例：{}\n", idntifier_yellow, center_r_.aspectRatio());
+    fmt::print("[{}] 矩形 {} 比例:{}\n", center_yellow, i, center_r_.aspectRatio());
     if (center_r_.aspectRatio() < 0.9f || center_r_.aspectRatio() > 1.25f) {
       continue;
     }
 
-    fmt::print("[{}] 矩形面积：{}\n", idntifier_yellow, center_r_.getRect().boundingRect().area());
-    if (center_r_.getRect().boundingRect().area() < 1000 ||
-        center_r_.getRect().boundingRect().area() > 3500) {
+    fmt::print("[{}] 矩形 {} 面积:{}\n", center_yellow, i, center_r_.getRect().boundingRect().area());
+    if (center_r_.getRect().boundingRect().area() < 1000 || center_r_.getRect().boundingRect().area() > 3500) {
       continue;
     }
 
-    fmt::print("[{}] Find center R target success !!!\n", idntifier_yellow);
-    fmt::print(" [{}]{}/{},", i, center_r_.aspectRatio(),
-               center_r_.getRect().boundingRect().area());
+    fmt::print("[{}] Find center R target success !!!   ", center_yellow);
+    fmt::print(" --》 矩形 {}  --》 Ratio: {} / Area: {} ", i, center_r_.aspectRatio(), center_r_.getRect().boundingRect().area());
 
     center_r_box_.push_back(center_r_);
 
     for (size_t j = 0; j != 4; ++j) {
-      cv::line(roi_img_, center_r_.getVertex(j), center_r_.getVertex((j + 1) % 4),
-               cv::Scalar(0, 130, 255), 3);
+      cv::line(roi_img_, center_r_.getVertex(j), center_r_.getVertex((j + 1) % 4), cv::Scalar(0, 130, 255), 3);
     }
 
     fmt::print("\n");
   }
 
-  fmt::print("[{}] Eligible rectangular(s) for the ratio: {}\n", idntifier_yellow,
-             center_r_box_.size());
+  fmt::print("[{}] 符合比例条件的有: {}\n", center_yellow, center_r_box_.size());
 
   // 如果没有圆心目标，则退出
   if (center_r_box_.size() < 1) {
-    fmt::print("[{}] Fitting center of circle\n", idntifier_yellow);
+    fmt::print("[{}] 圆心为:假定圆心 \n", center_yellow);
     is_circle_       = false;
     center_r_point2f = roi_global_center_;
 
 #ifndef RELEASE
     // 画出小轮廓到假定圆心的距离线
-    cv::line(_dst_img, current_target_.getArmor().getRect().center, center_r_point2f,
-             cv::Scalar(0, 0, 255), 2);
+    cv::line(_dst_img, current_target_.getArmor().getRect().center, center_r_point2f, cv::Scalar(0, 0, 255), 2);
     // 画出假定圆心
     cv::circle(_dst_img, center_r_point2f, 2, cv::Scalar(0, 0, 255), 2, 8, 0);
 #endif  // !RELEASE
 
   } else {
-    std::sort(center_r_box_.begin(), center_r_box_.end(),
-              [](abstract_center_r::Center_R& c1, abstract_center_r::Center_R& c2) {
-                return c1.centerDist() < c2.centerDist();
-              });
+    std::sort(center_r_box_.begin(), center_r_box_.end(), [](abstract_center_r::Center_R& c1, abstract_center_r::Center_R& c2) { return c1.centerDist() < c2.centerDist(); });
 
-    fmt::print("[{}] Real center of circle\n", idntifier_yellow);
+    fmt::print("[{}] 圆心为:真实圆心 \n", center_yellow);
     is_circle_       = true;
     center_r_point2f = center_r_box_[0].getRect().center + roi_R.boundingRect2f().tl();
 
 #ifndef RELEASE
     // 画出小轮廓到假定圆心的距离线
-    cv::line(_dst_img, current_target_.getArmor().getRect().center, center_r_point2f,
-             cv::Scalar(0, 255, 0), 2);
+    cv::line(_dst_img, current_target_.getArmor().getRect().center, center_r_point2f, cv::Scalar(0, 255, 0), 2);
     // 画出假定圆心
     cv::circle(_dst_img, center_r_point2f, 2, cv::Scalar(0, 0, 255), 2, 8, 0);
 #endif  // !RELEASE
   }
 
+  // 清理容器
   center_r_box_.clear();
   contours_r_.clear();
 
@@ -765,7 +720,7 @@ cv::Point2f Detector::findCircleR(cv::Mat&    _input_src_img,
 }
 
 void Detector::judgeCondition(const bool& _is_find_target) {
-  if (!_is_find_target) {
+  if (!(_is_find_target)) {
     // 没有目标，角度为上一帧的角度，方向重置为零，速度为0
     current_angle_ = last_target_.getAngle();
     diff_angle_    = 0.f;
@@ -774,17 +729,20 @@ void Detector::judgeCondition(const bool& _is_find_target) {
     return;
   }
 
+  // 计算角度
   calAngle();
+
+  // 计算方向
   calDirection();
+
+  // 计算速度
   calVelocity();
 
   return;
 }
 
 void Detector::calAngle() {
-  current_angle_ = atan2((current_target_.getArmor().getRect().center.y - final_center_r_.y),
-                         (current_target_.getArmor().getRect().center.x - final_center_r_.x)) *
-                   180 / static_cast<float>(CV_PI);
+  current_angle_ = atan2((current_target_.getArmor().getRect().center.y - final_center_r_.y), (current_target_.getArmor().getRect().center.x - final_center_r_.x)) * 180 / static_cast<float>(CV_PI);
 
   // 过零处理
   if (current_angle_ < 0.f) {
@@ -801,7 +759,7 @@ void Detector::calAngle() {
     diff_angle_ += 360;
   }
 
-  fmt::print("[{}] Current angle difference: {}\n", idntifier_yellow, diff_angle_);
+  fmt::print("[{}] 当前角度差为: {} 度\n", judgement_yellow, diff_angle_);
 
   if (fabs(diff_angle_) > 30.f) {
     is_change_blade_ = true;
@@ -827,26 +785,26 @@ void Detector::calDirection() {
 
   // 显示当前转动信息
   if (filter_direction_ > 0.1) {
-    fmt::print("[{}] Turning direction: clockwise\n", idntifier_yellow);
+    fmt::print("[{}] 转动方向:顺时针转动\n", judgement_yellow);
 
     final_direction_      = 1;
     last_final_direction_ = final_direction_;
   } else if (filter_direction_ < -0.1) {
-    fmt::print("[{}] Turning direction: counter-clockwise\n", idntifier_yellow);
+    fmt::print("[{}] 转动方向:逆时针转动\n", judgement_yellow);
 
     final_direction_      = -1;
     last_final_direction_ = final_direction_;
   } else {
-    fmt::print("[{}] Turning direction: stop\n", idntifier_yellow);
+    fmt::print("[{}] 转动方向:不转动\n", judgement_yellow);
 
+    // final_direction_      = 0;
     final_direction_ = last_final_direction_;
   }
 }
 
 int Detector::getState() {
   if (fabs(diff_angle_) < 10 && fabs(diff_angle_) > 1e-6) {
-    d_angle_ = (1 - buff_config_.param.FILTER_COEFFICIENT) * d_angle_ +
-               buff_config_.param.FILTER_COEFFICIENT * diff_angle_;
+    d_angle_ = (1 - buff_config_.param.FILTER_COEFFICIENT) * d_angle_ + buff_config_.param.FILTER_COEFFICIENT * diff_angle_;
   }
 
   if (d_angle_ > 0) {
@@ -873,12 +831,11 @@ void Detector::calVelocity() {
   last_last_diff_angle_ = last_diff_angle_;
   last_diff_angle_      = diff_angle_;
 
-  fmt::print("[{}] The current rotate speed is: {}\n", idntifier_yellow, current_speed_);
+  fmt::print("[{}] 当前风车转速为: {} rad/s \n", judgement_yellow, current_speed_);
 }
 
-float Detector::doPredict(const float& _bullet_velocity [[maybe_unused]],
-                          const bool&  _is_find_target) {
-  if (!_is_find_target) {
+float Detector::doPredict(const float& _bullet_velocity [[maybe_unused]], const bool& _is_find_target) {
+  if (!(_is_find_target)) {
     target_z_ = 0.f;
 
     return 0.f;
@@ -886,12 +843,13 @@ float Detector::doPredict(const float& _bullet_velocity [[maybe_unused]],
 
   float predict_quantity = 0.f;
 
-  // 计算固定预测量 原来是给 0.35 弧度
-  // TODO(fqjun) :测一下最快和最慢速度时的提前量，以确定范围
+  // 计算固定预测量 原来是给 0.35 弧度 TODO(fqjun) :测一下最快和最慢速度时的提前量，以确定范围
   // predict_quantity = fixedPredict(_bullet_velocity*1000);
   predict_quantity = fixedPredict(28 * 1000);  // 默认先给28m/s
 
   // 优化计算移动预测量 TODO (fqjun)
+
+  fmt::print("[{}] Info, 提前了: {} 度 \n", predict_yellow, predict_quantity * 180 / CV_PI);
 
   return predict_quantity;
 }
@@ -917,8 +875,7 @@ float Detector::fixedPredict(const float& _bullet_velocity) {
 
   // 计算固定提前量（也可以直接给定）
   if (current_direction_ != 0) {
-    fixed_forecast_quantity_ =
-        current_speed_ * bullet_tof_ + buff_config_.param.OFFSET_FIXED_RADIAN;
+    fixed_forecast_quantity_ = current_speed_ * bullet_tof_ + buff_config_.param.OFFSET_FIXED_RADIAN;
 
   } else {
     fixed_forecast_quantity_ = 0.f;
@@ -927,13 +884,10 @@ float Detector::fixedPredict(const float& _bullet_velocity) {
   return fixed_forecast_quantity_;
 }
 
-void Detector::calculateTargetPointSet(const float&              _predict_quantity,
-                                       const cv::Point2f&        _final_center_r,
-                                       std::vector<cv::Point2f>& _target_2d_point,
-                                       cv::Mat&                  _input_dst_img,
-                                       const bool&               _is_find_target) {
+void Detector::calculateTargetPointSet(
+  const float& _predict_quantity, const cv::Point2f& _final_center_r, std::vector<cv::Point2f>& _target_2d_point, cv::Mat& _input_dst_img, const bool& _is_find_target) {
   // 判断有无目标，若无则重置参数并提前退出
-  if (!_is_find_target) {
+  if (!(_is_find_target)) {
     _target_2d_point.clear();
     _target_2d_point = std::vector<cv::Point2f>(4, cv::Point2f(0.f, 0.f));
     // 重置参数
@@ -956,8 +910,7 @@ void Detector::calculateTargetPointSet(const float&              _predict_quanti
   cos_calcu_ = cos(final_radian_);
 
   // 计算最终坐标点
-  radio_ =
-      abstract_object::centerDistance(_final_center_r, current_target_.getArmor().getRect().center);
+  radio_ = abstract_object::centerDistance(_final_center_r, current_target_.getArmor().getRect().center);
 
   pre_center_.x = radio_ * cos_calcu_ + _final_center_r.x;
   pre_center_.y = radio_ * sin_calcu_ + _final_center_r.y;
@@ -983,33 +936,32 @@ void Detector::calculateTargetPointSet(const float&              _predict_quanti
   _target_2d_point.push_back(target_vertex[1]);
   _target_2d_point.push_back(target_vertex[0]);
 
-#ifdef DEBUG
+#ifndef RELEASE
+#  ifdef DEBUG
   // 最终目标装甲板（预测值）
   for (size_t i = 0; i != 4; ++i) {
-    cv::line(_input_dst_img, _target_2d_point[i], _target_2d_point[(i + 1) % 4],
-             cv::Scalar(0, 130, 255), 8);  // orange
+    cv::line(_input_dst_img, _target_2d_point[i], _target_2d_point[(i + 1) % 4], cv::Scalar(0, 130, 255), 8);  // orange
   }
 
   cv::circle(_input_dst_img, _final_center_r, radio_, cv::Scalar(0, 255, 125), 2, 8, 0);  // 轨迹圆
-  cv::circle(_input_dst_img, pre_center_, 3, cv::Scalar(255, 0, 0), 3, 8, 0);  // 预测值的中点
+  cv::circle(_input_dst_img, pre_center_, 3, cv::Scalar(255, 0, 0), 3, 8, 0);             // 预测值的中点
 
   cv::line(_input_dst_img, pre_center_, _final_center_r, cv::Scalar(0, 255, 255),
-           2);  // 预测点和圆心的连线
-  cv::line(_input_dst_img, current_target_.getArmor().getRect().center, _final_center_r,
-           cv::Scalar(0, 255, 0), 2);  // 装甲板和圆心的连线
+           2);                                                                                                       // 预测点和圆心的连线
+  cv::line(_input_dst_img, current_target_.getArmor().getRect().center, _final_center_r, cv::Scalar(0, 255, 0), 2);  // 装甲板和圆心的连线
 
   // 顺时针表示顶点顺序,红黄蓝绿
   cv::circle(_input_dst_img, _target_2d_point[0], 10, cv::Scalar(0, 0, 255), -1, 8, 0);
   cv::circle(_input_dst_img, _target_2d_point[1], 10, cv::Scalar(0, 255, 255), -1, 8, 0);
   cv::circle(_input_dst_img, _target_2d_point[2], 10, cv::Scalar(255, 0, 0), -1, 8, 0);
   cv::circle(_input_dst_img, _target_2d_point[3], 10, cv::Scalar(0, 255, 0), -1, 8, 0);
-#endif  // DEBUG
+#  endif  // DEBUG
+#endif    // !RELEASE
 }
 
 void Detector::updateLastData(const bool& _is_find_target) {
-  if (!_is_find_target) {
-    fmt::print("[{}] No target,there is no need to update the previous frame data XXX\n",
-               idntifier_yellow);
+  if (!(_is_find_target)) {
+    fmt::print("[{}] 没有目标，不需要更新上一帧数据 XXX\n", idntifier_yellow);
     is_find_last_target_ = _is_find_target;
 
     target_2d_point_.clear();
@@ -1028,7 +980,7 @@ void Detector::updateLastData(const bool& _is_find_target) {
 
   std::vector<cv::Point2f>(target_2d_point_).swap(target_2d_point_);
   target_rect_ = cv::RotatedRect();
-  fmt::print("[{}] Target found,previous frame data updated √√√\n", idntifier_yellow);
+  fmt::print("[{}] 发现目标，已更新上一帧数据 √√√\n", idntifier_yellow);
 }
 
 }  // namespace basic_buff

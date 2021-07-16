@@ -1,9 +1,8 @@
 #pragma once
 
-#include <vector>
-
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
+#include <vector>
 
 #include "abstract_object.hpp"
 
@@ -15,10 +14,18 @@ class FanBlade : public abstract_object::Object {
 
   ~FanBlade() = default;
 
-  void inputParams(const std::vector<cv::Point>& _contours) {
-    abstract_object::Object::inputParams(_contours);
-  }
+  /**
+   * @brief 输入外轮廓参数
+   * @param[in]  _contours        外轮廓点集
+   */
+  void inputParams(const std::vector<cv::Point>& _contours) { abstract_object::Object::inputParams(_contours); }
 
+  /**
+   * @brief 显示外轮廓
+   * @param[out]  _img         输出图像
+   * @note 黄色
+   * @note 图例显示在右侧
+   */
   void displayFanBlade(cv::Mat& _img) {
     cv::Scalar color         = cv::Scalar(0, 255, 255);
     cv::Point  put_fan_blade = cv::Point(_img.cols - 100, 30);
@@ -33,7 +40,7 @@ class FanBlade : public abstract_object::Object {
   inline int getLength() { return length_; }
 
  private:
-  int length_;
+  int length_;  // 周长
 };
 
 }  // namespace abstract_blade
