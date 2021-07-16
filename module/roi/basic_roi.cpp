@@ -8,7 +8,7 @@ cv::Rect RoI::makeRectSafeFixed(const cv::Mat&         _input_img,
   int height = _r_rect.boundingRect().height;
 
   cv::Point tl =
-    cv::Point(_r_rect.center.x - width * 0.5f, _r_rect.center.y * 0.5f);
+      cv::Point(_r_rect.center.x - width * 0.5f, _r_rect.center.y * 0.5f);
 
   if (tl.x < 0) {
     tl.x = 0;
@@ -25,7 +25,7 @@ cv::Rect RoI::makeRectSafeFixed(const cv::Mat&         _input_img,
   }
 
   return cv::Rect(tl.x, tl.y, width, height);
-} 
+}
 
 cv::Rect RoI::makeRectSafeTailor(const cv::Mat&         _input_img,
                                  const cv::RotatedRect& _r_rect) {
@@ -80,4 +80,41 @@ cv::Rect RoI::makeRectSafeTailor(const cv::Mat&  _input_img,
   return cv::Rect(tl.x, tl.y, width, height);
 }
 
+cv::Rect RoI::makeRectSafeThird(const cv::Mat&         _input_img,
+                                const cv::RotatedRect& _r_rect) {
+  int width = _r_rect.boundingRect().width;
+  int height = _r_rect.boundingRect().height;
+
+  cv::Point tl =
+      cv::Point(_r_rect.center.x - (width * 0.5f), _r_rect.center.y - (height * 0.5f));
+
+  if (tl.x < 0) {
+    tl.x = 0;
+  }
+  if (tl.y < 0) {
+    tl.y = 0;
+  }
+
+  if (tl.x + width > _input_img.cols) {
+    width = _input_img.cols - tl.x;
+  }
+  if (tl.y + height > _input_img.rows) {
+    height = _input_img.rows - tl.y;
+  }
+
+  return cv::Rect(tl.x, tl.y, width, height);
+}
+
+cv::Mat RoI::returnROIResultMat(const cv::Mat& _input_img) {
+  if (!roi_armor_data_.last_armor_success) {
+    roi_armor_data_.last_rect_ = cv::Rect(0, 0, 0, 0);
+    return _input_img;
+
+  } else {
+    // 更新上一帧ROI参数
+    roi_armor_data_.last_rect_ =
+        makeRectSafeThird(_input_img, roi_armor_data_.last_roi_armor_rect);
+    return _input_img(roi_armor_data_.last_rect_);
+  }
+}
 }  // namespace basic_roi

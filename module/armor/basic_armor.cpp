@@ -135,7 +135,6 @@ bool Detector::findLight() {
         light_w_h < light_config_.ratio_w_h_max &&
         light_w_h > light_config_.ratio_w_h_min) {
       light_.emplace_back(box);
-
       if (light_config_.light_draw == 1 || light_config_.light_edit == 1) {
         cv::Point2f vertex[4];
         box.points(vertex);
