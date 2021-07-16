@@ -1,7 +1,7 @@
 #include "wolfvision.hpp"
 
 int main() {
-  fmt::print("[{}] WolfVision built on g++ version: {}\n", idntifier , __VERSION__);
+  fmt::print("[{}] WolfVision built on g++ version: {}\n", idntifier, __VERSION__);
   fmt::print("[{}] WolfVision config file path: {}\n", idntifier, CONFIG_FILE_PATH);
 
   cv::Mat src_img_;
@@ -15,13 +15,20 @@ int main() {
   cv::VideoCapture cap_ = cv::VideoCapture(0);
 
   basic_armor::Detector basic_armor_ = basic_armor::Detector(
-    fmt::format("{}{}", CONFIG_FILE_PATH, "/armor/basic_armor_config.xml"));
+      fmt::format("{}{}", CONFIG_FILE_PATH, "/armor/basic_armor_config.xml"));
+
+  basic_buff::Detector basic_buff_ = basic_buff::Detector(
+      fmt::format("{}{}", CONFIG_FILE_PATH, "/buff/basic_buff_config.xml"));
 
   basic_pnp::PnP pnp_ = basic_pnp::PnP(
-    fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_554.xml"),
-    fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
+      fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_554.xml"),
+      fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
+
+  fps::FPS global_fps_;
 
   while (true) {
+    global_fps_.getTick();
+
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
     } else {
@@ -45,6 +52,7 @@ int main() {
                                 0);
         break;
       case uart::ENERGY_AGENCY:
+        serial_.writeData(basic_buff_.runTask(src_img_, serial_.returnReceive()));
         break;
       case uart::SENTRY_MODE:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
@@ -87,8 +95,12 @@ int main() {
       default:
         break;
       }
-
+      mv_capture_.cameraReleasebuff();
       basic_armor_.freeMemory();
+      if (cv::waitKey(1) == 'q') {
+        return 0;
+      }
+      global_fps_.calculateFPSGlobal();
     }
   }
 

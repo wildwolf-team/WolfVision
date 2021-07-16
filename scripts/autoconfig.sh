@@ -13,7 +13,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Get git submodules
-git submodule update --init --recursive
+git submodule update --init --recursive --depth 1
 
 # Enable pre-commit cpplint
 chmod +x scripts/cpplint-pre-commit.sh

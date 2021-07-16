@@ -16,8 +16,8 @@
   - 云台与相机 相机作为参考点
 -->
 <PTZ_CAMERA_X>0.0</PTZ_CAMERA_X>
-<PTZ_CAMERA_Y>0.0</PTZ_CAMERA_Y>
-<PTZ_CAMERA_Z>0.0</PTZ_CAMERA_Z>
+<PTZ_CAMERA_Y>46</PTZ_CAMERA_Y>
+<PTZ_CAMERA_Z>-93.6</PTZ_CAMERA_Z>
 <!-- 
   PTZ_BARREL_X - 云台与枪管的 X 轴偏移(左负右正)
   PTZ_BARREL_Y - 云台与枪管的 Y 轴偏移(上负下正)

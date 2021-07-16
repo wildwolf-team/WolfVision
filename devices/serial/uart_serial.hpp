@@ -29,6 +29,7 @@ enum BufferLength {
 
 // The color of our team
 enum Color {
+  ALL,
   BLUE,
   RED,
 };
