@@ -1,5 +1,4 @@
 git
-git-lfs
 gcc
 g++
 gdb
