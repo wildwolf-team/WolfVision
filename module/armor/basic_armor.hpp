@@ -129,6 +129,7 @@ class Detector {
   cv::Mat grayPretreat(cv::Mat &_src_img, const int _my_color);
 
   cv::Mat fuseImage(cv::Mat _bin_gray_img, cv::Mat _bin_color_img);
+  cv::Mat ReturnFrame() {return frame;}
 
  private:
   Armor_Config armor_config_;

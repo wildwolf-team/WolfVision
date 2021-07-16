@@ -47,6 +47,8 @@ enum RunMode {
   SENTRY_MODE,
   BASE_MODE,
   TOP_MODE,
+  PLANE_MODE,
+  OCR_SENTRYSELF_MODE,
 };
 
 // Describe the current robot ID information
@@ -67,7 +69,7 @@ struct Serial_Config {
 // Serial port information receiving structure
 struct Receive_Data {
   int   my_color;
-  int   now_run_mode;
+  int   now_run_mode = 7;
   int   my_robot_id;
   int   bullet_velocity;
   float acceleration;
@@ -85,8 +87,8 @@ struct Receive_Data {
   } Receive_Pitch_Angle_Info;
 
   Receive_Data() {
-    my_color                             = RED;
-    now_run_mode                         = SUP_SHOOT;
+    my_color                             = BLUE;
+    now_run_mode                         = OCR_SENTRYSELF_MODE;
     my_robot_id                          = INFANTRY;
     acceleration                         = 0.f;
     bullet_velocity                      = 30;
