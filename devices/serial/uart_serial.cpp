@@ -259,7 +259,7 @@ void SerialPort::updateReceiveInformation() {
       receive_data_.my_color = BLUE;
       break;
     default:
-      receive_data_.my_color = RED;
+      receive_data_.my_color = ALL;
       break;
   }
 
