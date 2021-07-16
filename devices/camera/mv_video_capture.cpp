@@ -8,11 +8,9 @@ VideoCapture::VideoCapture(const CameraParam &_camera_param) {
                _camera_param.resolution.rows,
                _camera_param.camera_exposuretime);
 
-    if (iStatus == CAMERA_STATUS_SUCCESS) {
-      iscamera0_open = true;
+    iscamera0_open = true;
 
       fmt::print("[{}] Using mindvision industrial camera: {}\n", idntifier_green, _camera_param.camera_mode);
-    }
   } else {
     iscamera0_open = false;
 
@@ -97,7 +95,8 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
   CameraSetImageResolution(hCamera, &pImageResolution);
 
   fmt::print("[{}] Info, camera status: {}, {}\n", idntifier_green, CameraGetAeState(hCamera, &AEstate), CameraGetAeState(hCamera, FALSE));
-
+  CameraGetAeState(hCamera, &AEstate);
+  CameraSetAeState(hCamera, FALSE);
   CameraSetExposureTime(hCamera, _CAMERA_EXPOSURETIME);
   CameraPlay(hCamera);
   CameraReleaseImageBuffer(hCamera, pbyBuffer);
