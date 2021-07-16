@@ -66,11 +66,13 @@
         "thread": "cpp",
         "typeinfo": "cpp"
     },
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.formatOnPaste": true,
-    "editor.defaultFormatter": "ms-vscode.cmake-tools",
     "files.exclude": {
         "3rdparty": true
     },
-    "C_Cpp.clang_format_style": ".clang-format",
+    "editor.defaultFormatter": "ms-vscode.cpptools",
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
 }
