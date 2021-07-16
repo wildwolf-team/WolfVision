@@ -51,11 +51,11 @@ class model {
 
     this->input_size = input_size;
   }
-  model();
+  model(){};
   // model(std::string orc_input_path_,bool key_input);
   NumParam param_ocr = Number_Param("/home/sms/workspace_vscode/WolfV_2/WolfVision/configs/ml/onnx_inferring_config.xml");
   bool     parma_case;
-  ~model();
+  ~model(){};
   /**
          @brief:  Inferring input image from loaded model, return classified int digit
          @param:  input, the image to classify (only 1 digit), const reference from cv::Mat
