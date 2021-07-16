@@ -95,13 +95,13 @@ int main() {
       default:
         break;
       }
-      mv_capture_.cameraReleasebuff();
-      basic_armor_.freeMemory();
-      if (cv::waitKey(1) == 'q') {
-        return 0;
-      }
-      global_fps_.calculateFPSGlobal();
     }
+    mv_capture_.cameraReleasebuff();
+    basic_armor_.freeMemory();
+    if (cv::waitKey(1) == 'q') {
+      return 0;
+    }
+    global_fps_.calculateFPSGlobal();
   }
 
   return 0;
