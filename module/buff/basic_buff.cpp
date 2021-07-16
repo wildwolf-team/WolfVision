@@ -809,7 +809,7 @@ void Detector::calAngle() {
   } else {
     is_change_blade_ = false;
   }
-  // TODO (fqjun) :当变化量大于 30°时，则是切换装甲板，则重置 diff 为 0，last 为当前。
+  // TODO(fqjun) :当变化量大于 30°时，则是切换装甲板，则重置 diff 为 0，last 为当前。
 }
 
 void Detector::calDirection() {
@@ -887,7 +887,7 @@ float Detector::doPredict(const float& _bullet_velocity [[maybe_unused]],
   float predict_quantity = 0.f;
 
   // 计算固定预测量 原来是给 0.35 弧度
-  // TODO (fqjun) :测一下最快和最慢速度时的提前量，以确定范围
+  // TODO(fqjun) :测一下最快和最慢速度时的提前量，以确定范围
   // predict_quantity = fixedPredict(_bullet_velocity*1000);
   predict_quantity = fixedPredict(28 * 1000);  // 默认先给28m/s
 
