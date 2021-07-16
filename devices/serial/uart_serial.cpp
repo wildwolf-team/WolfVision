@@ -305,21 +305,6 @@ void SerialPort::updateReceiveInformation() {
       break;
   }
 
-  transform_arr_[3] = receive_buff_[14] - '0';
-  switch (transform_arr_[3]) {
-    case 1:
-      receive_data_.bullet_velocity = 15;
-      break;
-    case 2:
-      receive_data_.bullet_velocity = 18;
-      break;
-    case 3:
-      receive_data_.bullet_velocity = 30;
-      break;
-    default:
-      receive_data_.bullet_velocity = 30;
-      break;
-  }
   receive_data_.bullet_velocity = receive_buff_[14];
 
   for (size_t i = 0; i != sizeof(receive_data_.Receive_Yaw_Angle_Info.arr_yaw_angle); ++i) {
