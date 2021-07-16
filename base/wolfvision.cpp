@@ -9,10 +9,10 @@ int main() {
   mindvision::VideoCapture mv_capture_ = mindvision::VideoCapture(
                                       mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
 
-  uart::SerialPort serial_ = 
+  uart::SerialPort serial_ =
     uart::SerialPort(fmt::format("{}{}", CONFIG_FILE_PATH, "/serial/uart_serial_config.xml"));
 
-  cv::VideoCapture cap_ = cv::VideoCapture(0);
+  cv::VideoCapture cap_ = cv::VideoCapture("/home/sms/VIDEO/camera_MaxBuff13.avi");
 
   basic_armor::Detector basic_armor_ = basic_armor::Detector(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/armor/basic_armor_config.xml"));
@@ -21,13 +21,12 @@ int main() {
     fmt::format("{}{}", CONFIG_FILE_PATH, "/buff/basic_buff_config.xml"));
 
   basic_pnp::PnP pnp_   = basic_pnp::PnP(
-    fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_554.xml"), 
+    fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_554.xml"),
     fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
 
-  onnx_inferring::model model_ = 
-    onnx_inferring::model("/home/sms/workspace_vscode/WolfVision/module/ml/mnist-8.onnx");
+  onnx_inferring::model model_ = onnx_inferring::model(
+      fmt::format("{}{}", SOURCE_PATH ,"/module/ml/mnist-8.onnx"));
 
-  //  onnx_inferring::model model_ = onnx_inferring::model(fmt::format("{}{}", CONFIG_FILE_PATH, "/ml/mnist-8.onnxl"));
   basic_roi::RoI save_roi;
   fps::FPS       global_fps_;
 
@@ -45,7 +44,7 @@ int main() {
       switch (serial_.returnReceiveMode()) {
       case uart::SUP_SHOOT:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
-          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), 
+          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
                               basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
         }
 
@@ -57,9 +56,9 @@ int main() {
         break;
       case uart::SENTRY_MODE:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
-          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), 
+          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
                               basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
-          serial_.updataWriteData(pnp_.returnYawAngle(), 
+          serial_.updataWriteData(pnp_.returnYawAngle(),
                                           pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
         } else {
           serial_.updataWriteData(pnp_.returnYawAngle(),
@@ -70,42 +69,42 @@ int main() {
         break;
       case uart::TOP_MODE:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
-          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), 
+          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
                           basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
-          serial_.updataWriteData(pnp_.returnYawAngle(), 
+          serial_.updataWriteData(pnp_.returnYawAngle(),
                                         pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
         } else {
-          serial_.updataWriteData(-pnp_.returnYawAngle(), 
+          serial_.updataWriteData(-pnp_.returnYawAngle(),
                                        pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnLostCnt() > 0 ? 1 : 0, 0);
         }
       case uart::PLANE_MODE:
         break;
       case uart::OCR_SENTRYSELF_MODE:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
-          if (basic_armor_.returnFinalArmorDistinguish(0) == 1){  // if the firt type of the amror_list is large
-            pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), 
+          if (basic_armor_.returnFinalArmorDistinguish(0) == 1) {  // if the firt type of the amror_list is large
+            pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
                                        basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
             serial_.updataWriteData(pnp_.returnYawAngle(),
                                        pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
-          } else {  //another type
+          } else {  // another type
             int info_number;
             for (int i = 0; i < basic_armor_.returnArmorNum(); i++) {
-              info_number = model_.inferring(save_roi.cutRoIRotatedRect(basic_armor_.ReturnFrame(), 
+              info_number = model_.inferring(save_roi.cutRoIRotatedRect(basic_armor_.ReturnFrame(),
                                                                             basic_armor_.returnFinalArmorRotatedRect(i)));
               if (info_number == 2) {
-                serial_.updataWriteData(pnp_.returnYawAngle(), 
+                serial_.updataWriteData(pnp_.returnYawAngle(),
                                                 pnp_.returnPitchAngle(), pnp_.returnDepth(), 0, 0);
                 break;
               } else {
-                pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), 
+                pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
                                        basic_armor_.returnFinalArmorDistinguish(i + 1), basic_armor_.returnFinalArmorRotatedRect(i + 1));
-                serial_.updataWriteData(pnp_.returnYawAngle(), 
+                serial_.updataWriteData(pnp_.returnYawAngle(),
                                                 pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
                 break;
               }
             }
             if (model_.param_ocr.switch_number == 1) {
-              cv::imshow("Dafult", save_roi.cutRoIRotatedRect(basic_armor_.ReturnFrame(), 
+              cv::imshow("Dafult", save_roi.cutRoIRotatedRect(basic_armor_.ReturnFrame(),
                                                                       basic_armor_.returnFinalArmorRotatedRect(0)));
               cv::putText(basic_armor_.ReturnFrame(), std::to_string(info_number), cv::Point(100, 100), cv::FONT_HERSHEY_DUPLEX, 2, cv::Scalar(255, 255, 255), 2, cv::LINE_AA);
             }

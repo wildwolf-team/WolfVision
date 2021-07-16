@@ -21,7 +21,9 @@ using namespace std;
 
 namespace onnx_inferring {
 
-typedef struct Number_Param {
+class Number_Param 
+{
+public:
   int h_min_num;
   int h_max_num;
 
@@ -35,8 +37,8 @@ typedef struct Number_Param {
   int kennerl_size;
 
   int switch_number;
-  Number_Param(std::string path_in);
-} NumParam;
+  explicit Number_Param(std::string path_in);
+} ;
 
 class model {
  public:
@@ -51,11 +53,11 @@ class model {
 
     this->input_size = input_size;
   }
-  model(){};
+  model() {}
   // model(std::string orc_input_path_,bool key_input);
-  NumParam param_ocr = Number_Param("/home/sms/workspace_vscode/WolfV_2/WolfVision/configs/ml/onnx_inferring_config.xml");
-  bool     parma_case;
-  ~model(){};
+  onnx_inferring::Number_Param param_ocr = onnx_inferring::Number_Param(fmt::format("{}{}", CONFIG_FILE_PATH, "/ml/onnx_inferring_config.xml"));
+  bool parma_case;
+  ~model() {}
   /**
          @brief:  Inferring input image from loaded model, return classified int digit
          @param:  input, the image to classify (only 1 digit), const reference from cv::Mat

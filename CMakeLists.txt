@@ -13,7 +13,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 # Use standard c++20
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add DEBUG/RELEASE marco to define if debug/release configured
@@ -103,6 +103,8 @@ target_link_libraries(wv-basic-buff
 )
 list(APPEND WV_EXTRA_LIBS wv-basic-buff)
 
+
+
 list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/filter)
 add_library(wv-basic-kalman SHARED module/filter/basic_kalman.cpp)
 list(APPEND WV_EXTRA_LIBS wv-basic-kalman)
@@ -150,8 +152,11 @@ set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 
 # Set configs folder absolute path
 set(CONFIG_FILE_PATH ${PROJECT_SOURCE_DIR}/configs)
+set(SOURCE_PATH ${PROJECT_SOURCE_DIR})
 target_compile_definitions(WolfVision PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
+target_compile_definitions(WolfVision PRIVATE "SOURCE_PATH=\"${SOURCE_PATH}\"")
 target_compile_definitions(wv-basic-buff PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
+target_compile_definitions(wv-onnx-inferring PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
 
 # Add test_camera directory
 if(BUILD_TEST)
