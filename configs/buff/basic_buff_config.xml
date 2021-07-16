@@ -39,7 +39,7 @@
   <BLUE_BUFF_COLOR_TH>79</BLUE_BUFF_COLOR_TH>
 
   <!-- 
-    - HSV-red 
+    - HSV-red param
   -->
   <H_RED_MAX>60</H_RED_MAX>  <!-- 41 -->
   <H_RED_MIN>0</H_RED_MIN>
@@ -49,7 +49,7 @@
   <V_RED_MIN>24</V_RED_MIN>  <!-- 106 95 60 24-->
 
   <!-- 
-    - HSV-blue 
+    - HSV-blue param
       175   187
       138   90
       239   245

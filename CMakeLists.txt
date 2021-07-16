@@ -13,10 +13,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 # Use standard c++20
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Add DEBUG marco to define if debug configured
+# Add DEBUG/RELEASE marco to define if debug/release configured
 add_compile_options("$<$<CONFIG:DEBUG>:-DDEBUG>")
 add_compile_options("$<$<CONFIG:RELEASE>:-DRELEASE>")
 

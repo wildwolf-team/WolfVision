@@ -18,8 +18,10 @@ double fps::FPS::last_time;
 
 namespace basic_buff {
 
-auto idntifier_green = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "basic_buff");
-auto idntifier_red   = fmt::format(fg(fmt::color::red)   | fmt::emphasis::bold, "basic_buff");
+auto idntifier_green  = fmt::format(fg(fmt::color::green)  | fmt::emphasis::bold, "basic_buff");
+auto idntifier_red    = fmt::format(fg(fmt::color::red)    | fmt::emphasis::bold, "basic_buff");
+
+auto idntifier_yellow = fmt::format(fg(fmt::color::yellow) | fmt::emphasis::bold, "basic_buff");
 
 struct Buff_Param {
   // BGR
