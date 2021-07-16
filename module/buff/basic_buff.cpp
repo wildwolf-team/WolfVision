@@ -41,11 +41,11 @@ Detector::Detector(const std::string& _buff_config_path) {
 
   current_direction_ = 0.f;
   // filter_direction_  = 0.f;
-  last_direction_    = 0.f;
-  find_cnt_          = 0;
-  d_angle_           = 1.f;
-  confirm_cnt_       = 0;
-  is_confirm_        = false;
+  last_direction_ = 0.f;
+  find_cnt_       = 0;
+  d_angle_        = 1.f;
+  confirm_cnt_    = 0;
+  is_confirm_     = false;
 
   current_speed_  = 0.f;
   last_time_      = 0.0;
@@ -120,7 +120,9 @@ void Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_i
 
   /* TODO(fqjun) :自动控制 */
 
+#ifndef RELEASE
   displayDst();
+#endif  // !RELEASE
 
   /* 更新上一帧数据 */
   updateLastData(is_find_target_);
@@ -169,7 +171,9 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
 
   /* TODO(fqjun) :自动控制 */
 
+#ifndef RELEASE
   displayDst();
+#endif  // !RELEASE
 
   /* 更新上一帧数据 */
   updateLastData(is_find_target_);
@@ -509,7 +513,6 @@ void Detector::findTarget(cv::Mat& _input_dst_img, cv::Mat& _input_bin_img, std:
     small_target_.inputParams(contours_[i]);
     big_target_.inputParams(contours_[static_cast<uint>(hierarchy_[i][3])]);
     candidated_target_.inputParams(big_target_, small_target_);
-    big_target_.displayFanBlade(_input_dst_img);
 
     // 组合判断角度差
     if (candidated_target_.diffAngle() >= buff_config_.param.DIFF_ANGLE_MAX || candidated_target_.diffAngle() <= buff_config_.param.DIFF_ANGLE_MIN) {
@@ -527,8 +530,10 @@ void Detector::findTarget(cv::Mat& _input_dst_img, cv::Mat& _input_bin_img, std:
       continue;
     }
 
+#ifndef RELEASE
     small_target_.displayFanArmor(_input_dst_img);
     big_target_.displayFanBlade(_input_dst_img);
+#endif  // !RELEASE
 
     candidated_target_.setType(abstract_object::ACTION);
     candidated_target_.updateVertex(_input_dst_img);
@@ -569,7 +574,9 @@ bool Detector::isFindTarget(cv::Mat& _input_img, std::vector<abstract_target::Ta
     ++inaction_cnt_;
 
     current_target_ = *iter;
+#ifndef RELEASE
     current_target_.displayInactionTarget(_input_img);
+#endif  // !RELEASE
   }
 
   fmt::print("[{}] 未击打数量: {},  已击打数量: {}\n", target_yellow, inaction_cnt_, action_cnt_);
@@ -630,7 +637,9 @@ cv::Point2f Detector::findCircleR(cv::Mat& _input_src_img, cv::Mat& _input_bin_i
   result_img_ = roi_tool_.cutRoIRect(_input_bin_img, roi);
   roi_img_    = roi_tool_.cutRoIRect(_input_src_img, roi);
 
+#ifndef RELEASE
   cv::rectangle(_dst_img, roi, cv::Scalar(0, 255, 200), 2, 8, 0);
+#endif  // !RELEASE
 
   is_circle_        = false;
   roi_local_center_ = cv::Point2f(roi_img_.cols * 0.5, roi_img_.rows * 0.5);  // 更新roi的中心点
@@ -789,7 +798,7 @@ void Detector::calDirection() {
     fmt::print("[{}] 转动方向:不转动\n", judgement_yellow);
 
     // final_direction_      = 0;
-    final_direction_      = last_final_direction_;
+    final_direction_ = last_final_direction_;
   }
 }
 
@@ -927,7 +936,8 @@ void Detector::calculateTargetPointSet(
   _target_2d_point.push_back(target_vertex[1]);
   _target_2d_point.push_back(target_vertex[0]);
 
-#ifdef DEBUG
+#ifndef RELEASE
+#  ifdef DEBUG
   // 最终目标装甲板（预测值）
   for (size_t i = 0; i != 4; ++i) {
     cv::line(_input_dst_img, _target_2d_point[i], _target_2d_point[(i + 1) % 4], cv::Scalar(0, 130, 255), 8);  // orange
@@ -945,7 +955,8 @@ void Detector::calculateTargetPointSet(
   cv::circle(_input_dst_img, _target_2d_point[1], 10, cv::Scalar(0, 255, 255), -1, 8, 0);
   cv::circle(_input_dst_img, _target_2d_point[2], 10, cv::Scalar(255, 0, 0), -1, 8, 0);
   cv::circle(_input_dst_img, _target_2d_point[3], 10, cv::Scalar(0, 255, 0), -1, 8, 0);
-#endif  // DEBUG
+#  endif  // DEBUG
+#endif    // !RELEASE
 }
 
 void Detector::updateLastData(const bool& _is_find_target) {
