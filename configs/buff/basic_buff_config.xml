@@ -1,118 +1,168 @@
 <?xml version="1.0"?>
 <opencv_storage>
-<!-- 
+
+  <!--~~~~~~~~~~~~~~  能量机关设置部分  ~~~~~~~~~~~~~~-->
+
+  <!-- 
   IS_PARAM_ADJUSTMENT - 是否进入调参模式
   - 0 Release（hsv + 600）
   - 1 Debug
   - 2 Alpha
--->
-<IS_PARAM_ADJUSTMENT>1</IS_PARAM_ADJUSTMENT>
-<!-- 
+  记得调整原参数
+  -->
+  <IS_PARAM_ADJUSTMENT>1</IS_PARAM_ADJUSTMENT>
+
+  <!-- 
   IS_SHOW_BIN_IMG - 是否显示二值图像
   - 0 不显示
   - 1 显示
--->
-<IS_SHOW_BIN_IMG>1</IS_SHOW_BIN_IMG>
-<!--
+  -->
+  <IS_SHOW_BIN_IMG>1</IS_SHOW_BIN_IMG>
+
+  <!--
   PROCESSING_MODE - 设置自瞄预处理的处理模式
   - 0 BGR
   - 1 HSV
--->
-<PROCESSING_MODE>0</PROCESSING_MODE>
-<!--
-  RED_ARMOR_GRAY_TH   - 红色灰度参数
-  RED_ARMOR_COLOR_TH  - BGR 红色参数
-  BLUE_ARMOR_COLOR_TH - 蓝色灰度参数
-  BLUE_ARMOR_GRAY_TH  - BGR 蓝色参数
--->
-<RED_BUFF_GRAY_TH>60</RED_BUFF_GRAY_TH>
-<RED_BUFF_COLOR_TH>49</RED_BUFF_COLOR_TH>
-<BLUE_BUFF_GRAY_TH>28</BLUE_BUFF_GRAY_TH>
-<BLUE_BUFF_COLOR_TH>79</BLUE_BUFF_COLOR_TH>
+  -->
+  <PROCESSING_MODE>0</PROCESSING_MODE>
 
-<H_RED_MAX>60</H_RED_MAX>
-<H_RED_MIN>0</H_RED_MIN>
-<S_RED_MAX>255</S_RED_MAX>
-<S_RED_MIN>150</S_RED_MIN>
-<V_RED_MAX>255</V_RED_MAX>
-<V_RED_MIN>24</V_RED_MIN>
+  <!-- BGR -->
+  <!--
+  RED_ARMOR_GRAY_TH   - 红色灰度参数 60
+  RED_ARMOR_COLOR_TH  - BGR红色参数 49
+  BLUE_ARMOR_COLOR_TH - 蓝色灰度参数 28 14
+  BLUE_ARMOR_GRAY_TH  - BGR蓝色参数 79 46
+  -->
+  <RED_BUFF_GRAY_TH>60</RED_BUFF_GRAY_TH>
+  <RED_BUFF_COLOR_TH>49</RED_BUFF_COLOR_TH>
+  <BLUE_BUFF_GRAY_TH>28</BLUE_BUFF_GRAY_TH>
+  <BLUE_BUFF_COLOR_TH>79</BLUE_BUFF_COLOR_TH>
 
-<H_BLUE_MAX>187</H_BLUE_MAX>
-<H_BLUE_MIN>90</H_BLUE_MIN>
-<S_BLUE_MAX>245</S_BLUE_MAX>
-<S_BLUE_MIN>140</S_BLUE_MIN>
-<V_BLUE_MAX>255</V_BLUE_MAX>
-<V_BLUE_MIN>18</V_BLUE_MIN>
+  <!-- 
+    - HSV-red param
+  -->
+  <H_RED_MAX>60</H_RED_MAX>  <!-- 41 -->
+  <H_RED_MIN>0</H_RED_MIN>
+  <S_RED_MAX>255</S_RED_MAX>
+  <S_RED_MIN>150</S_RED_MIN>  <!-- 111 140 95 太阳光就把s调高150-->
+  <V_RED_MAX>255</V_RED_MAX>
+  <V_RED_MIN>24</V_RED_MIN>  <!-- 106 95 60 24-->
 
-<!--
-  SMALL_TARGET_AREA_MAX -扇叶装甲面积最大值
-  SMALL_TARGET_AREA_MIN -扇叶装甲面积最小值
-  BIG_TARGET_AREA_MAX   -扇叶整体面积最大值
-  BIG_TARGET_AREA_MIN   -扇叶整体面积最小值
--->
-<SMALL_TARGET_AREA_MAX>2000</SMALL_TARGET_AREA_MAX>
-<SMALL_TARGET_AREA_MIN>600</SMALL_TARGET_AREA_MIN>
-<BIG_TARGET_AREA_MAX>15000</BIG_TARGET_AREA_MAX>
-<BIG_TARGET_AREA_MIN>3000</BIG_TARGET_AREA_MIN>
-<!--
-  SMALL_TARGET_Length_MAX - 扇叶装甲周长最大值 (暂未使用)
-  SMALL_TARGET_Length_MIN - 扇叶装甲周长最小值
-  BIG_TARGET_Length_MAX   - 扇叶整体周长最大值 (暂未使用)
-  BIG_TARGET_Length_MIN   - 扇叶整体周长最小值
--->
-<SMALL_TARGET_Length_MAX>2000</SMALL_TARGET_Length_MAX>
-<SMALL_TARGET_Length_MIN>10</SMALL_TARGET_Length_MIN>
-<BIG_TARGET_Length_MAX>10000</BIG_TARGET_Length_MAX>
-<BIG_TARGET_Length_MIN>50</BIG_TARGET_Length_MIN>
-<!--
-  DIFF_ANGLE_MAX - 装甲板和扇叶角度差阈值最大值
-  DIFF_ANGLE_MIN - 装甲板和扇叶角度差阈值最小值
--->
-<DIFF_ANGLE_MAX>100</DIFF_ANGLE_MAX>
-<DIFF_ANGLE_MIN>80</DIFF_ANGLE_MIN>
-<!--
-  SMALL_TARGET_ASPECT_RATIO_MAX - 装甲板长宽比阈值最大值
-  SMALL_TARGET_ASPECT_RATIO_MIN - 装甲板长宽比阈值最小值
--->
-<SMALL_TARGET_ASPECT_RATIO_MAX>3</SMALL_TARGET_ASPECT_RATIO_MAX>
-<SMALL_TARGET_ASPECT_RATIO_MIN>0.6</SMALL_TARGET_ASPECT_RATIO_MIN>
-<!--
-  AREA_RATIO_MAX - 装甲板和扇叶面积比阈值最大值
-  AREA_RATIO_MIN - 装甲板和扇叶面积比阈值最小值
--->
-<AREA_RATIO_MAX>0.25</AREA_RATIO_MAX>
-<AREA_RATIO_MIN>0.06</AREA_RATIO_MIN>
-<!--
-  BIG_LENTH_R - 装甲板距离 R 的距离系数
--->
-<BIG_LENTH_R>5.8</BIG_LENTH_R>
-<!--
-  CENTER_R_ROI_SIZE - 假定圆心的 ROI 矩形大小
--->
-<CENTER_R_ROI_SIZE>180</CENTER_R_ROI_SIZE>
-<!--
-  FILTER_COEFFICIENT - 滤波器系数 (滤波系数越小，滤波结果越平稳，但是灵敏度越低； 滤波系数越大，灵敏度越高，但是滤波结果越不稳定。)
--->
-<FILTER_COEFFICIENT>0.8</FILTER_COEFFICIENT>
-<!--
-  BUFF_H         - 能量机关中心高度
-  BUFF_RADIUS    - 能量机关半径
-  PLATFORM_H     - 狙击点高度
-  BARREL_ROBOT_H - 枪管离机器人底面高度
-  TARGET_X       - 目标的水平直线距离
-  - 单位 mm
-  - 相机离车身边界 前： 150， 左： 250
--->
-<BUFF_H>2386</BUFF_H>
-<BUFF_RADIUS>800</BUFF_RADIUS>
-<PLATFORM_H>850</PLATFORM_H>
-<BARREL_ROBOT_H>350</BARREL_ROBOT_H>
-<TARGET_X>7100</TARGET_X>
+  <!-- 
+    - HSV-blue param
+      175   187
+      138   90
+      239   245
+      163   140
+      255   255
+      44    18
+  -->
+  <H_BLUE_MAX>175</H_BLUE_MAX>
+  <H_BLUE_MIN>138</H_BLUE_MIN>
+  <S_BLUE_MAX>239</S_BLUE_MAX>
+  <S_BLUE_MIN>163</S_BLUE_MIN>
+  <V_BLUE_MAX>255</V_BLUE_MAX>
+  <V_BLUE_MIN>44</V_BLUE_MIN>
 
-<!--
-  OFFSET_FIXED_RADIAN - 固定预测值的补偿 (- 减少预测量，+ 增加预测量)
-  - 直接预测值为 0.7 = 0.35 * 2
-  - 预测值的补偿值 -0.05
--->
-<OFFSET_FIXED_RADIAN>-0.05</OFFSET_FIXED_RADIAN>
+  <!--
+    装甲板和扇叶面积阈值
+    SMALL_TARGET_AREA_MAX -扇叶装甲 面积最大值
+    SMALL_TARGET_AREA_MIN -扇叶装甲 面积最小值
+    BIG_TARGET_AREA_MAX   -扇叶整体 面积最大值  10000
+    BIG_TARGET_AREA_MIN   -扇叶整体 面积最小值  300
+  -->
+  <SMALL_TARGET_AREA_MAX>2000</SMALL_TARGET_AREA_MAX>
+  <SMALL_TARGET_AREA_MIN>600</SMALL_TARGET_AREA_MIN>
+  <BIG_TARGET_AREA_MAX>15000</BIG_TARGET_AREA_MAX>
+  <BIG_TARGET_AREA_MIN>3000</BIG_TARGET_AREA_MIN>
+
+  <!--
+    装甲板和扇叶面积阈值
+    SMALL_TARGET_Length_MAX - 扇叶装甲 周长最大值 暂时未使用
+    SMALL_TARGET_Length_MIN - 扇叶装甲 周长最小值
+    BIG_TARGET_Length_MAX   - 扇叶整体 周长最大值 暂时未使用
+    BIG_TARGET_Length_MIN   - 扇叶整体 周长最小值
+  -->
+  <!-- <SMALL_TARGET_Length_MAX>2000</SMALL_TARGET_Length_MAX> -->
+  <SMALL_TARGET_Length_MIN>10</SMALL_TARGET_Length_MIN>
+  <!-- <BIG_TARGET_Length_MAX>10000</BIG_TARGET_Length_MAX> -->
+  <BIG_TARGET_Length_MIN>50</BIG_TARGET_Length_MIN>
+
+  <!--
+    装甲板和扇叶角度差阈值
+    DIFF_ANGLE_MAX - 角度差 最大值
+    DIFF_ANGLE_MIN - 角度差 最小值
+  -->
+  <DIFF_ANGLE_MAX>100</DIFF_ANGLE_MAX>
+  <DIFF_ANGLE_MIN>80</DIFF_ANGLE_MIN>
+
+  <!--
+    装甲板长宽比阈值
+    SMALL_TARGET_ASPECT_RATIO_MAX - 长宽比 最大值
+    SMALL_TARGET_ASPECT_RATIO_MIN - 长宽比 最小值
+  -->
+  <SMALL_TARGET_ASPECT_RATIO_MAX>3</SMALL_TARGET_ASPECT_RATIO_MAX>
+  <SMALL_TARGET_ASPECT_RATIO_MIN>0.6</SMALL_TARGET_ASPECT_RATIO_MIN>
+
+  <!--
+    装甲板和扇叶面积比阈值
+    AREA_RATIO_MAX - 面积比 最大值
+    AREA_RATIO_MIN - 面积比 最小值
+  -->
+  <AREA_RATIO_MAX>0.25</AREA_RATIO_MAX>
+  <AREA_RATIO_MIN>0.06</AREA_RATIO_MIN>
+
+  <!--
+    BIG_LENTH_R - 装甲板距离R的距离系数
+  -->
+  <BIG_LENTH_R>6.3</BIG_LENTH_R>
+
+  <!--
+    CENTER_R_ROI_SIZE - 假定圆心的roi矩形大小
+  -->
+  <CENTER_R_ROI_SIZE>180</CENTER_R_ROI_SIZE>
+
+  <!--
+    FILTER_COEFFICIENT - 滤波器系数
+    滤波系数越小，滤波结果越平稳，但是灵敏度越低；
+    滤波系数越大，灵敏度越高，但是滤波结果越不稳定。
+  -->
+  <FILTER_COEFFICIENT>0.8</FILTER_COEFFICIENT>
+
+  <!--
+    能量机关打击模型参数 单位 mm
+    BUFF_H         - 能量机关中心高度
+    BUFF_RADIUS    - 能量机关半径
+    PLATFORM_H     - 狙击点高度
+    BARREL_ROBOT_H - 枪管离机器人底面高度
+    TARGET_X       - 目标的水平直线距离 可调 6500,6761,7100
+    相机离车身边界：前：150，左：250
+  -->
+  <BUFF_H>2386</BUFF_H>
+  <BUFF_RADIUS>800</BUFF_RADIUS>
+  <PLATFORM_H>850</PLATFORM_H>
+  <BARREL_ROBOT_H>350</BARREL_ROBOT_H>
+  <TARGET_X>7100</TARGET_X>
+
+  <!--
+    OFFSET_FIXED_RADIAN - 固定预测值的补偿 -减少预测量，+增加预测量
+    直接预测值为0.7 = 0.35*2
+    预测值的补偿值：-0.05 最终成功的一次：0.1
+  -->
+  <OFFSET_FIXED_RADIAN>0.1</OFFSET_FIXED_RADIAN>
+
+  <!-- 
+    OFFSET_TARGET_Z_ - 模型深度补偿（左半边比右半边距离要远）
+   -->
+  <OFFSET_TARGET_Z>0.0</OFFSET_TARGET_Z>
+
+  <!-- 
+    固定yaw补偿 （右正左负）第一次完成大符击打
+    固定pitch补偿 （下正上负）第一次完成大符击打，弹量刚好铺平一层绿色的弹仓 
+  -->
+  <OFFSET_ARMOR_YAW>0.85</OFFSET_ARMOR_YAW>
+  <OFFSET_ARMOR_PITCH>1.9</OFFSET_ARMOR_PITCH>
+
+  <!--~~~~~~~~~~~~~~  能量机关设置部分  ~~~~~~~~~~~~~~-->
+
 </opencv_storage>

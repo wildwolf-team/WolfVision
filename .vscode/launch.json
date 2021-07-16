@@ -2,9 +2,9 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "cmake: gbd build release",
+            "name": "gdb: cmake ninja build debug",
             "type": "cppdbg",
-            "preLaunchTask": "cmake build",
+            "preLaunchTask": "cmake ninja build debug",
             "request": "launch",
             "program": "${workspaceFolder}/build/bin/WolfVision",
             "args": [],
@@ -20,6 +20,26 @@
                     "ignoreFailures": true
                 }
             ]
-        }
+        },
+        {
+            "name": "gdb: cmake ninja build release",
+            "type": "cppdbg",
+            "preLaunchTask": "cmake ninja build release",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/WolfVision",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
     ]
 }

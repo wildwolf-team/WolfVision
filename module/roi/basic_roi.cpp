@@ -2,7 +2,7 @@
 
 namespace basic_roi {
 
-cv::Rect ROI::makeRectSafeFixed(const cv::Mat&         _input_img,
+cv::Rect RoI::makeRectSafeFixed(const cv::Mat&         _input_img,
                                 const cv::RotatedRect& _r_rect) {
   int width  = _r_rect.boundingRect().width;
   int height = _r_rect.boundingRect().height;
@@ -27,7 +27,7 @@ cv::Rect ROI::makeRectSafeFixed(const cv::Mat&         _input_img,
   return cv::Rect(tl.x, tl.y, width, height);
 } 
 
-cv::Rect ROI::makeRectSafeTailor(const cv::Mat&         _input_img,
+cv::Rect RoI::makeRectSafeTailor(const cv::Mat&         _input_img,
                                  const cv::RotatedRect& _r_rect) {
   int width  = _r_rect.boundingRect().width;
   int height = _r_rect.boundingRect().height;
@@ -54,7 +54,7 @@ cv::Rect ROI::makeRectSafeTailor(const cv::Mat&         _input_img,
   return cv::Rect(tl.x, tl.y, width, height);
 }
 
-cv::Rect ROI::makeRectSafeTailor(const cv::Mat&  _input_img,
+cv::Rect RoI::makeRectSafeTailor(const cv::Mat&  _input_img,
                                  const cv::Rect& _r_rect) {
   int width  = _r_rect.width;
   int height = _r_rect.height;

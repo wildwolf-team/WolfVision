@@ -9,7 +9,7 @@ on:
       - "README.md"
       - "LICENSE"
       - "_config.yml"
-      
+
   pull_request:
     branches: [ main ]
     paths-ignore:
@@ -38,8 +38,10 @@ jobs:
       - name: Update submodules
         run: git submodule update --init --recursive
 
-      - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: CMake Configure Ninja
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
 
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: Ninja Build
+        run: |
+          cd ${{github.workspace}}/build
+          ninja

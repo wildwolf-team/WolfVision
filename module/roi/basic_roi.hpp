@@ -4,11 +4,11 @@
 
 namespace basic_roi {
 
-class ROI : public abstract_roi::ROI {
+class RoI : public abstract_roi::RoI {
  public:
-  ROI() = default;
+  RoI() = default;
 
-  ~ROI() = default;
+  ~RoI() = default;
 
   cv::Rect makeRectSafeFixed(const cv::Mat&         _input_img,
                              const cv::RotatedRect& _r_rect);

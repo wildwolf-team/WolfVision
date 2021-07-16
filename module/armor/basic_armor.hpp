@@ -100,12 +100,10 @@ struct Image_Config {
 class Detector {
  public:
   explicit Detector(const std::string _armor_config);
-
   ~Detector() = default;
 
-  uart::Write_Data getWriteData(cv::Mat&           _src_img,
-                                uart::Receive_Data _receive_data);
-
+  bool runBasicArmor(cv::Mat&           _src_img,
+                     uart::Receive_Data _receive_data);
   float getDistance(cv::Point a, cv::Point b);
   bool  lightJudge(int i, int j);
   bool  fittingArmor();
@@ -115,6 +113,8 @@ class Detector {
   int   averageColor();
   int   motionDirection();
 
+  inline int             returnLostCnt()                       { return lost_cnt_--; }
+  inline int             returnArmorNum()                      { return armor_.size(); }
   inline bool            returnSuccessArmor()                  { return armor_success; }
   inline Armor_Data      returnFinalArmor(int _num)            { return armor_[_num]; }
   inline int             returnFinalArmorDistinguish(int _num) { return armor_[_num].distinguish; }
@@ -151,19 +151,20 @@ class Detector {
 
   cv::Rect armor_roi;
 
+  basic_pnp::PnP pnp_;
+  uart::SerialPort serial_;
+
   cv::Point lost_armor_center;
   cv::Point armor_center;
 
   std::vector<Armor_Data>      armor_;
   std::vector<cv::RotatedRect> light_;
 
-  basic_pnp::PnP   pnp_;
-  uart::SerialPort serial_;
-
   bool lost_armor_success = false;
   bool armor_success      = false;
   bool switch_armor       = false;
 
+  int lost_cnt_           = 10;
   int lost_distance_armor = 0;
   int amplitude           = 0;
   int optimal_armor       = 0;

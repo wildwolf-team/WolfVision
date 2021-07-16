@@ -29,6 +29,7 @@ enum BufferLength {
 
 // The color of our team
 enum Color {
+  ALL,
   BLUE,
   RED,
 };
@@ -45,6 +46,7 @@ enum RunMode {
 
   SENTRY_MODE,
   BASE_MODE,
+  TOP_MODE,
 };
 
 // Describe the current robot ID information
