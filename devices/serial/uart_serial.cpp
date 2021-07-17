@@ -259,7 +259,7 @@ void SerialPort::updateReceiveInformation() {
       receive_data_.my_color = BLUE;
       break;
     default:
-      receive_data_.my_color = RED;
+      receive_data_.my_color = ALL;
       break;
   }
 
@@ -286,7 +286,7 @@ void SerialPort::updateReceiveInformation() {
       receive_data_.now_run_mode = OCR_SENTRYSELF_MODE;
       break;
     default:
-      receive_data_.now_run_mode = OCR_SENTRYSELF_MODE;
+      receive_data_.now_run_mode = SUP_SHOOT;
       break;
   }
 

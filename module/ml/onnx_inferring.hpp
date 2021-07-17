@@ -21,9 +21,8 @@ using namespace std;
 
 namespace onnx_inferring {
 
-class Number_Param 
-{
-public:
+class Number_Param{
+ public:
   int h_min_num;
   int h_max_num;
 
@@ -38,16 +37,15 @@ public:
 
   int switch_number;
   explicit Number_Param(std::string path_in);
-} ;
-
-class model {
+};
+class model{
  public:
   /**
          @brief: Init model from params
          @param: onnx_model_path, the path of the modle on your machine, downloadable at https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx
          @param: input_size, define the input layer size, default to cv::Size(28, 28)
          */
-  explicit model(std::string onnx_model_path, const cv::Size& input_size = cv::Size(28, 28)) {
+  inline explicit model(std::string onnx_model_path, const cv::Size& input_size = cv::Size(28, 28)) {
     model::load(onnx_model_path);
     model::layers();
 
@@ -55,9 +53,10 @@ class model {
   }
   model() {}
   // model(std::string orc_input_path_,bool key_input);
-  onnx_inferring::Number_Param param_ocr = onnx_inferring::Number_Param(fmt::format("{}{}", CONFIG_FILE_PATH, "/ml/onnx_inferring_config.xml"));
+  onnx_inferring::Number_Param param_ocr = onnx_inferring::Number_Param(
+                                                  fmt::format("{}{}", CONFIG_FILE_PATH, "/ml/onnx_inferring_config.xml"));
   bool parma_case;
-  ~model() {}
+  ~model() {Image_showput.release();}
   /**
          @brief:  Inferring input image from loaded model, return classified int digit
          @param:  input, the image to classify (only 1 digit), const reference from cv::Mat
@@ -69,9 +68,9 @@ class model {
          */
   /*/ inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 5, const cv::Scalar& hsv_lowerb = cv::Scalar(), 
                                                  const cv::Scalar& hsv_upperb = cv::Scalar(), const float probability_threshold = 0) */
-  inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 3, float probability_threshold = 0) {
+  inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 3, float probability_threshold = 0, cv::Mat Image_input = cv::Mat::zeros(cv::Size(255, 0), CV_8UC3)) {
     cv::resize(hsv_input, Image_output, input_size);
-
+    this->Image_showput = Image_input.clone();
     cv::namedWindow("数字number");
     cv::createTrackbar("h_min_num", "数字number", &param_ocr.h_min_num, 255, NULL);
     cv::createTrackbar("s_min_num", "数字number", &param_ocr.s_min_num, 255, NULL);
@@ -113,6 +112,10 @@ class model {
       }
     });
 
+    if (!Image_showput.empty()) {
+        cv::putText(Image_showput , to_string(max_probability_idx) , cv::Point(100 , 100) , cv::FONT_HERSHEY_DUPLEX ,  2, cv::Scalar(255 , 255 , 255) , 2 , cv::LINE_AA);
+        cv::imshow("number_img" , Image_showput);
+    }
     return max_probability_idx;
   }
 
@@ -161,6 +164,7 @@ class model {
 
   cv::Size input_size;
   cv::Mat  Image_output;
+  cv::Mat  Image_showput;
 };
 
 }  // namespace onnx_inferring

@@ -69,7 +69,7 @@ struct Serial_Config {
 // Serial port information receiving structure
 struct Receive_Data {
   int   my_color;
-  int   now_run_mode = 7;
+  int   now_run_mode;
   int   my_robot_id;
   int   bullet_velocity;
   float acceleration;
@@ -88,7 +88,7 @@ struct Receive_Data {
 
   Receive_Data() {
     my_color                             = BLUE;
-    now_run_mode                         = OCR_SENTRYSELF_MODE;
+    now_run_mode                         = SUP_SHOOT;
     my_robot_id                          = INFANTRY;
     acceleration                         = 0.f;
     bullet_velocity                      = 30;
