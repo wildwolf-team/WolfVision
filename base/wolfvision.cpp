@@ -55,7 +55,7 @@ int main() {
       case uart::ENERGY_AGENCY:
         serial_.writeData(basic_buff_.runTask(src_img_, serial_.returnReceive()));
         break;
-      case uart::SENTRY_MODE:
+      case uart::ATTACK_SENTRY_MODE:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
           pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
                         basic_armor_.returnFinalArmorDistinguish(0),
@@ -73,11 +73,9 @@ int main() {
                                   0);
         }
         break;
-      case uart::BASE_MODE:
-        break;
+
       case uart::TOP_MODE:
         roi_img_ = roi_.returnROIResultMat(src_img_);
-        cv::imshow("roi", roi_img_);
         if (basic_armor_.runBasicArmor(roi_img_, serial_.returnReceive())) {
           basic_armor_.fixFinalArmorCenter(0, roi_.returnRectTl());
           roi_.setLastRoiRect(basic_armor_.returnFinalArmorRotatedRect(0),
@@ -99,7 +97,31 @@ int main() {
         }
         roi_.setLastRoiSuccess(basic_armor_.returnArmorNum());
         break;
+
+      case uart::RADAR_MODE:
+        break;
+      case uart::UAV_MODE:
+        if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
+          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
+                        basic_armor_.returnFinalArmorDistinguish(0),
+                        basic_armor_.returnFinalArmorRotatedRect(0));
+        }
+
+        serial_.updataWriteData(pnp_.returnYawAngle(), pnp_.returnPitchAngle(),
+                                pnp_.returnDepth(),
+                                basic_armor_.returnArmorNum(), 0);
+        break;
+      case uart::SENTRY_MODE:
+        break;
       default:
+        if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
+          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
+                        basic_armor_.returnFinalArmorDistinguish(0),
+                        basic_armor_.returnFinalArmorRotatedRect(0));
+        }
+        serial_.updataWriteData(pnp_.returnYawAngle(), pnp_.returnPitchAngle(),
+                                pnp_.returnDepth(),
+                                basic_armor_.returnArmorNum(), 0);
         break;
       }
     }
