@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<opencv_storage>
+
+<!--
+/**
+ * @brief: 数字识别参数
+ */
+-->
+<H_MIN_NUM>3</H_MIN_NUM>
+<H_MAX_NUM>255</H_MAX_NUM>
+<S_MIN_NUM>6</S_MIN_NUM>
+<S_MAX_NUM>255</S_MAX_NUM>
+<V_MIN_NUM>2</V_MIN_NUM>
+<V_MAX_NUM>255</V_MAX_NUM>
+
+<CONFIDENT>666</CONFIDENT>
+<KERNEL_SIZE>2</KERNEL_SIZE>
+
+<!--
+    识别显示开关
+-->
+<NUMBER_SWITCH>1</NUMBER_SWITCH>
+
+</opencv_storage>

@@ -47,6 +47,8 @@ enum RunMode {
   SENTRY_MODE,
   BASE_MODE,
   TOP_MODE,
+  PLANE_MODE,
+  OCR_SENTRYSELF_MODE,
 };
 
 // Describe the current robot ID information
@@ -85,7 +87,7 @@ struct Receive_Data {
   } Receive_Pitch_Angle_Info;
 
   Receive_Data() {
-    my_color                             = RED;
+    my_color                             = BLUE;
     now_run_mode                         = SUP_SHOOT;
     my_robot_id                          = INFANTRY;
     acceleration                         = 0.f;

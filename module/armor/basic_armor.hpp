@@ -130,6 +130,7 @@ class Detector {
 
   cv::Mat fuseImage(cv::Mat _bin_gray_img, cv::Mat _bin_color_img);
 
+
  private:
   Armor_Config armor_config_;
   Image_Config image_config_;

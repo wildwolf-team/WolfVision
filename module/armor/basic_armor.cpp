@@ -160,7 +160,7 @@ bool Detector::findLight() {
 bool Detector::runBasicArmor(cv::Mat&           _src_img,
                              uart::Receive_Data _receive_data) {
   runImage(_src_img, _receive_data.my_color);
-  draw_img_ = _src_img;
+  draw_img_ = _src_img.clone();
 
   if (findLight()) {
     if (fittingArmor()) {
@@ -321,7 +321,7 @@ bool Detector::lightJudge(int i, int j) {
             armor_config_.armor_angle_different * 0.1) {
             cv::RotatedRect rects = cv::RotatedRect(
               (armor_data_.left_light.center + armor_data_.right_light.center) / 2,
-              cv::Size(armor_data_.width, armor_data_.height),
+              cv::Size(armor_data_.width , armor_data_.height),
               armor_data_.tan_angle);
 
           armor_data_.armor_rect      = rects;
@@ -357,14 +357,12 @@ int Detector::averageColor() {
   armor_data_.right_light_width  =
       MIN(armor_data_.right_light_height, armor_data_.right_light_width);
 
-  cv::RotatedRect rects = cv::RotatedRect(
-      (armor_data_.left_light.center + armor_data_.right_light.center) / 2,
-      cv::Size(
-        armor_data_.width - (armor_data_.left_light_width + armor_data_.right_light_width),
-        (armor_data_.left_light_height + armor_data_.right_light_height) / 2),
-      armor_data_.tan_angle);
-
-  cv::rectangle(draw_img_, rects.boundingRect(), cv::Scalar(0, 0, 255), 3, 8);
+  cv::RotatedRect rects =
+    cv::RotatedRect((armor_data_.left_light.center + armor_data_.right_light.center) / 2,
+                    cv::Size(armor_data_.width - (armor_data_.left_light_width + armor_data_.right_light_width),
+                    ((armor_data_.left_light_height + armor_data_.right_light_height) / 2)),
+                    armor_data_.tan_angle);
+  cv::rectangle(draw_img_ , rects.boundingRect(), cv::Scalar(255, 0, 0), 3, 8);
 
   armor_data_.armor_rect = rects;
   cv::Rect _rect         = rects.boundingRect();
@@ -526,18 +524,19 @@ cv::Mat Detector::hsvPretreat(cv::Mat&  _src_img,
       break;
     default:
       if (image_config_.color_edit) {
-        cv::namedWindow(window_name);
-        cv::createTrackbar("red_h_min:", window_name,
+
+        cv::namedWindow("hsv_trackbar");
+        cv::createTrackbar("red_h_min:", "hsv_trackbar",
                            &image_config_.h_red_min, 255, NULL);
-        cv::createTrackbar("red_h_max:", window_name,
+        cv::createTrackbar("red_h_max:", "hsv_trackbar",
                            &image_config_.h_red_max, 255, NULL);
-        cv::createTrackbar("red_s_min:", window_name,
+        cv::createTrackbar("red_s_min:", "hsv_trackbar",
                            &image_config_.s_red_min, 255, NULL);
-        cv::createTrackbar("red_s_max:", window_name,
+        cv::createTrackbar("red_s_max:", "hsv_trackbar",
                            &image_config_.s_red_max, 255, NULL);
-        cv::createTrackbar("red_v_min:", window_name,
+        cv::createTrackbar("red_v_min:", "hsv_trackbar",
                            &image_config_.v_red_min, 255, NULL);
-        cv::createTrackbar("red_v_max:", window_name,
+        cv::createTrackbar("red_v_max:", "hsv_trackbar",
                            &image_config_.v_red_max, 255, NULL);
         cv::imshow(window_name, hsv_trackbar_);
       }
