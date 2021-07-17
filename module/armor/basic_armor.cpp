@@ -160,7 +160,7 @@ bool Detector::findLight() {
 bool Detector::runBasicArmor(cv::Mat&           _src_img,
                              uart::Receive_Data _receive_data) {
   runImage(_src_img, _receive_data.my_color);
-  draw_img_ = _src_img;
+  draw_img_ = _src_img.clone();
 
   if (findLight()) {
     if (fittingArmor()) {
@@ -171,7 +171,6 @@ bool Detector::runBasicArmor(cv::Mat&           _src_img,
           armor_config_.armor_edit == 1 ||
           light_config_.light_edit == 1) {
         cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
-
         draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
       }
 
