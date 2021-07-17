@@ -113,13 +113,13 @@ class Detector {
   int   averageColor();
   int   motionDirection();
 
-  inline int             returnLostCnt()                       { return lost_cnt_--; }
-  inline int             returnArmorNum()                      { return armor_.size(); }
-  inline bool            returnSuccessArmor()                  { return armor_success; }
-  inline Armor_Data      returnFinalArmor(int _num)            { return armor_[_num]; }
-  inline int             returnFinalArmorDistinguish(int _num) { return armor_[_num].distinguish; }
-  inline cv::RotatedRect returnFinalArmorRotatedRect(int _num) { return armor_[_num].armor_rect; }
-
+  inline int             returnLostCnt()                                  { return lost_cnt_--; }
+  inline int             returnArmorNum()                                 { return armor_.size(); }
+  inline bool            returnSuccessArmor()                             { return armor_success; }
+  inline Armor_Data      returnFinalArmor(int _num)                       { return armor_[_num]; }
+  inline int             returnFinalArmorDistinguish(int _num)            { return armor_[_num].distinguish; }
+  inline cv::RotatedRect returnFinalArmorRotatedRect(int _num)            { return armor_[_num].armor_rect; }
+  inline void            fixFinalArmorCenter(int _num, cv::Point2f _tl)   { armor_[_num].armor_rect.center += _tl; }
   void setImageConfig(Image_Config _image_config);
 
   void runImage(cv::Mat &_src_img, const int _my_color);
