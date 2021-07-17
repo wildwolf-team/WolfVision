@@ -1,5 +1,5 @@
 # Create project
-cmake_minimum_required(VERSION 3.16.0)
+cmake_minimum_required(VERSION 3.10.0)
 project(WolfVision VERSION 2021.7.9 LANGUAGES CXX)
 
 # Check system platform
