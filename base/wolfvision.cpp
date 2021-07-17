@@ -80,7 +80,8 @@ int main() {
         cv::imshow("roi", roi_img_);
         if (basic_armor_.runBasicArmor(roi_img_, serial_.returnReceive())) {
           basic_armor_.fixFinalArmorCenter(0, roi_.returnRectTl());
-          roi_.setLastRoiRect(basic_armor_.returnFinalArmorRotatedRect(0));
+          roi_.setLastRoiRect(basic_armor_.returnFinalArmorRotatedRect(0),
+                              basic_armor_.returnFinalArmorDistinguish(0));
           pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
                         basic_armor_.returnFinalArmorDistinguish(0),
                         basic_armor_.returnFinalArmorRotatedRect(0));
