@@ -2,9 +2,7 @@
 
 namespace fan_armor {
 
-void Detector::inputParams(const std::vector<cv::Point>& _contours) {
-  abstract_object::Object::inputParams(_contours);
-}
+void Detector::inputParams(const std::vector<cv::Point>& _contours) { abstract_object::Object::inputParams(_contours); }
 
 void Detector::displayFanArmor(cv::Mat& _img) {
   cv::Scalar color         = cv::Scalar(0, 255, 0);

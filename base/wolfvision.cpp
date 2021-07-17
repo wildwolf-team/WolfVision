@@ -4,7 +4,7 @@ int main() {
   fmt::print("[{}] WolfVision built on g++ version: {}\n", idntifier, __VERSION__);
   fmt::print("[{}] WolfVision config file path: {}\n", idntifier, CONFIG_FILE_PATH);
 
-  cv::Mat src_img_;
+  cv::Mat src_img_, roi_img_;
 
   mindvision::VideoCapture mv_capture_ = mindvision::VideoCapture(
                                       mindvision::CameraParam(1, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
@@ -30,6 +30,7 @@ int main() {
   basic_roi::RoI save_roi;
   fps::FPS       global_fps_;
 
+  basic_roi::RoI roi_;
   while (true) {
     global_fps_.getTick();
 
@@ -68,7 +69,12 @@ int main() {
       case uart::BASE_MODE:
         break;
       case uart::TOP_MODE:
-        if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
+        roi_img_ = roi_.returnROIResultMat(src_img_);
+        cv::imshow("roi", roi_img_);
+        if (basic_armor_.runBasicArmor(roi_img_, serial_.returnReceive())) {
+          basic_armor_.fixFinalArmorCenter(0, roi_.returnRectTl());
+          roi_.setLastRoiRect(basic_armor_.returnFinalArmorRotatedRect(0),
+                              basic_armor_.returnFinalArmorDistinguish(0));
           pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
                           basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
           serial_.updataWriteData(pnp_.returnYawAngle(),
@@ -113,17 +119,18 @@ int main() {
             }
           }
         }
+        roi_.setLastRoiSuccess(basic_armor_.returnArmorNum());
         break;
       default:
         break;
       }
-      mv_capture_.cameraReleasebuff();
-      basic_armor_.freeMemory();
-      if (cv::waitKey(1) == 'q') {
-        break;
-      }
-      global_fps_.calculateFPSGlobal();
     }
+    mv_capture_.cameraReleasebuff();
+    basic_armor_.freeMemory();
+    if (cv::waitKey(1) == 'q') {
+      return 0;
+    }
+    global_fps_.calculateFPSGlobal();
   }
 
   return 0;

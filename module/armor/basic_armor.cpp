@@ -135,7 +135,6 @@ bool Detector::findLight() {
         light_w_h < light_config_.ratio_w_h_max &&
         light_w_h > light_config_.ratio_w_h_min) {
       light_.emplace_back(box);
-
       if (light_config_.light_draw == 1 || light_config_.light_edit == 1) {
         cv::Point2f vertex[4];
         box.points(vertex);
@@ -414,11 +413,10 @@ cv::Mat Detector::grayPretreat(cv::Mat&  _src_img,
   cv::cvtColor(_src_img, gray_img_, cv::COLOR_BGR2GRAY);
 
   std::string window_name = {"[basic_armor] grayPretreat() -> gray_trackbar"};
-  cv::namedWindow(window_name);
-
   switch (_my_color) {
     case 0:
       if (image_config_.gray_edit) {
+        cv::namedWindow(window_name);
         cv::createTrackbar("gray_th", window_name,
                            &image_config_.blue_armor_gray_th, 255, NULL);
         cv::imshow(window_name, gray_trackbar_);
@@ -429,6 +427,7 @@ cv::Mat Detector::grayPretreat(cv::Mat&  _src_img,
       break;
     default:
       if (image_config_.gray_edit) {
+        cv::namedWindow(window_name);
         cv::createTrackbar("gray_th", window_name,
                            &image_config_.red_armor_gray_th, 255, NULL);
         cv::imshow(window_name, gray_trackbar_);
@@ -454,13 +453,12 @@ cv::Mat Detector::bgrPretreat(cv::Mat&  _src_img,
   cv::split(_src_img, _split);
 
   std::string window_name = {"[basic_armor] brgPretreat() -> color_trackbar"};
-  cv::namedWindow(window_name);
-
   switch (_my_color) {
     case 0:
       cv::subtract(_split[0], _split[2], bin_color_img);
 
       if (image_config_.color_edit) {
+        cv::namedWindow(window_name);
         cv::createTrackbar("blue_color_th", window_name,
                            &image_config_.blue_armor_color_th, 255, NULL);
         cv::imshow(window_name, this->bgr_trackbar_);
@@ -473,6 +471,7 @@ cv::Mat Detector::bgrPretreat(cv::Mat&  _src_img,
       cv::subtract(_split[2], _split[0], bin_color_img);
 
       if (image_config_.color_edit) {
+        cv::namedWindow(window_name);
         cv::createTrackbar("red_color_th", window_name,
                            &image_config_.red_armor_color_th, 255, NULL);
         cv::imshow(window_name, this->bgr_trackbar_);
@@ -495,11 +494,10 @@ cv::Mat Detector::hsvPretreat(cv::Mat&  _src_img,
   cv::cvtColor(_src_img, hsv_img, cv::COLOR_BGR2HSV_FULL);
 
   std::string window_name = {"[basic_armor] hsvPretreat() -> hsv_trackbar"};
-  cv::namedWindow(window_name);
-
   switch (_my_color) {
     case 0:
       if (image_config_.color_edit) {
+        cv::namedWindow(window_name);
         cv::createTrackbar("blue_h_min:", window_name,
                            &image_config_.h_blue_min, 255, NULL);
         cv::createTrackbar("blue_h_max:", window_name,
@@ -526,6 +524,7 @@ cv::Mat Detector::hsvPretreat(cv::Mat&  _src_img,
       break;
     default:
       if (image_config_.color_edit) {
+
         cv::namedWindow("hsv_trackbar");
         cv::createTrackbar("red_h_min:", "hsv_trackbar",
                            &image_config_.h_red_min, 255, NULL);

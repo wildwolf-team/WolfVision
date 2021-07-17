@@ -20,8 +20,13 @@ namespace basic_buff {
 
 auto idntifier_green  = fmt::format(fg(fmt::color::green)  | fmt::emphasis::bold, "basic_buff");
 auto idntifier_red    = fmt::format(fg(fmt::color::red)    | fmt::emphasis::bold, "basic_buff");
-
 auto idntifier_yellow = fmt::format(fg(fmt::color::yellow) | fmt::emphasis::bold, "basic_buff");
+auto process_yellow = fmt::format(fg(fmt::color::yellow) | fmt::emphasis::bold, "processing");
+auto target_yellow = fmt::format(fg(fmt::color::yellow) | fmt::emphasis::bold, "find_target");
+auto center_yellow = fmt::format(fg(fmt::color::yellow) | fmt::emphasis::bold, "center_r");
+auto judgement_yellow = fmt::format(fg(fmt::color::yellow) | fmt::emphasis::bold, "judgement");
+auto predict_yellow = fmt::format(fg(fmt::color::yellow) | fmt::emphasis::bold, "predict");
+auto final_target_yellow = fmt::format(fg(fmt::color::yellow) | fmt::emphasis::bold, "final_target");
 
 struct Buff_Param {
   // BGR
