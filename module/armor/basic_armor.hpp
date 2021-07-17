@@ -12,7 +12,6 @@
 #include <opencv2/imgproc.hpp>
 
 #include "devices/serial/uart_serial.hpp"
-#include "module/angle_solve/basic_pnp.hpp"
 
 namespace basic_armor {
 
@@ -150,9 +149,6 @@ class Detector {
   cv::Mat ele_            = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
 
   cv::Rect armor_roi;
-
-  basic_pnp::PnP pnp_;
-  uart::SerialPort serial_;
 
   cv::Point lost_armor_center;
   cv::Point armor_center;
