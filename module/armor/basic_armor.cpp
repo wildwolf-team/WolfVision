@@ -414,10 +414,10 @@ cv::Mat Detector::grayPretreat(cv::Mat&  _src_img,
 
   std::string window_name = {"[basic_armor] grayPretreat() -> gray_trackbar"};
   switch (_my_color) {
-    case 0:
+    case uart::RED:
       if (image_config_.gray_edit) {
         cv::namedWindow(window_name);
-        cv::createTrackbar("gray_th", window_name,
+        cv::createTrackbar("blue_gray_th", window_name,
                            &image_config_.blue_armor_gray_th, 255, NULL);
         cv::imshow(window_name, gray_trackbar_);
       }
@@ -425,16 +425,32 @@ cv::Mat Detector::grayPretreat(cv::Mat&  _src_img,
       cv::threshold(gray_img_, bin_gray_img, image_config_.blue_armor_gray_th,
                     255, cv::THRESH_BINARY);
       break;
-    default:
+    case uart::BLUE:
       if (image_config_.gray_edit) {
         cv::namedWindow(window_name);
-        cv::createTrackbar("gray_th", window_name,
+        cv::createTrackbar("red_gray_th", window_name,
                            &image_config_.red_armor_gray_th, 255, NULL);
         cv::imshow(window_name, gray_trackbar_);
       }
 
       cv::threshold(gray_img_, bin_gray_img, image_config_.red_armor_gray_th,
                     255, cv::THRESH_BINARY);
+      break;
+    default:
+      if (image_config_.gray_edit) {
+        cv::namedWindow(window_name);
+        cv::createTrackbar("red_gray_th", window_name,
+                           &image_config_.red_armor_gray_th, 255, NULL);
+        cv::createTrackbar("blue_gray_th", window_name,
+                           &image_config_.blue_armor_gray_th, 255, NULL);
+        cv::imshow(window_name, gray_trackbar_);
+      }
+
+      cv::threshold(gray_img_, bin_red_gray_img,
+                    image_config_.red_armor_gray_th, 255, cv::THRESH_BINARY);
+      cv::threshold(gray_img_, bin_blue_gray_img,
+                    image_config_.blue_armor_gray_th, 255, cv::THRESH_BINARY);
+      cv::bitwise_or(bin_red_gray_img, bin_blue_gray_img, bin_gray_img);
       break;
   }
 
@@ -454,7 +470,7 @@ cv::Mat Detector::bgrPretreat(cv::Mat&  _src_img,
 
   std::string window_name = {"[basic_armor] brgPretreat() -> color_trackbar"};
   switch (_my_color) {
-    case 0:
+    case uart::RED:
       cv::subtract(_split[0], _split[2], bin_color_img);
 
       if (image_config_.color_edit) {
@@ -467,7 +483,7 @@ cv::Mat Detector::bgrPretreat(cv::Mat&  _src_img,
       cv::threshold(bin_color_img, bin_color_img,
                     image_config_.blue_armor_color_th, 255, cv::THRESH_BINARY);
       break;
-    default:
+    case uart::BLUE:
       cv::subtract(_split[2], _split[0], bin_color_img);
 
       if (image_config_.color_edit) {
@@ -479,6 +495,24 @@ cv::Mat Detector::bgrPretreat(cv::Mat&  _src_img,
 
       cv::threshold(bin_color_img, bin_color_img,
                     image_config_.red_armor_color_th, 255, cv::THRESH_BINARY);
+      break;
+    default:
+      cv::subtract(_split[2], _split[0], bin_red_color_img);
+      cv::subtract(_split[0], _split[2], bin_blue_color_img);
+
+      if (image_config_.color_edit) {
+        cv::namedWindow(window_name);
+        cv::createTrackbar("red_color_th", window_name,
+                           &image_config_.red_armor_color_th, 255, NULL);
+        cv::createTrackbar("blue_color_th", window_name,
+                           &image_config_.blue_armor_color_th, 255, NULL);
+        cv::imshow(window_name, this->bgr_trackbar_);
+      }
+      cv::threshold(bin_blue_color_img, bin_blue_color_img,
+                    image_config_.blue_armor_color_th, 255, cv::THRESH_BINARY);
+      cv::threshold(bin_red_color_img, bin_red_color_img,
+                    image_config_.red_armor_color_th, 255, cv::THRESH_BINARY);
+      cv::bitwise_or(bin_blue_color_img, bin_red_color_img, bin_color_img);
       break;
   }
 
@@ -492,10 +526,9 @@ cv::Mat Detector::bgrPretreat(cv::Mat&  _src_img,
 cv::Mat Detector::hsvPretreat(cv::Mat&  _src_img,
                               const int _my_color) {
   cv::cvtColor(_src_img, hsv_img, cv::COLOR_BGR2HSV_FULL);
-
   std::string window_name = {"[basic_armor] hsvPretreat() -> hsv_trackbar"};
   switch (_my_color) {
-    case 0:
+    case uart::RED:
       if (image_config_.color_edit) {
         cv::namedWindow(window_name);
         cv::createTrackbar("blue_h_min:", window_name,
@@ -522,22 +555,22 @@ cv::Mat Detector::hsvPretreat(cv::Mat&  _src_img,
                              image_config_.v_blue_max),
                   bin_color_img);
       break;
-    default:
+    case uart::BLUE:
       if (image_config_.color_edit) {
-
         cv::namedWindow("hsv_trackbar");
-        cv::createTrackbar("red_h_min:", "hsv_trackbar",
+        cv::createTrackbar("red_h_min:", window_name,
                            &image_config_.h_red_min, 255, NULL);
-        cv::createTrackbar("red_h_max:", "hsv_trackbar",
+        cv::createTrackbar("red_h_max:", window_name,
                            &image_config_.h_red_max, 255, NULL);
-        cv::createTrackbar("red_s_min:", "hsv_trackbar",
+        cv::createTrackbar("red_s_min:", window_name,
                            &image_config_.s_red_min, 255, NULL);
-        cv::createTrackbar("red_s_max:", "hsv_trackbar",
+        cv::createTrackbar("red_s_max:", window_name,
                            &image_config_.s_red_max, 255, NULL);
-        cv::createTrackbar("red_v_min:", "hsv_trackbar",
+        cv::createTrackbar("red_v_min:", window_name,
                            &image_config_.v_red_min, 255, NULL);
-        cv::createTrackbar("red_v_max:", "hsv_trackbar",
-                           &image_config_.v_red_max, 255, NULL);
+        cv::createTrackbar("red_v_max:", window_name,
+                           &image_config_.v_red_max,
+                           255, NULL);
         cv::imshow(window_name, hsv_trackbar_);
       }
 
@@ -549,6 +582,57 @@ cv::Mat Detector::hsvPretreat(cv::Mat&  _src_img,
                              image_config_.s_red_max,
                              image_config_.v_red_max),
                   bin_color_img);
+      break;
+    default:
+      if (image_config_.color_edit) {
+        cv::namedWindow("hsv_trackbar");
+        cv::createTrackbar("red_h_min:", window_name,
+                           &image_config_.h_red_min, 255, NULL);
+        cv::createTrackbar("red_h_max:", window_name,
+                           &image_config_.h_red_max, 255, NULL);
+        cv::createTrackbar("red_s_min:", window_name,
+                           &image_config_.s_red_min, 255, NULL);
+        cv::createTrackbar("red_s_max:", window_name,
+                           &image_config_.s_red_max, 255, NULL);
+        cv::createTrackbar("red_v_min:", window_name,
+                           &image_config_.v_red_min, 255, NULL);
+        cv::createTrackbar("red_v_max:", window_name,
+                           &image_config_.v_red_max, 255, NULL);
+
+        cv::createTrackbar("blue_h_min:", window_name,
+                           &image_config_.h_blue_min, 255, NULL);
+        cv::createTrackbar("blue_h_max:", window_name,
+                           &image_config_.h_blue_max, 255, NULL);
+        cv::createTrackbar("blue_s_min:", window_name,
+                           &image_config_.s_blue_min, 255, NULL);
+        cv::createTrackbar("blue_s_max:", window_name,
+                           &image_config_.s_blue_max, 255, NULL);
+        cv::createTrackbar("blue_v_min:", window_name,
+                           &image_config_.v_blue_min, 255, NULL);
+        cv::createTrackbar("blue_v_max:", window_name, &image_config_.v_red_max,
+                           255, NULL);
+
+        cv::imshow(window_name, hsv_trackbar_);
+      }
+
+      cv::inRange(hsv_img,
+                  cv::Scalar(image_config_.h_red_min,
+                             image_config_.s_red_min,
+                             image_config_.v_red_min),
+                  cv::Scalar(image_config_.h_red_max,
+                             image_config_.s_red_max,
+                             image_config_.v_red_max),
+                  bin_red_color_img);
+
+      cv::inRange(hsv_img,
+                  cv::Scalar(image_config_.h_blue_min,
+                             image_config_.s_blue_min,
+                             image_config_.v_blue_min),
+                  cv::Scalar(image_config_.h_blue_max,
+                             image_config_.s_blue_max,
+                             image_config_.v_blue_max),
+                  bin_blue_color_img);
+      cv::bitwise_or(bin_blue_color_img, bin_red_color_img, bin_color_img);
 
       break;
   }
