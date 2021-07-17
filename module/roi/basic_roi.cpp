@@ -7,8 +7,8 @@ cv::Rect RoI::makeRectSafeFixed(const cv::Mat&         _input_img,
   int width  = _r_rect.boundingRect().width;
   int height = _r_rect.boundingRect().height;
 
-  cv::Point tl =
-      cv::Point(_r_rect.center.x - width * 0.5f, _r_rect.center.y * 0.5f);
+  cv::Point tl = cv::Point(_r_rect.center.x - width * 0.5f,
+                           _r_rect.center.y - (height * 0.5f));
 
   if (tl.x < 0) {
     tl.x = 0;
@@ -32,8 +32,8 @@ cv::Rect RoI::makeRectSafeTailor(const cv::Mat&         _input_img,
   int width  = _r_rect.boundingRect().width;
   int height = _r_rect.boundingRect().height;
 
-  cv::Point tl =
-      cv::Point(_r_rect.center.x - width * 0.5f, _r_rect.center.y * 0.5f);
+  cv::Point tl = cv::Point(_r_rect.center.x - width * 0.5f,
+                           _r_rect.center.y - (height * 0.5f));
 
   if (tl.x < 0) {
     width -= 0 - tl.x;
@@ -85,8 +85,8 @@ cv::Rect RoI::makeRectSafeThird(const cv::Mat&         _input_img,
   int width = _r_rect.boundingRect().width;
   int height = _r_rect.boundingRect().height;
 
-  cv::Point tl =
-        cv::Point(_r_rect.center.x - (width * 0.5f), _r_rect.center.y - (height * 0.5f));
+  cv::Point tl = cv::Point(_r_rect.center.x - (width * 0.5f),
+                           _r_rect.center.y - (height * 0.5f));
 
   if (tl.x < 0) {
     tl.x = 0;
