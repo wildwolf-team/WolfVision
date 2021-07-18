@@ -101,10 +101,10 @@ class Detector {
   explicit Detector(const std::string _armor_config);
   ~Detector() = default;
 
-  bool runBasicArmor(cv::Mat&           _src_img,
-                     uart::Receive_Data _receive_data);
-  float getDistance(cv::Point a, cv::Point b);
-  bool  lightJudge(int i, int j);
+  bool runBasicArmor(const cv::Mat&           _src_img,
+                     const uart::Receive_Data _receive_data);
+  float getDistance(const cv::Point a, const cv::Point b);
+  bool  lightJudge(const int i, const int j);
   bool  fittingArmor();
   bool  findLight();
   void  finalArmor();
@@ -115,19 +115,20 @@ class Detector {
   inline int             returnLostCnt()                                  { return lost_cnt_--; }
   inline int             returnArmorNum()                                 { return armor_.size(); }
   inline bool            returnSuccessArmor()                             { return armor_success; }
-  inline Armor_Data      returnFinalArmor(int _num)                       { return armor_[_num]; }
-  inline int             returnFinalArmorDistinguish(int _num)            { return armor_[_num].distinguish; }
-  inline cv::RotatedRect returnFinalArmorRotatedRect(int _num)            { return armor_[_num].armor_rect; }
-  inline void            fixFinalArmorCenter(int _num, cv::Point2f _tl)   { armor_[_num].armor_rect.center += _tl; }
-  void setImageConfig(Image_Config _image_config);
+  inline Armor_Data      returnFinalArmor(const int _num)                 { return armor_[_num]; }
+  inline int             returnFinalArmorDistinguish(const int _num)      { return armor_[_num].distinguish; }
+  inline cv::RotatedRect returnFinalArmorRotatedRect(const int _num)      { return armor_[_num].armor_rect; }
+  inline void fixFinalArmorCenter(const int _num, const cv::Point2f _tl) {
+    armor_[_num].armor_rect.center += _tl;
+  }
 
-  void runImage(cv::Mat &_src_img, const int _my_color);
+  void runImage(const cv::Mat &_src_img, const int _my_color);
 
-  cv::Mat bgrPretreat(cv::Mat &_src_img, const int _my_color);
-  cv::Mat hsvPretreat(cv::Mat &_src_img, const int _my_color);
-  cv::Mat grayPretreat(cv::Mat &_src_img, const int _my_color);
+  cv::Mat bgrPretreat(const cv::Mat &_src_img, const int _my_color);
+  cv::Mat hsvPretreat(const cv::Mat &_src_img, const int _my_color);
+  cv::Mat grayPretreat(const cv::Mat &_src_img, const int _my_color);
 
-  cv::Mat fuseImage(cv::Mat _bin_gray_img, cv::Mat _bin_color_img);
+  cv::Mat fuseImage(const cv::Mat _bin_gray_img, const cv::Mat _bin_color_img);
 
 
  private:
@@ -146,12 +147,12 @@ class Detector {
   cv::Mat bin_color_img;
   cv::Mat bin_red_color_img;
   cv::Mat bin_blue_color_img;
-  cv::Mat light_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
-  cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
-  cv::Mat gray_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);
-  cv::Mat bgr_trackbar_   = cv::Mat::zeros(1, 300, CV_8UC1);
-  cv::Mat hsv_trackbar_   = cv::Mat::zeros(1, 300, CV_8UC1);
-  cv::Mat ele_            = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
+  const cv::Mat light_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat gray_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat bgr_trackbar_   = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat hsv_trackbar_   = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat ele_ = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
 
   cv::Rect armor_roi;
 
