@@ -242,7 +242,7 @@ void SerialPort::updateReceiveInformation() {
   receiveData();
 
   if (isEmpty()) {
-    receive_data_ = last_receive_data_;
+    return;
   } else {
     last_receive_data_ = receive_data_;
   }
