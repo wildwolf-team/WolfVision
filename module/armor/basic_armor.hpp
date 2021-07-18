@@ -12,7 +12,6 @@
 #include <opencv2/imgproc.hpp>
 
 #include "devices/serial/uart_serial.hpp"
-#include "module/angle_solve/basic_pnp.hpp"
 
 namespace basic_armor {
 
@@ -142,7 +141,11 @@ class Detector {
   cv::Mat gray_img_;
   cv::Mat hsv_img;
   cv::Mat bin_gray_img;
+  cv::Mat bin_red_gray_img;
+  cv::Mat bin_blue_gray_img;
   cv::Mat bin_color_img;
+  cv::Mat bin_red_color_img;
+  cv::Mat bin_blue_color_img;
   cv::Mat light_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
   cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
   cv::Mat gray_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);
@@ -151,9 +154,6 @@ class Detector {
   cv::Mat ele_            = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
 
   cv::Rect armor_roi;
-
-  basic_pnp::PnP pnp_;
-  uart::SerialPort serial_;
 
   cv::Point lost_armor_center;
   cv::Point armor_center;

@@ -7,12 +7,12 @@ int main() {
   cv::Mat src_img_, roi_img_;
 
   mindvision::VideoCapture mv_capture_ = mindvision::VideoCapture(
-                                      mindvision::CameraParam(1, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
+    mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
 
   uart::SerialPort serial_ =
     uart::SerialPort(fmt::format("{}{}", CONFIG_FILE_PATH, "/serial/uart_serial_config.xml"));
 
-  cv::VideoCapture cap_ = cv::VideoCapture("/home/sms/VIDEO/camera_MaxBuff13.avi");
+  cv::VideoCapture cap_ = cv::VideoCapture(0);
 
   basic_armor::Detector basic_armor_ = basic_armor::Detector(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/armor/basic_armor_config.xml"));
