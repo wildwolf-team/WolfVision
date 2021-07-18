@@ -65,6 +65,7 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
     return -1;
   }
 
+  // 相机初始化
   iStatus = CameraInit(&tCameraEnumList, -1, -1, &hCamera);
 
   if (iStatus != CAMERA_STATUS_SUCCESS) {
@@ -82,6 +83,7 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
       malloc(tCapability.sResolutionRange.iHeightMax *
              tCapability.sResolutionRange.iWidthMax  * 3));
 
+  // 设置相机分辨率
   CameraGetImageResolution(hCamera, &pImageResolution);
 
   pImageResolution.iIndex      = 0xFF;
@@ -94,10 +96,11 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
 
   CameraSetImageResolution(hCamera, &pImageResolution);
 
-  fmt::print("[{}] Info, camera status: {}, {}\n", idntifier_green, CameraGetAeState(hCamera, &AEstate), CameraGetAeState(hCamera, FALSE));
+  // 设置曝光时间
   CameraGetAeState(hCamera, &AEstate);
   CameraSetAeState(hCamera, FALSE);
   CameraSetExposureTime(hCamera, _CAMERA_EXPOSURETIME);
+  // 让SDK进入工作模式
   CameraPlay(hCamera);
   CameraReleaseImageBuffer(hCamera, pbyBuffer);
 
