@@ -100,6 +100,11 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
   CameraGetAeState(hCamera, &AEstate);
   CameraSetAeState(hCamera, FALSE);
   CameraSetExposureTime(hCamera, _CAMERA_EXPOSURETIME);
+  // 伽马值、饱和度、对比度、颜色增益
+  CameraSetGain(hCamera, 100, 100, 100);
+  CameraSetGamma(hCamera, 100);
+  CameraSetContrast(hCamera, 100);
+  CameraSetSaturation(hCamera, 100);
   // 让SDK进入工作模式
   CameraPlay(hCamera);
   CameraReleaseImageBuffer(hCamera, pbyBuffer);
