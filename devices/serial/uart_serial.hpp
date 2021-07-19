@@ -165,7 +165,7 @@ class SerialPort {
                  const int16_t& depth,  const int&     data_type = 0,
                  const int&     s_shooting = 0);
   void writeData();
-  void writeData(const Write_Data& _write_data);
+  void writeData(Write_Data& _write_data);
 
   void updataWriteData(const float _yaw,   const float _pitch,
                        const int   _depth, const int   _data_type = 0,
