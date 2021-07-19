@@ -28,18 +28,18 @@
 
   <!-- BGR -->
   <!--
-  RED_ARMOR_GRAY_TH   - 红色灰度参数 60
-  RED_ARMOR_COLOR_TH  - BGR红色参数 49
-  BLUE_ARMOR_COLOR_TH - 蓝色灰度参数 28 14
-  BLUE_ARMOR_GRAY_TH  - BGR蓝色参数 79 46
+  RED_ARMOR_GRAY_TH   - 红色灰度参数 27 or 41 30~60 85
+  RED_ARMOR_COLOR_TH  - BGR红色参数 100
+  BLUE_ARMOR_COLOR_TH - 蓝色灰度参数 100 17 29  28 14
+  BLUE_ARMOR_GRAY_TH  - BGR蓝色参数 28~61 or 110 79 46
   -->
   <RED_BUFF_GRAY_TH>60</RED_BUFF_GRAY_TH>
   <RED_BUFF_COLOR_TH>49</RED_BUFF_COLOR_TH>
-  <BLUE_BUFF_GRAY_TH>28</BLUE_BUFF_GRAY_TH>
-  <BLUE_BUFF_COLOR_TH>79</BLUE_BUFF_COLOR_TH>
+  <BLUE_BUFF_GRAY_TH>64</BLUE_BUFF_GRAY_TH>
+  <BLUE_BUFF_COLOR_TH>154</BLUE_BUFF_COLOR_TH>
 
   <!-- 
-    - HSV-red param
+    - HSV-red 
   -->
   <H_RED_MAX>60</H_RED_MAX>  <!-- 41 -->
   <H_RED_MIN>0</H_RED_MIN>
@@ -49,13 +49,13 @@
   <V_RED_MIN>24</V_RED_MIN>  <!-- 106 95 60 24-->
 
   <!-- 
-    - HSV-blue param
-      175   187
-      138   90
-      239   245
-      163   140
-      255   255
-      44    18
+    - HSV-blue 
+    175   187
+    138   90
+    239   245
+    163   140
+    255   255
+    44    18
   -->
   <H_BLUE_MAX>175</H_BLUE_MAX>
   <H_BLUE_MIN>138</H_BLUE_MIN>
@@ -147,7 +147,7 @@
   <!--
     OFFSET_FIXED_RADIAN - 固定预测值的补偿 -减少预测量，+增加预测量
     直接预测值为0.7 = 0.35*2
-    预测值的补偿值：-0.05 最终成功的一次：0.1
+    预测值的补偿值：-0.05  0.1是弹丸在平面一层的pitch补偿量时的最佳效果
   -->
   <OFFSET_FIXED_RADIAN>0.1</OFFSET_FIXED_RADIAN>
 
@@ -155,13 +155,6 @@
     OFFSET_TARGET_Z_ - 模型深度补偿（左半边比右半边距离要远）
    -->
   <OFFSET_TARGET_Z>0.0</OFFSET_TARGET_Z>
-
-  <!-- 
-    固定yaw补偿 （右正左负）第一次完成大符击打
-    固定pitch补偿 （下正上负）第一次完成大符击打，弹量刚好铺平一层绿色的弹仓 
-  -->
-  <OFFSET_ARMOR_YAW>0.85</OFFSET_ARMOR_YAW>
-  <OFFSET_ARMOR_PITCH>1.9</OFFSET_ARMOR_PITCH>
 
   <!--~~~~~~~~~~~~~~  能量机关设置部分  ~~~~~~~~~~~~~~-->
 

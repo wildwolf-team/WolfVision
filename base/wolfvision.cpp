@@ -17,11 +17,10 @@ int main() {
   basic_armor::Detector basic_armor_ = basic_armor::Detector(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/armor/basic_armor_config.xml"));
 
-  basic_buff::Detector basic_buff_ = basic_buff::Detector(
-    fmt::format("{}{}", CONFIG_FILE_PATH, "/buff/basic_buff_config.xml"));
+  basic_buff::Detector basic_buff_ = basic_buff::Detector(fmt::format("{}{}", CONFIG_FILE_PATH, "/buff/basic_buff_config.xml"));
 
   basic_pnp::PnP pnp_   = basic_pnp::PnP(
-    fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_554.xml"),
+    fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_407.xml"),
     fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
 
   onnx_inferring::model model_ = onnx_inferring::model(
@@ -163,9 +162,13 @@ int main() {
     }
     mv_capture_.cameraReleasebuff();
     basic_armor_.freeMemory();
+    #ifndef RELEASE
     if (cv::waitKey(1) == 'q') {
       return 0;
     }
+    #else
+    usleep(1);
+    #endif
     global_fps_.calculateFPSGlobal();
   }
 
