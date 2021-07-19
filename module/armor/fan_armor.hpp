@@ -5,12 +5,10 @@
 #include "module/buff/abstract_object.hpp"
 
 namespace fan_armor {
-
 class Detector : public abstract_object::Object {
  public:
-  Detector() = default;
-
-  ~Detector() = default;
+  Detector();
+  ~Detector();
 
   /**
    * @brief 输入参数
@@ -25,6 +23,9 @@ class Detector : public abstract_object::Object {
    * @note 图例显示在右侧
    */
   void displayFanArmor(cv::Mat& _img);
+
+ private:
+  /* anything else */
 };
 
 }  // namespace fan_armor
