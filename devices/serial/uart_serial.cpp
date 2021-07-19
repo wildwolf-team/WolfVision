@@ -146,6 +146,14 @@ void SerialPort::writeData(const int&     _yaw,
 }
 
 void SerialPort::writeData(const Write_Data& _write_data) {
+  write_data_.data_type    = _write_data.data_type > 1 ? 1 : _write_data.data_type;
+  write_data_.is_shooting  = _write_data.is_shooting;
+  write_data_.symbol_yaw   = _write_data.yaw_angle >= 0 ? 1 : 0;
+  write_data_.yaw_angle    = fabs(_write_data.yaw_angle) * 100;
+  write_data_.symbol_pitch = _write_data.pitch_angle >= 0 ? 1 : 0;
+  write_data_.pitch_angle  = fabs(_write_data.pitch_angle) * 100;
+  write_data_.depth        = _write_data.depth;
+
   writeData(_write_data.symbol_yaw,
             _write_data.yaw_angle,
             _write_data.symbol_pitch,
@@ -331,7 +339,7 @@ void SerialPort::updateReceiveInformation() {
       break;
   }
 
-  receive_data_.bullet_velocity = receive_buff_[14];
+  receive_data_.bullet_velocity = receive_buff_[14] - 2;
 
   for (size_t i = 0; i != sizeof(receive_data_.Receive_Yaw_Angle_Info.arr_yaw_angle); ++i) {
     receive_data_.Receive_Yaw_Angle_Info.arr_yaw_angle[i] = receive_buff_[i + 4];
