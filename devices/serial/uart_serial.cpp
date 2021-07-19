@@ -154,13 +154,13 @@ void SerialPort::writeData(const Write_Data& _write_data) {
   write_data_.pitch_angle  = fabs(_write_data.pitch_angle) * 100;
   write_data_.depth        = _write_data.depth;
 
-  writeData(_write_data.symbol_yaw,
-            _write_data.yaw_angle,
-            _write_data.symbol_pitch,
-            _write_data.pitch_angle,
-            _write_data.depth,
-            _write_data.data_type,
-            _write_data.is_shooting);
+  writeData(write_data_.symbol_yaw,
+            write_data_.yaw_angle,
+            write_data_.symbol_pitch,
+            write_data_.pitch_angle,
+            write_data_.depth,
+            write_data_.data_type,
+            write_data_.is_shooting);
 }
 
 void SerialPort::writeData() {
