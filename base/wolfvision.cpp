@@ -136,7 +136,7 @@ int main() {
                                                                         basic_armor_.returnFinalArmorRotatedRect(i)),
                                                                         0,
                                                                         0,
-                                                                        src_img_)) {
+                                                                        src_img_) == 2) {
                 if (basic_armor_.returnArmorNum() > 1) {
                     pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
                                   basic_armor_.returnFinalArmorDistinguish(i + 1),
