@@ -70,16 +70,12 @@ struct Buff_Param {
   // 面积比 MAX MIN
   float AREA_RATIO_MAX;
   float AREA_RATIO_MIN;
-
   // 圆心R距离小轮廓中心的距离系数
   float BIG_LENTH_R;
 
   /* 圆心限制条件 */
   // 圆心roi矩形大小
   int CENTER_R_ROI_SIZE;
-  // 面积
-
-  // 轮廓面积
 
   // 滤波器系数
   float FILTER_COEFFICIENT;
@@ -112,13 +108,11 @@ struct Buff_Cfg {
 // 能量机关类 继承抽象类
 class Detector {
  public:
-  // 初始化参数结构体
   Detector() = default;
   explicit Detector(const std::string& _buff_config_path);
 
   ~Detector() = default;
 
-  // 总执行函数（接口）
   /**
    * @brief 总执行函数（接口）
    * @param  _input_img       输入图像
@@ -232,7 +226,6 @@ class Detector {
   void findTarget(cv::Mat& _input_dst_img, cv::Mat& _input_bin_img, std::vector<abstract_target::Target>& _target_box);
 
   fan_armor::Detector small_target_;  // 内轮廓
-
   abstract_blade::FanBlade big_target_;  // 外轮廓
 
   abstract_target::Target              candidated_target_;  // 当前检测得到的打击目标（遍历使用）
@@ -370,7 +363,7 @@ class Detector {
    */
   float fixedPredict(const float& _bullet_velocity);
 
-  // 变化预测量
+  // 变化预测量 TODO(fqjun)
   void mutativePredict(const float& _input_predict_quantity, float& _output_predict_quantity);
 
   float current_radian_;        // 当前弧度
@@ -412,7 +405,7 @@ class Detector {
 
  private:
   /* 自动控制 */
-
+  // TODO(fqjun)
  private:
   /* 更新上一帧数据 */
 
@@ -422,15 +415,7 @@ class Detector {
   // 帧率测试
   fps::FPS buff_fps_1_{"Part 1"};
   fps::FPS buff_fps_2_{"Part 2"};
-  fps::FPS buff_fps_;  // 计算时间
+  fps::FPS buff_fps_;
 };
 
-inline void Detector::getInput(cv::Mat& _input_img, const int& _my_color) {
-  this->src_img_  = _input_img;
-  this->my_color_ = _my_color;
-  this->src_img_.copyTo(this->dst_img_);
-  this->is_find_target_ = false;
-}
-
-inline void Detector::displayDst() { imshow("dst_img", this->dst_img_); }
 }  // namespace basic_buff
