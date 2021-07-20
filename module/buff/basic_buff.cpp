@@ -42,12 +42,13 @@ Detector::Detector(const std::string& _buff_config_address) {
   last_last_diff_angle_ = 0.f;
   is_change_blade_      = false;
 
-  current_direction_ = 0.f;
-  last_direction_    = 0.f;
-  find_cnt_          = 0;
-  d_angle_           = 1.f;
-  confirm_cnt_       = 0;
-  is_confirm_        = false;
+  current_direction_    = 0.f;
+  last_direction_       = 0.f;
+  last_final_direction_ = 0;
+  find_cnt_             = 0;
+  d_angle_              = 1.f;
+  confirm_cnt_          = 0;
+  is_confirm_           = false;
 
   current_speed_  = 0.f;
   last_time_      = 0.0;
@@ -455,20 +456,20 @@ void Detector::hsvProcessing(const int& _my_color) {
     fmt::print("[{}] Image pre-processing color: BLUE\n", process_yellow);
 
 #ifndef RELEASE
-      if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-        std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
+    if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
+      std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
 
-        cv::namedWindow(window_name);
-        cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
-        cv::createTrackbar("H_BLUE_MAX:", window_name, &buff_config_.param.H_BLUE_MAX, 255, nullptr);
-        cv::createTrackbar("H_BLUE_MIN:", window_name, &buff_config_.param.H_BLUE_MIN, 255, nullptr);
-        cv::createTrackbar("S_BLUE_MAX:", window_name, &buff_config_.param.S_BLUE_MAX, 255, nullptr);
-        cv::createTrackbar("S_BLUE_MIN:", window_name, &buff_config_.param.S_BLUE_MIN, 255, nullptr);
-        cv::createTrackbar("V_BLUE_MAX:", window_name, &buff_config_.param.V_BLUE_MAX, 255, nullptr);
-        cv::createTrackbar("V_BLUE_MIN:", window_name, &buff_config_.param.V_BLUE_MIN, 255, nullptr);
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("H_BLUE_MAX:", window_name, &buff_config_.param.H_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("H_BLUE_MIN:", window_name, &buff_config_.param.H_BLUE_MIN, 255, nullptr);
+      cv::createTrackbar("S_BLUE_MAX:", window_name, &buff_config_.param.S_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("S_BLUE_MIN:", window_name, &buff_config_.param.S_BLUE_MIN, 255, nullptr);
+      cv::createTrackbar("V_BLUE_MAX:", window_name, &buff_config_.param.V_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("V_BLUE_MIN:", window_name, &buff_config_.param.V_BLUE_MIN, 255, nullptr);
 
-        cv::imshow(window_name, trackbar_img_);
-        fmt::print("[{}] HSV蓝色预处理调参面板已打开 \n", process_yellow);
+      cv::imshow(window_name, trackbar_img_);
+      fmt::print("[{}] HSV蓝色预处理调参面板已打开 \n", process_yellow);
     }
 #endif  // !RELEASE
 
