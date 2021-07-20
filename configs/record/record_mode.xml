@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<opencv_storage>
+
+
+<!--
+    相机录制模式设置
+-->
+<RECORD_MODE>2</RECORD_MODE>
+<!--
+    录制开关
+-->
+<RECORD_SWITCH>0</RECORD_SWITCH>
+
+<!--
+    录制位置存放
+-->
+<PATH_>1</PATH_>
+
+
+<!--
+    fsp
+-->
+<FPS_RECORD>66</FPS_RECORD>
+</opencv_storage>

@@ -11,5 +11,6 @@
 #include "module/buff/basic_buff.hpp"
 #include "module/roi/basic_roi.hpp"
 #include "module/ml/onnx_inferring.hpp"
+#include "module/record/record.hpp"
 
 auto idntifier = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "wolfvision");

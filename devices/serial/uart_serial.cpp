@@ -298,23 +298,24 @@ void SerialPort::updateReceiveInformation() {
     case ENERGY_AGENCY:
       receive_data_.now_run_mode = ENERGY_AGENCY;
       break;
-    case SENTRY_MODE:
-      receive_data_.now_run_mode = SENTRY_MODE;
-      break;
-    case BASE_MODE:
-      receive_data_.now_run_mode = BASE_MODE;
+    case SENTRY_STRIKE_MODE:
+      receive_data_.now_run_mode = SENTRY_STRIKE_MODE;
       break;
     case TOP_MODE:
       receive_data_.now_run_mode = TOP_MODE;
       break;
+    case RECORD_MODE:
+      receive_data_.now_run_mode = RECORD_MODE;
+      break;
     case PLANE_MODE:
       receive_data_.now_run_mode = PLANE_MODE;
       break;
-    case OCR_SENTRYSELF_MODE:
-      receive_data_.now_run_mode = OCR_SENTRYSELF_MODE;
+    case SENTINEL_AUTONOMOUS_MODE:
+      receive_data_.now_run_mode = SENTINEL_AUTONOMOUS_MODE;
       break;
-    default:
-      receive_data_.now_run_mode = SUP_SHOOT;
+    case RADAR_MODE:
+      receive_data_.now_run_mode = RADAR_MODE;
+    default : receive_data_.now_run_mode = SUP_SHOOT;
       break;
   }
 
