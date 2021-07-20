@@ -29,7 +29,7 @@ VideoCapture::~VideoCapture() {
 
 bool VideoCapture::isindustryimgInput() {
   bool isindustry_camera_open = false;
-  
+
   if (iscamera0_open == 1) {
     if (CameraGetImageBuffer(hCamera, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS) {
       CameraImageProcess(hCamera, pbyBuffer, g_pRgbBuffer, &sFrameInfo);
@@ -100,6 +100,9 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
   CameraGetAeState(hCamera, &AEstate);
   CameraSetAeState(hCamera, FALSE);
   CameraSetExposureTime(hCamera, _CAMERA_EXPOSURETIME);
+
+  CameraSetGain(hCamera, 145, 130, 105);
+
   // 让SDK进入工作模式
   CameraPlay(hCamera);
   CameraReleaseImageBuffer(hCamera, pbyBuffer);
