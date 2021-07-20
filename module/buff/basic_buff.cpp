@@ -1,6 +1,7 @@
 #include "basic_buff.hpp"
 
 namespace basic_buff {
+
 Detector::Detector(const std::string& _buff_config_address) {
   // 读取buff配置文件
   cv::FileStorage buff_config_fs(_buff_config_address, cv::FileStorage::READ);
@@ -32,8 +33,6 @@ Detector::Detector(const std::string& _buff_config_address) {
 
   /* 判断目标是否为空 */
   is_find_target_ = false;
-
-  /* 查找圆心 */
 
   /* 计算运转状态值：速度、方向、角度 */
   current_angle_        = 0.f;
@@ -78,6 +77,15 @@ Detector::Detector(const std::string& _buff_config_address) {
   /* 输入串口数据 */
 }
 
+inline void Detector::getInput(cv::Mat& _input_img, const int& _my_color) {
+  src_img_  = _input_img;
+  my_color_ = _my_color;
+  src_img_.copyTo(dst_img_);
+  is_find_target_ = false;
+}
+
+inline void Detector::displayDst() { imshow("[basic_buff] displayDst() -> dst_img_", dst_img_); }
+
 void Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_info, uart::Write_Data& _send_info) {
   /* 获取基本信息 */
   getInput(_input_img, _receive_info.my_color);
@@ -100,8 +108,6 @@ void Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_i
   /* 计算预测量 单位为弧度 */
   final_forecast_quantity_ = doPredict(static_cast<float>(_receive_info.bullet_velocity), is_find_target_);
 
-  std::cout << "测试 提前了" << final_forecast_quantity_ * 180 / CV_PI << "度" << std::endl;
-
   /* 计算获取最终目标（矩形、顶点） */
   calculateTargetPointSet(final_forecast_quantity_, final_center_r_, target_2d_point_, dst_img_, is_find_target_);
 
@@ -114,7 +120,7 @@ void Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_i
     _send_info.depth       = final_target_z_;
     _send_info.data_type   = is_find_target_;
 
-    std::cout << " yaw:" << _send_info.yaw_angle << " pitch:" << _send_info.pitch_angle << " depth:" << _send_info.depth << std::endl;
+    fmt::print("[{}] Info, yaw: {}, pitch: {}, depth: {}\n", idntifier_yellow, _send_info.yaw_angle, _send_info.pitch_angle, _send_info.depth);
   } else {
     _send_info = uart::Write_Data();
   }
@@ -137,7 +143,7 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
   getInput(_input_img, _receive_info.my_color);
 
   /* 预处理 */
-  imageProcessing(src_img_, bin_img_, my_color_, BGR_MODE /* static_cast<Processing_Moudle>(buff_config_.ctrl.PROCESSING_MODE) */);
+  imageProcessing(src_img_, bin_img_, my_color_, static_cast<Processing_Moudle>(buff_config_.ctrl.PROCESSING_MODE));
 
   /* 查找目标 */
   findTarget(dst_img_, bin_img_, target_box_);
@@ -154,8 +160,6 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
   /* 计算预测量 单位为弧度 */
   final_forecast_quantity_ = doPredict(static_cast<float>(_receive_info.bullet_velocity), is_find_target_);
 
-  std::cout << "测试 提前了" << final_forecast_quantity_ * 180 / CV_PI << "度" << std::endl;
-
   /* 计算获取最终目标（矩形、顶点） */
   calculateTargetPointSet(final_forecast_quantity_, final_center_r_, target_2d_point_, dst_img_, is_find_target_);
 
@@ -168,7 +172,7 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
     send_info.depth       = final_target_z_;
     send_info.data_type   = is_find_target_;
 
-    std::cout << " yaw:" << send_info.yaw_angle << " pitch:" << send_info.pitch_angle << " depth:" << send_info.depth << std::endl;
+    fmt::print("[{}] Info, yaw: {}, pitch: {}, depth: {}\n", idntifier_yellow, send_info.yaw_angle, send_info.pitch_angle, send_info.depth);
   } else {
     send_info = uart::Write_Data();
   }
@@ -256,7 +260,7 @@ void Detector::readBuffConfig(const cv::FileStorage& _fs) {
   _fs["OFFSET_TARGET_Z"] >> buff_config_.param.OFFSET_TARGET_Z;
 
   // 输出提示
-  std::cout << "✔️ ✔️ ✔️ 🌈 能量机关初始化参数 读取成功 🌈 ✔️ ✔️ ✔️" << std::endl;
+  fmt::print("✔️ ✔️ ✔️ 🌈 能量机关初始化参数 读取成功 🌈 ✔️ ✔️ ✔️\n");
 }
 
 void Detector::imageProcessing(cv::Mat& _input_img, cv::Mat& _output_img, const int& _my_color, const Processing_Moudle& _process_moudle) {
@@ -266,21 +270,21 @@ void Detector::imageProcessing(cv::Mat& _input_img, cv::Mat& _output_img, const 
   // 选择预处理的模式：BGR、HSV
   switch (_process_moudle) {
   case BGR_MODE: {
-    std::cout << "+++ BGR MODOL +++" << std::endl;
+    fmt::print("[{}] Image pre-processing mode: +++ BGR_MODE +++\n", process_yellow);
 
     bgrProcessing(_my_color);
 
     break;
   }
   case HSV_MODE: {
-    std::cout << "--- HSV MODOL ---" << std::endl;
+    fmt::print("[{}] Image pre-processing mode: --- HSV_MODE ---\n", process_yellow);
 
     hsvProcessing(_my_color);
 
     break;
   }
   default: {
-    std::cout << "=== DEFAULT MODOL ===" << std::endl;
+    fmt::print("[{}] Image pre-processing mode: === DEFAULT_MODE ===\n", process_yellow);
 
     bgrProcessing(_my_color);
 
@@ -291,8 +295,8 @@ void Detector::imageProcessing(cv::Mat& _input_img, cv::Mat& _output_img, const 
 // 显示各部分的二值图
 #ifndef RELEASE
   if (buff_config_.ctrl.IS_SHOW_BIN_IMG == 1 && buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-    cv::imshow("bin_img_color", bin_img_color_);
-    cv::imshow("bin_img_gray", bin_img_gray_);
+    cv::imshow("[basic_buff] imageProcessing() -> bin_img_color_", bin_img_color_);
+    cv::imshow("[basic_buff] imageProcessing() -> bin_img_gray_", bin_img_gray_);
   }
 #endif  // !RELEASE
 
@@ -305,7 +309,7 @@ void Detector::imageProcessing(cv::Mat& _input_img, cv::Mat& _output_img, const 
 // 显示最终合并的二值图
 #ifndef RELEASE
   if (buff_config_.ctrl.IS_SHOW_BIN_IMG == 1 && buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-    cv::imshow("bin_img_final", bin_img_);
+    cv::imshow("[basic_buff] imageProcessing() -> bin_img_final", bin_img_);
   }
 #endif  // !RELEASE
 }
@@ -317,19 +321,21 @@ void Detector::bgrProcessing(const int& _my_color) {
   // 选择颜色
   switch (_my_color) {
   case uart::RED: {
-    std::cout << "My color is red!" << std::endl;
+    fmt::print("[{}] Image pre-processing color: RED\n", process_yellow);
 
-    /* my_color为红色，则处理红色的情况 */
-    /* 灰度图与RGB同样做红色处理 */
+    /* my_color 为红色，则处理红色的情况 灰度图与 RGB 同样做红色处理 */
     cv::subtract(split_img_[2], split_img_[0], bin_img_color_);  // r-b
 
 #ifndef RELEASE
     if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-      cv::namedWindow("trackbar");
-      cv::createTrackbar("GRAY_TH_RED:", "trackbar", &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
-      cv::createTrackbar("COLOR_TH_RED:", "trackbar", &buff_config_.param.RED_BUFF_COLOR_TH, 255, nullptr);
-      cv::imshow("trackbar", trackbar_img_);
-      std::cout << "🧐 BGR红色预处理调参面板已打开 🧐" << std::endl;
+      std::string window_name = {"[basic_buff] bgrProcessing() -> trackbar"};
+
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("COLOR_TH_RED:", window_name, &buff_config_.param.RED_BUFF_COLOR_TH, 255, nullptr);
+
+      cv::imshow(window_name, trackbar_img_);
+      fmt::print("[{}] BGR红色预处理调参面板已打开 \n", process_yellow);
     }
 
 #endif  // !RELEASE
@@ -343,18 +349,21 @@ void Detector::bgrProcessing(const int& _my_color) {
     break;
   }
   case uart::BLUE: {
-    std::cout << "My color is blue!" << std::endl;
+    fmt::print("[{}] Image pre-processing color: BLUE\n", process_yellow);
 
     /* my_color为蓝色，则处理蓝色的情况 灰度图与RGB同样做蓝色处理 */
     cv::subtract(split_img_[0], split_img_[2], bin_img_color_);  // b-r
 
 #ifndef RELEASE
     if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-      cv::namedWindow("trackbar");
-      cv::createTrackbar("GRAY_TH_BLUE:", "trackbar", &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
-      cv::createTrackbar("COLOR_TH_BLUE:", "trackbar", &buff_config_.param.BLUE_BUFF_COLOR_TH, 255, nullptr);
-      cv::imshow("trackbar", trackbar_img_);
-      std::cout << "🧐 BGR蓝色预处理调参面板已打开 🧐" << std::endl;
+      std::string window_name = {"[basic_buff] bgrProcessing() -> trackbar"};
+
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("COLOR_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_COLOR_TH, 255, nullptr);
+
+      cv::imshow(window_name, trackbar_img_);
+      fmt::print("[{}] BGR蓝色预处理调参面板已打开 \n", process_yellow);
     }
 #endif  // !RELEASE
 
@@ -374,13 +383,16 @@ void Detector::bgrProcessing(const int& _my_color) {
 
 #ifndef RELEASE
     if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-      cv::namedWindow("trackbar");
-      cv::createTrackbar("GRAY_TH_RED:", "trackbar", &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
-      cv::createTrackbar("COLOR_TH_RED:", "trackbar", &buff_config_.param.RED_BUFF_COLOR_TH, 255, nullptr);
-      cv::createTrackbar("GRAY_TH_BLUE:", "trackbar", &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
-      cv::createTrackbar("COLOR_TH_BLUE:", "trackbar", &buff_config_.param.BLUE_BUFF_COLOR_TH, 255, nullptr);
-      cv::imshow("trackbar", trackbar_img_);
-      std::cout << "🧐 BGR通用预处理调参面板已打开 🧐" << std::endl;
+      std::string window_name = {"[basic_buff] bgrProcessing() -> trackbar"};
+
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("COLOR_TH_RED:", window_name, &buff_config_.param.RED_BUFF_COLOR_TH, 255, nullptr);
+      cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("COLOR_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_COLOR_TH, 255, nullptr);
+
+      cv::imshow(window_name, trackbar_img_);
+      fmt::print("[{}] BGR红蓝两色预处理调参面板已打开 \n", process_yellow);
     }
 #endif  // !RELEASE
 
@@ -409,19 +421,22 @@ void Detector::hsvProcessing(const int& _my_color) {
   switch (_my_color) {
   case uart::RED:
 
-    std::cout << "My color is red!" << std::endl;
+    fmt::print("[{}] Image pre-processing color: RED\n", process_yellow);
 #ifndef RELEASE
     if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-      cv::namedWindow("trackbar");
-      cv::createTrackbar("GRAY_TH_RED:", "trackbar", &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
-      cv::createTrackbar("H_RED_MAX:", "trackbar", &buff_config_.param.H_RED_MAX, 360, nullptr);
-      cv::createTrackbar("H_RED_MIN:", "trackbar", &buff_config_.param.H_RED_MIN, 360, nullptr);
-      cv::createTrackbar("S_RED_MAX:", "trackbar", &buff_config_.param.S_RED_MAX, 255, nullptr);
-      cv::createTrackbar("S_RED_MIN:", "trackbar", &buff_config_.param.S_RED_MIN, 255, nullptr);
-      cv::createTrackbar("V_RED_MAX:", "trackbar", &buff_config_.param.V_RED_MAX, 255, nullptr);
-      cv::createTrackbar("V_RED_MIN:", "trackbar", &buff_config_.param.V_RED_MIN, 255, nullptr);
-      cv::imshow("trackbar", trackbar_img_);
-      std::cout << "🧐 HSV红色预处理调参面板已打开 🧐" << std::endl;
+      std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
+
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("H_RED_MAX:", window_name, &buff_config_.param.H_RED_MAX, 360, nullptr);
+      cv::createTrackbar("H_RED_MIN:", window_name, &buff_config_.param.H_RED_MIN, 360, nullptr);
+      cv::createTrackbar("S_RED_MAX:", window_name, &buff_config_.param.S_RED_MAX, 255, nullptr);
+      cv::createTrackbar("S_RED_MIN:", window_name, &buff_config_.param.S_RED_MIN, 255, nullptr);
+      cv::createTrackbar("V_RED_MAX:", window_name, &buff_config_.param.V_RED_MAX, 255, nullptr);
+      cv::createTrackbar("V_RED_MIN:", window_name, &buff_config_.param.V_RED_MIN, 255, nullptr);
+
+      imshow(window_name, trackbar_img_);
+      fmt::print("[{}] HSV红色预处理调参面板已打开 \n", process_yellow);
     }
 #endif  // !RELEASE
 
@@ -437,21 +452,23 @@ void Detector::hsvProcessing(const int& _my_color) {
 
     break;
   case uart::BLUE:
-
-    std::cout << "My color is blue!" << std::endl;
+    fmt::print("[{}] Image pre-processing color: BLUE\n", process_yellow);
 
 #ifndef RELEASE
-    if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-      cv::namedWindow("trackbar");
-      cv::createTrackbar("GRAY_TH_BLUE:", "trackbar", &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
-      cv::createTrackbar("H_BLUE_MAX:", "trackbar", &buff_config_.param.H_BLUE_MAX, 255, nullptr);
-      cv::createTrackbar("H_BLUE_MIN:", "trackbar", &buff_config_.param.H_BLUE_MIN, 255, nullptr);
-      cv::createTrackbar("S_BLUE_MAX:", "trackbar", &buff_config_.param.S_BLUE_MAX, 255, nullptr);
-      cv::createTrackbar("S_BLUE_MIN:", "trackbar", &buff_config_.param.S_BLUE_MIN, 255, nullptr);
-      cv::createTrackbar("V_BLUE_MAX:", "trackbar", &buff_config_.param.V_BLUE_MAX, 255, nullptr);
-      cv::createTrackbar("V_BLUE_MIN:", "trackbar", &buff_config_.param.V_BLUE_MIN, 255, nullptr);
-      cv::imshow("trackbar", trackbar_img_);
-      std::cout << "🧐 HSV蓝色预处理调参面板已打开 🧐" << std::endl;
+      if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
+        std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
+
+        cv::namedWindow(window_name);
+        cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
+        cv::createTrackbar("H_BLUE_MAX:", window_name, &buff_config_.param.H_BLUE_MAX, 255, nullptr);
+        cv::createTrackbar("H_BLUE_MIN:", window_name, &buff_config_.param.H_BLUE_MIN, 255, nullptr);
+        cv::createTrackbar("S_BLUE_MAX:", window_name, &buff_config_.param.S_BLUE_MAX, 255, nullptr);
+        cv::createTrackbar("S_BLUE_MIN:", window_name, &buff_config_.param.S_BLUE_MIN, 255, nullptr);
+        cv::createTrackbar("V_BLUE_MAX:", window_name, &buff_config_.param.V_BLUE_MAX, 255, nullptr);
+        cv::createTrackbar("V_BLUE_MIN:", window_name, &buff_config_.param.V_BLUE_MIN, 255, nullptr);
+
+        cv::imshow(window_name, trackbar_img_);
+        fmt::print("[{}] HSV蓝色预处理调参面板已打开 \n", process_yellow);
     }
 #endif  // !RELEASE
 
@@ -466,30 +483,31 @@ void Detector::hsvProcessing(const int& _my_color) {
 
     break;
   default:
-
-    std::cout << "My color is default!" << std::endl;
+    fmt::print("[{}] Image pre-processing color: default\n", process_yellow);
 
 #ifndef RELEASE
     if (buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
-      cv::namedWindow("trackbar");
+      std::string window_name = {"[basic_buff] hsvProcessing() -> trackbar"};
 
-      cv::createTrackbar("GRAY_TH_RED:", "trackbar", &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
-      cv::createTrackbar("H_RED_MAX:", "trackbar", &buff_config_.param.H_RED_MAX, 360, nullptr);
-      cv::createTrackbar("H_RED_MIN:", "trackbar", &buff_config_.param.H_RED_MIN, 360, nullptr);
-      cv::createTrackbar("S_RED_MAX:", "trackbar", &buff_config_.param.S_RED_MAX, 255, nullptr);
-      cv::createTrackbar("S_RED_MIN:", "trackbar", &buff_config_.param.S_RED_MIN, 255, nullptr);
-      cv::createTrackbar("V_RED_MAX:", "trackbar", &buff_config_.param.V_RED_MAX, 255, nullptr);
-      cv::createTrackbar("V_RED_MIN:", "trackbar", &buff_config_.param.V_RED_MIN, 255, nullptr);
+      cv::namedWindow(window_name);
+      cv::createTrackbar("GRAY_TH_RED:", window_name, &buff_config_.param.RED_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("H_RED_MAX:", window_name, &buff_config_.param.H_RED_MAX, 360, nullptr);
+      cv::createTrackbar("H_RED_MIN:", window_name, &buff_config_.param.H_RED_MIN, 360, nullptr);
+      cv::createTrackbar("S_RED_MAX:", window_name, &buff_config_.param.S_RED_MAX, 255, nullptr);
+      cv::createTrackbar("S_RED_MIN:", window_name, &buff_config_.param.S_RED_MIN, 255, nullptr);
+      cv::createTrackbar("V_RED_MAX:", window_name, &buff_config_.param.V_RED_MAX, 255, nullptr);
+      cv::createTrackbar("V_RED_MIN:", window_name, &buff_config_.param.V_RED_MIN, 255, nullptr);
 
-      cv::createTrackbar("GRAY_TH_BLUE:", "trackbar", &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
-      cv::createTrackbar("H_BLUE_MAX:", "trackbar", &buff_config_.param.H_BLUE_MAX, 255, nullptr);
-      cv::createTrackbar("H_BLUE_MIN:", "trackbar", &buff_config_.param.H_BLUE_MIN, 255, nullptr);
-      cv::createTrackbar("S_BLUE_MAX:", "trackbar", &buff_config_.param.S_BLUE_MAX, 255, nullptr);
-      cv::createTrackbar("S_BLUE_MIN:", "trackbar", &buff_config_.param.S_BLUE_MIN, 255, nullptr);
-      cv::createTrackbar("V_BLUE_MAX:", "trackbar", &buff_config_.param.V_BLUE_MAX, 255, nullptr);
-      cv::createTrackbar("V_BLUE_MIN:", "trackbar", &buff_config_.param.V_BLUE_MIN, 255, nullptr);
-      cv::imshow("trackbar", trackbar_img_);
-      std::cout << "🧐 HSV通用预处理调参面板已打开 🧐" << std::endl;
+      cv::createTrackbar("GRAY_TH_BLUE:", window_name, &buff_config_.param.BLUE_BUFF_GRAY_TH, 255, nullptr);
+      cv::createTrackbar("H_BLUE_MAX:", window_name, &buff_config_.param.H_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("H_BLUE_MIN:", window_name, &buff_config_.param.H_BLUE_MIN, 255, nullptr);
+      cv::createTrackbar("S_BLUE_MAX:", window_name, &buff_config_.param.S_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("S_BLUE_MIN:", window_name, &buff_config_.param.S_BLUE_MIN, 255, nullptr);
+      cv::createTrackbar("V_BLUE_MAX:", window_name, &buff_config_.param.V_BLUE_MAX, 255, nullptr);
+      cv::createTrackbar("V_BLUE_MIN:", window_name, &buff_config_.param.V_BLUE_MIN, 255, nullptr);
+
+      imshow(window_name, trackbar_img_);
+      fmt::print("[{}] HSV红蓝两色预处理调参面板已打开 \n", process_yellow);
     }
 #endif  // !RELEASE
 
@@ -569,10 +587,10 @@ void Detector::findTarget(cv::Mat& _input_dst_img, cv::Mat& _input_bin_img, std:
       continue;
     }
 
-    #ifndef RELEASE
+#ifndef RELEASE
     small_target_.displayFanArmor(_input_dst_img);
     big_target_.displayFanBlade(_input_dst_img);
-    #endif  // !RELEASE
+#endif  // !RELEASE
 
     // 设置默认扇叶状态
     candidated_target_.setType(abstract_object::ACTION);
@@ -583,12 +601,12 @@ void Detector::findTarget(cv::Mat& _input_dst_img, cv::Mat& _input_bin_img, std:
 
     _target_box.push_back(candidated_target_);
   }
-  std::cout << "扇叶数量：" << _target_box.size() << std::endl;
+  fmt::print("[{}] 扇叶数量: {}\n", target_yellow, _target_box.size());
 }
 
 bool Detector::isFindTarget(cv::Mat& _input_img, std::vector<abstract_target::Target>& _target_box) {
   if (_target_box.size() < 1) {
-    std::cout << "XXX 没有目标 XXX" << std::endl;
+    fmt::print("[{}] Info, XXX no target detected XXX \n", target_yellow);
 
     current_target_ = abstract_target::Target();
     contours_.clear();
@@ -607,7 +625,7 @@ bool Detector::isFindTarget(cv::Mat& _input_img, std::vector<abstract_target::Ta
 
   // 遍历容器获取未激活目标
   for (auto iter = _target_box.begin(); iter != _target_box.end(); ++iter) {
-    if ((*iter).Type() != abstract_object::INACTION) {
+    if (iter->Type() != abstract_object::INACTION) {
       // TODO(fqjun) 测试是否会多或者少了几个对象，如果没有顺序的话，有可能第一个就退出了
 
       ++action_cnt_;
@@ -620,7 +638,7 @@ bool Detector::isFindTarget(cv::Mat& _input_img, std::vector<abstract_target::Ta
     current_target_.displayInactionTarget(_input_img);
   }
 
-  std::cout << "未击打数量: " << inaction_cnt_ << "  已击打数量: " << action_cnt_ << std::endl;
+  fmt::print("[{}] 未击打数量: {},  已击打数量: {}\n", target_yellow, inaction_cnt_, action_cnt_);
 
   // 清除容器
   contours_.clear();
@@ -698,7 +716,7 @@ cv::Point2f Detector::findCircleR(cv::Mat& _input_src_img, cv::Mat& _input_bin_i
   // 查找轮廓
   cv::findContours(result_img_, contours_r_, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
 
-  std::cout << "遍历轮廓数量：" << contours_r_.size() << std::endl;
+  fmt::print("[{}] 圆心目标遍历轮廓数量: {} \n", center_yellow, contours_r_.size());
 
   // 选择并记录合适的圆心目标
   for (size_t j = 0; j < contours_r_.size(); ++j) {
@@ -708,19 +726,21 @@ cv::Point2f Detector::findCircleR(cv::Mat& _input_src_img, cv::Mat& _input_bin_i
 
     center_r_.inputParams(contours_r_[j], roi_img_);
 
-    std::cout << "矩形比例：" << center_r_.aspectRatio() << std::endl;
+    fmt::print("[{}] 矩形 {} 比例:{}\n", center_yellow, j, center_r_.aspectRatio());
 
     if (center_r_.aspectRatio() < 0.9f || center_r_.aspectRatio() > 1.25f) {
       continue;
     }
 
-    std::cout << "矩形面积：" << center_r_.Rect().boundingRect().area() << std::endl;
+    fmt::print("[{}] 矩形 {} 面积:{}\n", center_yellow, j, center_r_.Rect().boundingRect().area());
 
     if (center_r_.Rect().boundingRect().area() < 1000 || center_r_.Rect().boundingRect().area() > 3500) {
       continue;
     }
 
-    std::cout << " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+    fmt::print("[{}] Find center R target success !!!   ", center_yellow);
+    fmt::print(" --》 矩形 {}  --》 Ratio: {} / Area: {} ", j, center_r_.aspectRatio(), center_r_.Rect().boundingRect().area());
+
     center_r_box_.push_back(center_r_);
 
     for (int k = 0; k < 4; ++k) {
@@ -728,13 +748,14 @@ cv::Point2f Detector::findCircleR(cv::Mat& _input_src_img, cv::Mat& _input_bin_i
     }
     // std::cout << "正确的矩形比例：" << center_r_.aspectRatio() <<
     // std::endl;
+    fmt::print("\n");
   }
 
-  std::cout << "符合比例条件的：" << center_r_box_.size() << std::endl;
+  fmt::print("[{}] 符合比例条件的有: {}\n", center_yellow, center_r_box_.size());
 
   // 如果没有圆心目标，则退出
   if (center_r_box_.size() < 1) {
-    std::cout << "圆心为：假定圆心" << std::endl;
+    fmt::print("[{}] 圆心为:假定圆心 \n", center_yellow);
     is_circle_       = false;
     center_r_point2f = roi_global_center_;
 
@@ -747,7 +768,7 @@ cv::Point2f Detector::findCircleR(cv::Mat& _input_src_img, cv::Mat& _input_bin_i
   } else {
     std::sort(center_r_box_.begin(), center_r_box_.end(), [](abstract_center_r::Center_R& c1, abstract_center_r::Center_R& c2) { return c1.centerDist() < c2.centerDist(); });
 
-    std::cout << "圆心为：真实圆心" << std::endl;
+    fmt::print("[{}] 圆心为:真实圆心 \n", center_yellow);
     is_circle_       = true;
     center_r_point2f = center_r_box_[0].Rect().center + roi_R.boundingRect2f().tl();
 
@@ -809,7 +830,8 @@ void Detector::calAngle() {
   } else if (diff_angle_ < -180) {
     diff_angle_ += 360;
   }
-  std::cout << "测试 当前角度差为：" << diff_angle_ << std::endl;
+
+  fmt::print("[{}] 当前角度差为: {} 度\n", judgement_yellow, diff_angle_);
 
   if (fabs(diff_angle_) > 30.f) {
     is_change_blade_ = true;
@@ -835,17 +857,17 @@ void Detector::calDirection() {
 
   // 显示当前转动信息
   if (filter_direction_ > 0.1) {
-    std::cout << "转动方向：顺时针转动" << std::endl;
+    fmt::print("[{}] 转动方向:顺时针转动\n", judgement_yellow);
 
-    final_direction_ = 1;
+    final_direction_      = 1;
     last_final_direction_ = final_direction_;
   } else if (filter_direction_ < -0.1) {
-    std::cout << "转动方向：逆时针转动" << std::endl;
+    fmt::print("[{}] 转动方向:逆时针转动\n", judgement_yellow);
 
-    final_direction_ = -1;
+    final_direction_      = -1;
     last_final_direction_ = final_direction_;
   } else {
-    std::cout << "转动方向：不转动" << std::endl;
+    fmt::print("[{}] 转动方向:不转动\n", judgement_yellow);
 
     final_direction_ = last_final_direction_;
   }
@@ -880,7 +902,7 @@ void Detector::calVelocity() {
   last_last_diff_angle_ = last_diff_angle_;
   last_diff_angle_      = diff_angle_;
 
-  std::cout << "测试 当前风车转速为：" << current_speed_ << std::endl;
+  fmt::print("[{}] 当前风车转速为: {} rad/s \n", judgement_yellow, current_speed_);
 }
 
 float Detector::doPredict(const float& _bullet_velocity, const bool& _is_find_target) {
@@ -897,6 +919,8 @@ float Detector::doPredict(const float& _bullet_velocity, const bool& _is_find_ta
   predict_quantity = fixedPredict(28 * 1000);  // 默认先给28m/s
 
   // 计算移动预测量 TODO(fqjun)
+
+  fmt::print("[{}] Info, 提前了: {} 度 \n", predict_yellow, predict_quantity * 180 / CV_PI);
 
   return predict_quantity;
 }
@@ -1008,7 +1032,7 @@ void Detector::calculateTargetPointSet(
 
 void Detector::updateLastData(const bool& _is_find_target) {
   if (!(_is_find_target)) {
-    std::cout << "没有目标，不需要更新上一帧数据" << std::endl;
+    fmt::print("[{}] 没有目标，不需要更新上一帧数据 XXX\n", idntifier_yellow);
     is_find_last_target_ = _is_find_target;
     target_2d_point_.clear();
     std::vector<cv::Point2f>(target_2d_point_).swap(target_2d_point_);
@@ -1023,7 +1047,7 @@ void Detector::updateLastData(const bool& _is_find_target) {
   std::vector<cv::Point2f>(target_2d_point_).swap(target_2d_point_);
   target_rect_ = cv::RotatedRect();
 
-  std::cout << "发现目标，已更新上一帧数据" << std::endl;
+  fmt::print("[{}] 发现目标，已更新上一帧数据 √√√\n", idntifier_yellow);
 }
 
 }  // namespace basic_buff
