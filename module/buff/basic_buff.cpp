@@ -542,7 +542,7 @@ void Detector::hsvProcessing(const int& _my_color) {
 void Detector::findTarget(cv::Mat& _input_dst_img, cv::Mat& _input_bin_img, std::vector<abstract_target::Target>& _target_box) {
   cv::findContours(_input_bin_img, contours_, hierarchy_, 2, cv::CHAIN_APPROX_NONE);
 
-  for (size_t i = 0; i < contours_.size(); ++i) {
+  for (size_t i = 0; i != contours_.size(); ++i) {
     // 用于寻找小轮廓，没有父轮廓的跳过，以及不满足6点拟合椭圆
     if (hierarchy_[i][3] < 0 || contours_[i].size() < 6 || contours_[static_cast<uint>(hierarchy_[i][3])].size() < 6) {
       continue;
@@ -642,7 +642,9 @@ bool Detector::isFindTarget(cv::Mat& _input_img, std::vector<abstract_target::Ta
     ++inaction_cnt_;
     // 获取到未激活对象后退出遍历 TODO(fqjun) 查看是否筛选出想要的内容
     current_target_ = *iter;
+#ifndef RELEASE
     current_target_.displayInactionTarget(_input_img);
+#endif  // RELEASE
   }
 
   fmt::print("[{}] 未击打数量: {},  已击打数量: {}\n", target_yellow, inaction_cnt_, action_cnt_);
@@ -726,35 +728,35 @@ cv::Point2f Detector::findCircleR(cv::Mat& _input_src_img, cv::Mat& _input_bin_i
   fmt::print("[{}] 圆心目标遍历轮廓数量: {} \n", center_yellow, contours_r_.size());
 
   // 选择并记录合适的圆心目标
-  for (size_t j = 0; j < contours_r_.size(); ++j) {
-    if (contours_r_[j].size() < 6) {
+  for (size_t i = 0; i != contours_r_.size(); ++i) {
+    if (contours_r_[i].size() < 6) {
       continue;
     }
 
-    center_r_.inputParams(contours_r_[j], roi_img_);
+    center_r_.inputParams(contours_r_[i], roi_img_);
 
-    fmt::print("[{}] 矩形 {} 比例:{}\n", center_yellow, j, center_r_.aspectRatio());
+    fmt::print("[{}] 矩形 {} 比例:{}\n", center_yellow, i, center_r_.aspectRatio());
 
     if (center_r_.aspectRatio() < 0.9f || center_r_.aspectRatio() > 1.25f) {
       continue;
     }
 
-    fmt::print("[{}] 矩形 {} 面积:{}\n", center_yellow, j, center_r_.Rect().boundingRect().area());
+    fmt::print("[{}] 矩形 {} 面积:{}\n", center_yellow, i, center_r_.Rect().boundingRect().area());
 
     if (center_r_.Rect().boundingRect().area() < 1000 || center_r_.Rect().boundingRect().area() > 3500) {
       continue;
     }
 
     fmt::print("[{}] Find center R target success !!!   ", center_yellow);
-    fmt::print(" --》 矩形 {}  --》 Ratio: {} / Area: {} ", j, center_r_.aspectRatio(), center_r_.Rect().boundingRect().area());
+    fmt::print(" --》 矩形 {}  --》 Ratio: {} / Area: {} ", i, center_r_.aspectRatio(), center_r_.Rect().boundingRect().area());
 
     center_r_box_.push_back(center_r_);
 
+#ifndef RELEASE
     for (int k = 0; k < 4; ++k) {
       cv::line(roi_img_, center_r_.Vertex(k), center_r_.Vertex((k + 1) % 4), cv::Scalar(0, 130, 255), 3);
     }
-    // std::cout << "正确的矩形比例：" << center_r_.aspectRatio() <<
-    // std::endl;
+#endif  // !RELEASE
     fmt::print("\n");
   }
 
@@ -1020,7 +1022,7 @@ void Detector::calculateTargetPointSet(
   _target_2d_point.push_back(target_vertex[2]);
   _target_2d_point.push_back(target_vertex[3]);
 
-#ifdef DEBUG
+#ifndef RELEASE
   /* 绘制图像 */
   // 最终目标装甲板（预测值）
   for (int k = 0; k < 4; ++k) {
@@ -1031,7 +1033,7 @@ void Detector::calculateTargetPointSet(
   cv::circle(_input_dst_img, _final_center_r, radio_, cv::Scalar(0, 255, 125), 2, 8, 0);  // 轨迹圆
   cv::circle(_input_dst_img, pre_center_, 3, cv::Scalar(255, 0, 0), 3, 8, 0);             // 预测值的中点
   cv::line(_input_dst_img, pre_center_, _final_center_r, cv::Scalar(0, 255, 255), 2);     // 预测点和圆心的连线
-  // cv::line(_input_dst_img, current_target_.Armor().Rect().center, _final_center_r, cv::Scalar(0, 255, 0), 2);  // 装甲板和圆心的连线
+  cv::line(_input_dst_img, current_target_.Armor().Rect().center, _final_center_r, cv::Scalar(0, 255, 0), 2);  // 装甲板和圆心的连线
 
   // 顺时针表示顶点顺序,红黄蓝绿
   cv::circle(_input_dst_img, _target_2d_point[0], 10, cv::Scalar(0, 0, 255), -1, 8, 0);
@@ -1039,7 +1041,7 @@ void Detector::calculateTargetPointSet(
   cv::circle(_input_dst_img, _target_2d_point[2], 10, cv::Scalar(255, 0, 0), -1, 8, 0);
   cv::circle(_input_dst_img, _target_2d_point[3], 10, cv::Scalar(0, 255, 0), -1, 8, 0);
   /* 绘制图像 */
-#endif  // DEBUG
+#endif  // RELEASE
 }
 
 void Detector::updateLastData(const bool& _is_find_target) {

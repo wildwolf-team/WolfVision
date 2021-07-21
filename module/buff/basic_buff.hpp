@@ -422,9 +422,12 @@ class Detector {
   fps::FPS buff_fps_2_{"Part 2"};
   fps::FPS buff_fps_;
 
+#ifdef DEBUG
+
  private:
   // 卡尔曼滤波器
   basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.01f, 0.03f, 1.f, 0.f, 0.f);
+#endif  // DEBUG
 
 #ifdef DEBUG
   float last_final_radian_ = 0.f;
