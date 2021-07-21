@@ -116,8 +116,8 @@ void Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_i
   if (is_find_target_) {
     /* 计算云台角度 */
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
-    _send_info.yaw_angle   = buff_pnp_.returnYawAngle();
-    _send_info.pitch_angle = buff_pnp_.returnPitchAngle();
+    _send_info.yaw_angle   = buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
+    _send_info.pitch_angle = buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
     _send_info.depth       = final_target_z_;
     _send_info.data_type   = is_find_target_;
 
@@ -168,8 +168,8 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
   if (is_find_target_) {
     /* 计算云台角度 */
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
-    send_info.yaw_angle   = buff_pnp_.returnYawAngle();
-    send_info.pitch_angle = buff_pnp_.returnPitchAngle();
+    send_info.yaw_angle   = buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
+    send_info.pitch_angle = buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
     send_info.depth       = final_target_z_;
     send_info.data_type   = is_find_target_;
 
@@ -259,6 +259,12 @@ void Detector::readBuffConfig(const cv::FileStorage& _fs) {
 
   // 模型深度补偿（左半边比右半边距离要远）
   _fs["OFFSET_TARGET_Z"] >> buff_config_.param.OFFSET_TARGET_Z;
+
+  // yaw 和 pitch 轴弹道补偿
+  _fs["OFFSET_ARMOR_YAW"] >> buff_config_.param.OFFSET_ARMOR_YAW;
+  _fs["OFFSET_ARMOR_PITCH"] >> buff_config_.param.OFFSET_ARMOR_PITCH;
+  buff_config_.param.OFFSET_ARMOR_YAW *= 0.01;
+  buff_config_.param.OFFSET_ARMOR_PITCH *= 0.01;
 
   // 输出提示
   fmt::print("✔️ ✔️ ✔️ 🌈 能量机关初始化参数 读取成功 🌈 ✔️ ✔️ ✔️\n");
@@ -923,6 +929,10 @@ float Detector::doPredict(const float& _bullet_velocity, const bool& _is_find_ta
 
   fmt::print("[{}] Info, 提前了: {} 度 \n", predict_yellow, predict_quantity * 180 / CV_PI);
 
+#ifdef DEBUG
+  predict_quantity = buff_filter_.run(predict_quantity);
+#endif  // DEBUG
+
   return predict_quantity;
 }
 
@@ -977,7 +987,8 @@ void Detector::calculateTargetPointSet(
 
   // 计算最终角度和弧度
   final_radian_ = theta_ + final_direction_ * _predict_quantity;
-  final_angle_  = final_radian_ * 180 / CV_PI;
+
+  final_angle_ = final_radian_ * 180 / CV_PI;
 
   // 计算sin和cos
   sin_calcu_ = sin(final_radian_);
