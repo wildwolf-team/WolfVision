@@ -10,6 +10,7 @@
 #include "abstract_center_r.hpp"
 #include "abstract_target.hpp"
 #include "devices/serial/uart_serial.hpp"
+#include "filter/basic_kalman.hpp"
 #include "module/angle_solve/basic_pnp.hpp"
 #include "roi/basic_roi.hpp"
 #include "utils/fps.hpp"
@@ -92,6 +93,10 @@ struct Buff_Param {
 
   // 模型深度补偿（左半边比右半边距离要远）
   float OFFSET_TARGET_Z;
+
+  // yaw 和 pitch 轴弹道补偿
+  float OFFSET_ARMOR_YAW;
+  float OFFSET_ARMOR_PITCH;
 };
 
 struct Buff_Ctrl {
@@ -225,8 +230,8 @@ class Detector {
    */
   void findTarget(cv::Mat& _input_dst_img, cv::Mat& _input_bin_img, std::vector<abstract_target::Target>& _target_box);
 
-  fan_armor::Detector small_target_;  // 内轮廓
-  abstract_blade::FanBlade big_target_;  // 外轮廓
+  fan_armor::Detector      small_target_;  // 内轮廓
+  abstract_blade::FanBlade big_target_;    // 外轮廓
 
   abstract_target::Target              candidated_target_;  // 当前检测得到的打击目标（遍历使用）
   abstract_target::Target              current_target_;     // 当前检测打击目标（现在）
@@ -416,6 +421,14 @@ class Detector {
   fps::FPS buff_fps_1_{"Part 1"};
   fps::FPS buff_fps_2_{"Part 2"};
   fps::FPS buff_fps_;
+
+ private:
+  // 卡尔曼滤波器
+  basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.01f, 0.03f, 1.f, 0.f, 0.f);
+
+#ifdef DEBUG
+  float last_final_radian_ = 0.f;
+#endif  // DEBUG
 };
 
 }  // namespace basic_buff
