@@ -1,25 +1,16 @@
 #pragma once
 
-
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include <vector>
+#include <queue>
 
 namespace basic_kalman {
-
-
-#ifndef RM_KALMANFILTER_H
-#  define RM_KALMANFILTER_H
-
-#  include <iostream>
-using namespace std;
-#  include <opencv2/opencv.hpp>
-#  include <vector>
-using namespace cv;
-#  include <queue>
-
 
 class RM_kalmanfilter {
  private:
   cv::KalmanFilter KF_;
-  Mat              measurement_matrix;
+  cv::Mat          measurement_matrix;
 
   float p;
   float x = 640;
@@ -33,22 +24,19 @@ class RM_kalmanfilter {
     int               get_top_times = 0;  // 陀螺仪数据获取次数
     std::queue<float> difference_queue;   // difference_队列
   } top_diff_Queue;
-  top_diff_Queue  temp;
-  top_diff_Queue* top_angle_differ = &temp;
+  top_diff_Queue  top_angle_differ;
 
  public:
   RM_kalmanfilter();
   ~RM_kalmanfilter();
-  Point2f predict_point(Point2f _p);
+  cv::Point2f predict_point(cv::Point2f _p);
   void    reset();
 
   float use_RM_KF(float top);
-  // void use_RM_kf(top_diff_Queue *top_angle_differ, serial_port::SerialPort serial_);
 
   float anti_range = 1.5;
 };
 
-#endif
 class Kalman1 {
  public:
     Kalman1() {
