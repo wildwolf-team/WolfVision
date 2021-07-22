@@ -61,7 +61,7 @@ Detector::Detector(const std::string _armor_config) {
   fmt::print("[{}] Info, Armor configuration initial success\n", idntifier_green);
 }
 
-float Detector::getDistance(cv::Point a, cv::Point b) {
+float Detector::getDistance(const cv::Point a, const cv::Point b) {
   return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
 
@@ -157,8 +157,8 @@ bool Detector::findLight() {
   return true;
 }
 
-bool Detector::runBasicArmor(cv::Mat&           _src_img,
-                             uart::Receive_Data _receive_data) {
+bool Detector::runBasicArmor(const cv::Mat&           _src_img,
+                             const uart::Receive_Data _receive_data) {
   runImage(_src_img, _receive_data.my_color);
   draw_img_ = _src_img.clone();
 
@@ -286,7 +286,7 @@ bool Detector::fittingArmor() {
   return true;
 }
 
-bool Detector::lightJudge(int i, int j) {
+bool Detector::lightJudge(const int i, const int j) {
   armor_data_.left_light_height   =
       MAX(light_[i].size.height, light_[i].size.width);
   armor_data_.left_light_width    =
@@ -386,8 +386,8 @@ int Detector::averageColor() {
   return average_intensity;
 }
 
-void Detector::runImage(cv::Mat&  _src_img,
-                        const int _my_color) {
+void Detector::runImage(const cv::Mat&  _src_img,
+                        const int       _my_color) {
   switch (image_config_.method) {
     case 0:
       bin_color_img = fuseImage(grayPretreat(_src_img, _my_color),
@@ -400,16 +400,16 @@ void Detector::runImage(cv::Mat&  _src_img,
   }
 }
 
-cv::Mat Detector::fuseImage(cv::Mat _bin_gray_img,
-                            cv::Mat _bin_color_img) {
+cv::Mat Detector::fuseImage(const cv::Mat _bin_gray_img,
+                            const cv::Mat _bin_color_img) {
   cv::bitwise_and(_bin_color_img, _bin_gray_img, _bin_color_img);
   cv::morphologyEx(_bin_color_img, _bin_color_img, cv::MORPH_DILATE, ele_);
 
   return _bin_color_img;
 }
 
-cv::Mat Detector::grayPretreat(cv::Mat&  _src_img,
-                              const int _my_color) {
+inline cv::Mat Detector::grayPretreat(const cv::Mat& _src_img,
+                                      const int      _my_color) {
   cv::cvtColor(_src_img, gray_img_, cv::COLOR_BGR2GRAY);
 
   std::string window_name = {"[basic_armor] grayPretreat() -> gray_trackbar"};
@@ -461,8 +461,8 @@ cv::Mat Detector::grayPretreat(cv::Mat&  _src_img,
   return bin_gray_img;
 }
 
-cv::Mat Detector::bgrPretreat(cv::Mat&  _src_img,
-                              const int _my_color) {
+inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img,
+                                     const int      _my_color) {
   static std::vector<cv::Mat> _split;
   static cv::Mat              bin_color_img;
 
@@ -523,8 +523,8 @@ cv::Mat Detector::bgrPretreat(cv::Mat&  _src_img,
   return bin_color_img;
 }
 
-cv::Mat Detector::hsvPretreat(cv::Mat&  _src_img,
-                              const int _my_color) {
+inline cv::Mat Detector::hsvPretreat(const cv::Mat& _src_img,
+                                     const int      _my_color) {
   cv::cvtColor(_src_img, hsv_img, cv::COLOR_BGR2HSV_FULL);
   std::string window_name = {"[basic_armor] hsvPretreat() -> hsv_trackbar"};
   switch (_my_color) {
