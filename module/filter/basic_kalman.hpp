@@ -14,7 +14,7 @@ class RM_kalmanfilter {
 
   float p;
   float x = 640;
-  float y = 320;
+  float y = 300;
 
   typedef struct {
     const int         QUEUE_NUM = 5 + 1;  // 队列大小+1
