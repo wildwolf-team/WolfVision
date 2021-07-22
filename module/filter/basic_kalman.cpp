@@ -55,3 +55,4 @@ float RM_kalmanfilter::use_RM_KF(float top) {
   return predict_point(top_differ).x;  // top_angle_differ->differ
                                        // }
 }
+}  // namespace basic_kalman
