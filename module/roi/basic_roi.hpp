@@ -29,12 +29,12 @@ class RoI : public abstract_roi::RoI {
   inline void setLastRoiRect(cv::RotatedRect _rect, int _ArmorDistinguish) {
     if (_ArmorDistinguish == 0) {
       roi_armor_data_.last_roi_armor_rect.center = _rect.center;
-      roi_armor_data_.last_roi_armor_rect.size.width = _rect.size.width * 4;
+      roi_armor_data_.last_roi_armor_rect.size.width = _rect.size.width * 8;
       roi_armor_data_.last_roi_armor_rect.size.height = _rect.size.height * 4;
       roi_armor_data_.last_roi_armor_rect.angle = _rect.angle;
     } else {
       roi_armor_data_.last_roi_armor_rect.center = _rect.center;
-      roi_armor_data_.last_roi_armor_rect.size.width = _rect.size.width * 2;
+      roi_armor_data_.last_roi_armor_rect.size.width = _rect.size.width * 4;
       roi_armor_data_.last_roi_armor_rect.size.height = _rect.size.height * 4;
       roi_armor_data_.last_roi_armor_rect.angle = _rect.angle;
     }

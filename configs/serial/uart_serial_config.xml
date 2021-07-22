@@ -7,7 +7,7 @@
   - 1  B115200
   - 10 B921600
  -->
-<SET_BAUDRATE>1</SET_BAUDRATE>
+<SET_BAUDRATE>10</SET_BAUDRATE>
 <!-- 
   SHOW_SERIAL_INFORMATION - wheather print serial inforation
   - 0 Disable
