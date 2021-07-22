@@ -35,6 +35,7 @@ int main() {
   fps::FPS       global_fps_;
 
   basic_roi::RoI roi_;
+
   while (true) {
     global_fps_.getTick();
 
@@ -43,7 +44,6 @@ int main() {
     } else {
       cap_.read(src_img_);
     }
-
     if (!src_img_.empty()) {
       serial_.updateReceiveInformation();
       switch (serial_.returnReceiveMode()) {
@@ -58,9 +58,11 @@ int main() {
                                 pnp_.returnDepth(),
                                 basic_armor_.returnArmorNum(),
                                 0);
+        record_.Rmode_current = Record_mode::S1;
         break;
       case uart::ENERGY_AGENCY:
         serial_.writeData(basic_buff_.runTask(src_img_, serial_.returnReceive()));
+        record_.Rmode_current = Record_mode::S2;
         break;
       case uart::SENTRY_STRIKE_MODE:
         roi_img_ = roi_.returnROIResultMat(src_img_);
@@ -80,6 +82,7 @@ int main() {
                                   basic_armor_.returnLostCnt() > 0 ? 1 : 0, 0);
         }
         roi_.setLastRoiSuccess(basic_armor_.returnArmorNum());
+        record_.Rmode_current = Record_mode::S3;
         break;
       case uart::TOP_MODE:
         roi_img_ = roi_.returnROIResultMat(src_img_);
@@ -103,21 +106,14 @@ int main() {
                                   0);
         }
         roi_.setLastRoiSuccess(basic_armor_.returnArmorNum());
+        record_.Rmode_current = Record_mode::S4;
         break;
       case uart::RECORD_MODE:
-          if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
-          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
-                        basic_armor_.returnFinalArmorDistinguish(0),
-                        basic_armor_.returnFinalArmorRotatedRect(0));
-        }
-        serial_.updataWriteData(pnp_.returnYawAngle(),
-                                pnp_.returnPitchAngle(),
-                                pnp_.returnDepth(),
-                                basic_armor_.returnArmorNum(),
-                                0);
-         record_.RecordIng(src_img_);
+        record_.RecordIng(src_img_);
+        record_.Rmode_current = Record_mode::S5;
         break;
       case uart::PLANE_MODE:
+        record_.Rmode_current = Record_mode::S6;
         break;
       case uart::SENTINEL_AUTONOMOUS_MODE:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
@@ -169,25 +165,55 @@ int main() {
             }
           }
         }
+        record_.Rmode_current = Record_mode::S7;
         break;
       case uart::RADAR_MODE:
           fmt::print("RADIA_MODE");
           cv::imshow("RECORD_IMG", src_img_);
-          record_.RecordIng(src_img_);
-        break;
+           record_.RecordIng(src_img_);
+           record_.Rmode_current = Record_mode::S8;
+           break;
       default:
         break;
+      }
+    }
+    if (record_.Rmode_current == record_.Rmode_dafult) {
+      if (!record_.Recording_flag) {
+        record_.Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(record_.n++) + ".avi"));
+        record_.Rmode_last     = record_.Rmode_current;
+        record_.Recording_flag = true;
+      }
+    }
+    if (record_.Rmode_current != record_.Rmode_dafult) {
+      record_.Recording_flag = false;
+    }
+    if ( record_.Rmode_last == record_.Rmode_dafult && !record_.Recording_flag ) {
+      record_.writer.release();
+    }
+    int k = cv::waitKey(1);
+    if (record_.Priority) {
+      if (k == 115) {
+        record_.vidion_up = true;
+        record_.Rmode_current = Record_mode::S5;
+      }
+      if (k == 101) {
+        record_.vidion_up = false;
+        record_.Rmode_current = Record_mode::S1;
+      }
+      if (record_.vidion_up) {
+          record_.RecordIng(src_img_);
       }
     }
 
     mv_capture_.cameraReleasebuff();
     basic_armor_.freeMemory();
 #ifndef RELEASE
-    if (cv::waitKey(1) == 'q') {
+    if (k == 113) {
       record_.writer.release();
-     return 0;
+      return 0;
     }
-    #else
+
+#else
     usleep(1);
     #endif
     global_fps_.calculateFPSGlobal();

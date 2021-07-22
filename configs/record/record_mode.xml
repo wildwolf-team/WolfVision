@@ -4,21 +4,34 @@
 
 <!--
     相机录制模式设置
+    1 视频
+    2 照片
 -->
-<RECORD_MODE>2</RECORD_MODE>
+<RECORD_MODE>1</RECORD_MODE>
 <!--
     录制开关
+    1 开启
+    0  关闭
 -->
 <RECORD_SWITCH>0</RECORD_SWITCH>
 
 <!--
     录制位置存放
+    默认为数字1 可以自行更改
+    但不更该相对路径，只改变文件名称
 -->
 <PATH_>1</PATH_>
 
 
+
 <!--
-    fsp
+    视觉电控优先级
+    1 电控+视觉
+    else 电控
 -->
-<FPS_RECORD>66</FPS_RECORD>
+<VISION_ELECTRONIC_LOCK>1</VISION_ELECTRONIC_LOCK>
+<!--
+    fsp帧率控制
+-->
+<FPS_RECORD>20</FPS_RECORD>
 </opencv_storage>
