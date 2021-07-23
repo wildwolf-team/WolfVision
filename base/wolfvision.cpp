@@ -44,8 +44,16 @@ int main() {
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
           pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
         }
+<<<<<<< HEAD
         serial_.updataWriteData(pnp_.returnYawAngle(), pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
 
+=======
+        serial_.updataWriteData(pnp_.returnYawAngle(),
+                                pnp_.returnPitchAngle(),
+                                pnp_.returnDepth(),
+                                basic_armor_.returnArmorNum(),
+                                0);
+>>>>>>> 52c4881b07d8e6a5ff1c66da1d479b98051941b7
         record_.Rmode_current = Record_mode::S1;
         break;
       case uart::ENERGY_AGENCY:
@@ -79,7 +87,11 @@ int main() {
         record_.Rmode_current = Record_mode::S4;
         break;
       case uart::RECORD_MODE:
+<<<<<<< HEAD
         // record_.RecordIng(src_img_);
+=======
+        record_.RecordIng(src_img_);
+>>>>>>> 52c4881b07d8e6a5ff1c66da1d479b98051941b7
         record_.Rmode_current = Record_mode::S5;
         break;
       case uart::PLANE_MODE:
@@ -112,15 +124,24 @@ int main() {
         record_.Rmode_current = Record_mode::S7;
         break;
       case uart::RADAR_MODE:
+<<<<<<< HEAD
         fmt::print("RADIA_MODE");
         cv::imshow("RECORD_IMG", src_img_);
         record_.RecordIng(src_img_);
         record_.Rmode_current = Record_mode::S8;
         break;
+=======
+          fmt::print("RADIA_MODE");
+          cv::imshow("RECORD_IMG", src_img_);
+           record_.RecordIng(src_img_);
+           record_.Rmode_current = Record_mode::S8;
+           break;
+>>>>>>> 52c4881b07d8e6a5ff1c66da1d479b98051941b7
       default:
         break;
       }
     }
+<<<<<<< HEAD
     // if(record_.Rmode_current == record_.Rmode_dafult){
     //   if (!record_.Recording_flag) {
     //     record_.Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(record_.n++) + ".avi"));
@@ -148,12 +169,46 @@ int main() {
     //   }
     // }
     record_.Vision_judge(src_img_, cv::waitKey(1), record_.Rmode_current);
+=======
+    if (record_.Rmode_current == record_.Rmode_dafult) {
+      if (!record_.Recording_flag) {
+        record_.Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(record_.n++) + ".avi"));
+        record_.Rmode_last     = record_.Rmode_current;
+        record_.Recording_flag = true;
+      }
+    }
+    if (record_.Rmode_current != record_.Rmode_dafult) {
+      record_.Recording_flag = false;
+    }
+    if ( record_.Rmode_last == record_.Rmode_dafult && !record_.Recording_flag ) {
+      record_.writer.release();
+    }
+    int k = cv::waitKey(1);
+    if (record_.Priority) {
+      if (k == 115) {
+        record_.vidion_up = true;
+        record_.Rmode_current = Record_mode::S5;
+      }
+      if (k == 101) {
+        record_.vidion_up = false;
+        record_.Rmode_current = Record_mode::S1;
+      }
+      if (record_.vidion_up) {
+          record_.RecordIng(src_img_);
+      }
+    }
+
+>>>>>>> 52c4881b07d8e6a5ff1c66da1d479b98051941b7
     mv_capture_.cameraReleasebuff();
     basic_armor_.freeMemory();
 
 #ifndef RELEASE
+<<<<<<< HEAD
     cv::imshow("dafule", src_img_);
     if (k == 'q') {
+=======
+    if (k == 113) {
+>>>>>>> 52c4881b07d8e6a5ff1c66da1d479b98051941b7
       record_.writer.release();
       return 0;
     }

@@ -33,10 +33,16 @@ enum ChangeNext {
 class Record {
  public:
   Record();
+<<<<<<< HEAD
   explicit Record(std::string record_path_, String path_in, cv::Size size);
   ~Record();
   int             Return_switch() { return switch_r; }
   void            Vision_judge(const cv::Mat input_img, int judge, int current_mode);
+=======
+  explicit Record(const std::string record_path_, String path_in, cv::Size size);
+  ~Record();
+  int             Return_switch() { return switch_r; }
+>>>>>>> 52c4881b07d8e6a5ff1c66da1d479b98051941b7
   int             Path_H;             // 读取xml文件路径
   int             mode_set;           // 视频/截图模式设置
   cv::VideoWriter writer;             // 写入对象
@@ -45,9 +51,15 @@ class Record {
   int             Rmode_current  = S1;
   int             n              = 1;
   bool            Recording_flag = false;
+<<<<<<< HEAD
   void            Change_Place(String change_path);
   int             Priority;   // 视觉电控优先级
   bool            vidion_up;  // 开始结束判断
+=======
+  void            Change_Place(const String change_path);
+  int             Priority;  // 视觉电控优先级
+  bool          vidion_up;  // 开始结束判断
+>>>>>>> 52c4881b07d8e6a5ff1c66da1d479b98051941b7
 
  private:
   String   palce_change;

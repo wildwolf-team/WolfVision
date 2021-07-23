@@ -33,5 +33,9 @@
 <!--
     fsp帧率控制
 -->
+<<<<<<< HEAD
 <FPS_RECORD>35</FPS_RECORD>
+=======
+<FPS_RECORD>20</FPS_RECORD>
+>>>>>>> 52c4881b07d8e6a5ff1c66da1d479b98051941b7
 </opencv_storage>

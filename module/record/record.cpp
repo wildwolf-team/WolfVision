@@ -13,6 +13,7 @@ Record::Record(std::string path_input, String path_in, cv::Size size) {
   record["RECORD_MODE"] >> mode_set;
   record["VISION_ELECTRONIC_LOCK"] >> Priority;
   palce_change = path_in;
+<<<<<<< HEAD
   size_        = size;
 }
 void Record::RecordIng(cv::Mat src_img_r) {
@@ -60,6 +61,13 @@ void Record::Vision_judge(const cv::Mat src_input, int judge_, int current_mode)
     if (vidion_up) {
       RecordIng(src_input);
     }
+=======
+  size_ = size;
+}
+void Record::RecordIng(cv::Mat src_img_r) {
+  if (mode_set == 1) {
+    writer << src_img_r;
+>>>>>>> 52c4881b07d8e6a5ff1c66da1d479b98051941b7
   }
   // 串口部分
   if (current_mode == S5) {
@@ -79,4 +87,17 @@ void Record::Vision_judge(const cv::Mat src_input, int judge_, int current_mode)
 }
 Record::~Record() {}
 
+void Record::Change_Place(const String path_) {
+  palce_change = path_;
+  if (switch_r == 1) {
+    writer.open(palce_change, fourcc_, fps_r, size_, true);
+  }
+  if (writer.isOpened()) {
+    fmt::print("ISRECORDING\n");
+  } else {
+    fmt::print("UNABLE TO RECORD\n");
+  }
+}
+Record::~Record() {}
+}
 }  // namespace Record_mode
