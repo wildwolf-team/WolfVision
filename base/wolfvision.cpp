@@ -6,7 +6,8 @@ int main() {
 
   cv::Mat src_img_, roi_img_;
 
-  mindvision::VideoCapture mv_capture_ = mindvision::VideoCapture(mindvision::CameraParam(1, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
+  mindvision::VideoCapture mv_capture_ = mindvision::VideoCapture(
+    mindvision::CameraParam(1, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_5000));
 
   uart::SerialPort serial_ = uart::SerialPort(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/serial/uart_serial_config.xml"));
@@ -26,7 +27,7 @@ int main() {
     fmt::format("{}{}", SOURCE_PATH, "/module/ml/mnist-8.onnx"));
 
   Record_mode::Record record_ = Record_mode::Record(
-    fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_mode.xml"),
+    fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_mode.yaml"),
                                                     fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/" + to_string(record_.Path_H) + ".avi"),
                                                     cv::Size(640, 480));  // 记得修改分辨率
 

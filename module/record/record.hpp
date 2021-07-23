@@ -58,7 +58,8 @@ class Record {
   bool          vision_up_uart;  // 串口录制使能判断
 
  private:
-  String   palce_change;
+  String  xml_path;
+  String   palce_change;                // 读取文件写入路径
   int      fps_r;                                        // 视频帧数限制
   int      switch_r;                                     // 录制开关
   int      fourcc_ = writer.fourcc('M', 'J', 'P', 'G');  // 写入格式

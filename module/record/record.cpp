@@ -5,7 +5,8 @@
 namespace Record_mode {
 Record::Record() {}
 Record::Record(std::string path_input, String path_in, cv::Size size) {
-  cv::FileStorage record(path_input, cv::FileStorage::READ);
+  xml_path = path_input;
+  cv::FileStorage record(xml_path, cv::FileStorage::READ);
 
   record["RECORD_SWITCH"] >> switch_r;
   record["PATH_"] >> Path_H;
@@ -14,6 +15,7 @@ Record::Record(std::string path_input, String path_in, cv::Size size) {
   record["VISION_ELECTRONIC_LOCK"] >> Priority;
   palce_change = path_in;
   size_        = size;
+  record.release();
 }
 void Record::RecordIng(cv::Mat src_img_r) {
   if (mode_set == 1) {
@@ -40,54 +42,13 @@ void Record::Change_Place(String path_) {
 }
 
 void Record::Vision_judge(const cv::Mat src_input, int judge_, int current_mode) {
-  // 视觉部分
-  // if (Priority) {
-  //   if (judge_ == 's') {
-  //     vision_up = true;
-  //     if (!Recording_flag) {
-  //       Rmode_current = S5;
-  //       Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(n++) + ".avi"));
-  //       Rmode_last     = Rmode_current;
-  //       Recording_flag = true;
-  //     }
-  //   }
-  //   if (judge_ == 'e') {
-  //     vision_up      = false;
-  //     Rmode_current  = S1;
-  //     Rmode_last     = Rmode_current;
-  //     Recording_flag = false;
-  //   }
-  //   if (vision_up) {
-  //     RecordIng(src_input);
-  //   }
-  // }
-  // 串口部分
-
-  // if (current_mode == S5) {
-  //   Rmode_last_elec = current_mode;
-  //   RecordIng(src_input);
-  //   if (!Recording_flag) {
-  //     Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(n++) + ".avi"));
-  //     Recording_flag = true;
-  //   }
-  // }
-
-  // if (current_mode != S5) {
-  //   if (!vision_up || Rmode_last == S5) {
-  //     Recording_flag = false;
-  //   }
-  // }
-  // if ((Rmode_last != S5 && !Recording_flag)) {
-  //   writer.release();
-  // }
-
   /****视觉控制部分***/
   if (Priority) {
     if (judge_ == 's') {
       vision_up     = true;
       Rmode_current = S5;
       if (!Recording_flag) {
-        Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(n++) + ".avi"));
+        Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(Path_H++) + ".avi"));
       }
       Recording_flag = true;
     }
@@ -110,7 +71,7 @@ void Record::Vision_judge(const cv::Mat src_input, int judge_, int current_mode)
   if (current_mode == S5) {
       uart_judge = true;
     if (!Recording_flag_uart) {
-      Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(n++) + ".avi"));
+      Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(Path_H++) + ".avi"));
     }
     Recording_flag_uart = true;
   }
