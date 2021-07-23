@@ -292,30 +292,32 @@ void SerialPort::updateReceiveInformation() {
   }
 
   switch (transform_arr_[1]) {
-    case SUP_SHOOT:
-      receive_data_.now_run_mode = SUP_SHOOT;
-      break;
-    case ENERGY_AGENCY:
-      receive_data_.now_run_mode = ENERGY_AGENCY;
-      break;
-    case SENTRY_MODE:
-      receive_data_.now_run_mode = SENTRY_MODE;
-      break;
-    case BASE_MODE:
-      receive_data_.now_run_mode = BASE_MODE;
-      break;
-    case TOP_MODE:
-      receive_data_.now_run_mode = TOP_MODE;
-      break;
-    case PLANE_MODE:
-      receive_data_.now_run_mode = PLANE_MODE;
-      break;
-    case OCR_SENTRYSELF_MODE:
-      receive_data_.now_run_mode = OCR_SENTRYSELF_MODE;
-      break;
-    default:
-      receive_data_.now_run_mode = SUP_SHOOT;
-      break;
+  case SUP_SHOOT:
+    receive_data_.now_run_mode = SUP_SHOOT;
+    break;
+  case ENERGY_AGENCY:
+    receive_data_.now_run_mode = ENERGY_AGENCY;
+    break;
+  case SENTRY_STRIKE_MODE:
+    receive_data_.now_run_mode = SENTRY_STRIKE_MODE;
+    break;
+  case TOP_MODE:
+    receive_data_.now_run_mode = TOP_MODE;
+    break;
+  case RECORD_MODE:
+    receive_data_.now_run_mode = RECORD_MODE;
+    break;
+  case PLANE_MODE:
+    receive_data_.now_run_mode = PLANE_MODE;
+    break;
+  case SENTINEL_AUTONOMOUS_MODE:
+    receive_data_.now_run_mode = SENTINEL_AUTONOMOUS_MODE;
+    break;
+  case RADAR_MODE:
+    receive_data_.now_run_mode = RADAR_MODE;
+  default:
+    receive_data_.now_run_mode = SUP_SHOOT;
+    break;
   }
 
   switch (transform_arr_[2]) {
