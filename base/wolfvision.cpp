@@ -45,12 +45,9 @@ int main() {
           pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
         }
         serial_.updataWriteData(pnp_.returnYawAngle(), pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
-
-        record_.Rmode_current = Record_mode::S1;
         break;
       case uart::ENERGY_AGENCY:
         serial_.writeData(basic_buff_.runTask(src_img_, serial_.returnReceive()));
-        record_.Rmode_current = Record_mode::S2;
         break;
       case uart::SENTRY_STRIKE_MODE:
         roi_img_ = roi_.returnROIResultMat(src_img_);
@@ -63,7 +60,7 @@ int main() {
           serial_.updataWriteData(-pnp_.returnYawAngle(), pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnLostCnt() > 0 ? 1 : 0, 0);
         }
         roi_.setLastRoiSuccess(basic_armor_.returnArmorNum());
-        record_.Rmode_current = Record_mode::S3;
+
         break;
       case uart::TOP_MODE:
         roi_img_ = roi_.returnROIResultMat(src_img_);
@@ -76,14 +73,14 @@ int main() {
           serial_.updataWriteData(-pnp_.returnYawAngle(), pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnLostCnt() > 0 ? 1 : 0, 0);
         }
         roi_.setLastRoiSuccess(basic_armor_.returnArmorNum());
-        record_.Rmode_current = Record_mode::S4;
+
         break;
       case uart::RECORD_MODE:
         // record_.RecordIng(src_img_);
-        record_.Rmode_current = Record_mode::S5;
+
         break;
       case uart::PLANE_MODE:
-        record_.Rmode_current = Record_mode::S6;
+
         break;
       case uart::SENTINEL_AUTONOMOUS_MODE:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
@@ -109,19 +106,17 @@ int main() {
             }
           }
         }
-        record_.Rmode_current = Record_mode::S7;
         break;
       case uart::RADAR_MODE:
         fmt::print("RADIA_MODE");
         cv::imshow("RECORD_IMG", src_img_);
         record_.RecordIng(src_img_);
-        record_.Rmode_current = Record_mode::S8;
         break;
       default:
         break;
       }
     }
-    record_.Vision_judge(src_img_, cv::waitKey(1), record_.Rmode_current);
+    record_.Vision_judge(src_img_, cv::waitKey(1), uart::SUP_SHOOT);
     mv_capture_.cameraReleasebuff();
     basic_armor_.freeMemory();
 
