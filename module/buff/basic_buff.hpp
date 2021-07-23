@@ -382,6 +382,15 @@ class Detector {
   float fixed_forecast_quantity_;  // 固定预测量（扇叶的单帧移动量）
   float final_forecast_quantity_;  // 最终合成的预测量
 
+#ifdef DEBUG
+
+ private:
+  // 卡尔曼滤波器
+  basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.01f, 0.03f, 1.f, 0.f, 0.f);
+
+  float last_final_radian_ = 0.f;
+#endif  // DEBUG
+
  private:
   /* 计算获取最终目标（矩形、顶点） */
 
@@ -410,7 +419,7 @@ class Detector {
 
  private:
   /* 自动控制 */
-  // TODO(fqjun)
+
  private:
   /* 更新上一帧数据 */
 
@@ -421,17 +430,6 @@ class Detector {
   fps::FPS buff_fps_1_{"Part 1"};
   fps::FPS buff_fps_2_{"Part 2"};
   fps::FPS buff_fps_;
-
-#ifdef DEBUG
-
- private:
-  // 卡尔曼滤波器
-  basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.01f, 0.03f, 1.f, 0.f, 0.f);
-#endif  // DEBUG
-
-#ifdef DEBUG
-  float last_final_radian_ = 0.f;
-#endif  // DEBUG
 };
 
 }  // namespace basic_buff
