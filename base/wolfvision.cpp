@@ -170,6 +170,11 @@ int main() {
     usleep(1);
     #endif
     global_fps_.calculateFPSGlobal();
+    if (global_fps_.returnFps() > 500) {
+      mv_capture_.~VideoCapture();
+      mv_capture_ = mindvision::VideoCapture(
+        mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
+    }
   }
 
   return 0;
