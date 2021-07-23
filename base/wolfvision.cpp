@@ -109,6 +109,7 @@ int main() {
             }
           }
         }
+        serial_.updataWriteData(pnp_.returnYawAngle(), pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
         record_.Rmode_current = Record_mode::S7;
         break;
       case uart::RADAR_MODE:
