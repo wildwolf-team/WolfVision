@@ -109,6 +109,12 @@ list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/filter)
 add_library(wv-basic-kalman SHARED module/filter/basic_kalman.cpp)
 list(APPEND WV_EXTRA_LIBS wv-basic-kalman)
 
+
+list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/record)
+add_library(wv-video-record SHARED module/record/record.cpp)
+list(APPEND WV_EXTRA_LIBS wv-video-record)
+
+
 list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/module/ml)
 add_library(wv-onnx-inferring SHARED module/ml/onnx_inferring.cpp)
 list(APPEND WV_EXTRA_LIBS wv-onnx-inferring)
@@ -157,6 +163,8 @@ target_compile_definitions(WolfVision PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_
 target_compile_definitions(WolfVision PRIVATE "SOURCE_PATH=\"${SOURCE_PATH}\"")
 target_compile_definitions(wv-basic-buff PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
 target_compile_definitions(wv-onnx-inferring PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
+target_compile_definitions(wv-video-record PRIVATE "CONFIG_FILE_PATH=\"${CONFIG_FILE_PATH}\"")
+
 
 # Add test_camera directory
 if(BUILD_TEST)
