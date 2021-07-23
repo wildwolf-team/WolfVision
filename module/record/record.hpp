@@ -41,13 +41,21 @@ class Record {
   int             mode_set;           // 视频/截图模式设置
   cv::VideoWriter writer;             // 写入对象
   int             Rmode_dafult = S5;  // 模式切换更新
-  int             Rmode_last;
+  int             Rmode_last;               // 视觉判断
+
   int             Rmode_current  = S1;
   int             n              = 1;
   bool          Recording_flag = false;
   void          Change_Place(String change_path);
-  int             Priority;  // 视觉电控优先级
-  bool          vidion_up;  // 开始结束判断
+  int             Priority;  // 视觉串口优先级
+  bool          vision_up;  // 开始结束判断(视觉)
+
+  /*******串口控制数据********************/
+  bool          uart_judge;  // 串口开始结束判断(uart)
+  int             Rmode_last_uart;  // 串口上次模式判断
+  int             Rmode_current_uart;  // 串口当前模式判断
+  bool          Recording_flag_uart = false;
+  bool          vision_up_uart;  // 串口录制使能判断
 
  private:
   String   palce_change;

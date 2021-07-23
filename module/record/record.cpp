@@ -13,7 +13,7 @@ Record::Record(std::string path_input, String path_in, cv::Size size) {
   record["RECORD_MODE"] >> mode_set;
   record["VISION_ELECTRONIC_LOCK"] >> Priority;
   palce_change = path_in;
-  size_ = size;
+  size_        = size;
 }
 void Record::RecordIng(cv::Mat src_img_r) {
   if (mode_set == 1) {
@@ -39,43 +39,92 @@ void Record::Change_Place(String path_) {
   }
 }
 
-void Record::Vision_judge(const cv::Mat src_input,  int judge_ , int current_mode) {
-// 视觉部分
+void Record::Vision_judge(const cv::Mat src_input, int judge_, int current_mode) {
+  // 视觉部分
+  // if (Priority) {
+  //   if (judge_ == 's') {
+  //     vision_up = true;
+  //     if (!Recording_flag) {
+  //       Rmode_current = S5;
+  //       Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(n++) + ".avi"));
+  //       Rmode_last     = Rmode_current;
+  //       Recording_flag = true;
+  //     }
+  //   }
+  //   if (judge_ == 'e') {
+  //     vision_up      = false;
+  //     Rmode_current  = S1;
+  //     Rmode_last     = Rmode_current;
+  //     Recording_flag = false;
+  //   }
+  //   if (vision_up) {
+  //     RecordIng(src_input);
+  //   }
+  // }
+  // 串口部分
+
+  // if (current_mode == S5) {
+  //   Rmode_last_elec = current_mode;
+  //   RecordIng(src_input);
+  //   if (!Recording_flag) {
+  //     Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(n++) + ".avi"));
+  //     Recording_flag = true;
+  //   }
+  // }
+
+  // if (current_mode != S5) {
+  //   if (!vision_up || Rmode_last == S5) {
+  //     Recording_flag = false;
+  //   }
+  // }
+  // if ((Rmode_last != S5 && !Recording_flag)) {
+  //   writer.release();
+  // }
+
+  /****视觉控制部分***/
   if (Priority) {
     if (judge_ == 's') {
-      vidion_up = true;
+      vision_up     = true;
+      Rmode_current = S5;
       if (!Recording_flag) {
-        Rmode_current = S5;
         Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(n++) + ".avi"));
-        Rmode_last     = Rmode_current;
-        Recording_flag = true;
       }
-    }
-    if (judge_ == 'e') {
-      vidion_up      = false;
-      Rmode_current  = S1;
-      Rmode_last     = Rmode_current;
-      Recording_flag = false;
-    }
-    if (vidion_up) {
-      RecordIng(src_input);
-    }
-  }
-  // 串口部分
-  if (current_mode == S5) {
-    RecordIng(src_input);
-    if (!Recording_flag) {
-      Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(n++) + ".avi"));
-      Rmode_last     = current_mode;
       Recording_flag = true;
     }
+
+    if (judge_ == 'e') {
+      Recording_flag = false;
+      Rmode_current  = S1;
+      vision_up      = false;
+    }
+    if (vision_up) {
+      RecordIng(src_input);
+    }
+    if (!Recording_flag && Rmode_last == S5) {
+      writer.release();
+    }
+    Rmode_last = Rmode_current;
   }
-  if (current_mode != S5 && !vidion_up) {
-    Recording_flag = false;
+
+  /*******串口输入部分*********/
+  if (current_mode == S5) {
+      uart_judge = true;
+    if (!Recording_flag_uart) {
+      Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(n++) + ".avi"));
+    }
+    Recording_flag_uart = true;
   }
-  if (Rmode_last != S5 && !Recording_flag) {
+  if (current_mode != S5) {
+    Recording_flag_uart = false;
+    uart_judge          = false;
+  }
+  if (uart_judge) {
+    RecordIng(src_input);
+  }
+  if (!Recording_flag_uart && Rmode_last_uart == S5) {
     writer.release();
   }
+  Rmode_last_uart = current_mode;
 }
 Record::~Record() {}
 

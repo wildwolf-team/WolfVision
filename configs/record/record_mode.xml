@@ -33,5 +33,5 @@
 <!--
     fsp帧率控制
 -->
-<FPS_RECORD>35</FPS_RECORD>
+<FPS_RECORD>10</FPS_RECORD>
 </opencv_storage>
