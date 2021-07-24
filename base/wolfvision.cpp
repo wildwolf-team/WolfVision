@@ -7,7 +7,7 @@ int main() {
   cv::Mat src_img_, roi_img_;
 
   mindvision::VideoCapture mv_capture_ = mindvision::VideoCapture(
-    mindvision::CameraParam(1, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_5000));
+    mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_5000));
 
   uart::SerialPort serial_ = uart::SerialPort(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/serial/uart_serial_config.xml"));
@@ -29,7 +29,7 @@ int main() {
   Record_mode::Record record_ = Record_mode::Record(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_mode.yaml"),
                                                     fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/" + to_string(record_.Path_H) + ".avi"),
-                                                    cv::Size(640, 480));  // 记得修改分辨率
+                                                    cv::Size(1280, 800));  // 记得修改分辨率
 
   basic_roi::RoI save_roi;
   fps::FPS       global_fps_;
@@ -37,7 +37,6 @@ int main() {
   basic_roi::RoI roi_;
   while (true) {
     global_fps_.getTick();
-    int k = cv::waitKey(1);
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
     } else {
@@ -151,7 +150,7 @@ int main() {
 
 #ifndef RELEASE
     cv::imshow("dafule", src_img_);
-    if (k == 'q') {
+    if (cv::waitKey(1) == 'q') {
       return 0;
     }
 
