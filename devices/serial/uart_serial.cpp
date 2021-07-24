@@ -80,7 +80,7 @@ void SerialPort::receiveData() {
         for (size_t j = 0; j != sizeof(receive_buff_); ++j) {
           receive_buff_[j] = receive_buff_temp_[i + j];
 
-          fmt::print(" {}", static_cast<int>(receive_buff_[i]));
+          fmt::print(" {:d}", receive_buff_[j]);
         }
 
         fmt::print("\n");
