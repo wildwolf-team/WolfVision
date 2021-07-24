@@ -43,11 +43,11 @@ class Record {
   cv::VideoWriter writer;             // 写入对象
   cv::VideoWriter writer_uart;  // 串口写入对象
   int             Rmode_last;               // 视觉判断
-
+  void          Change_Place(String change_path , int mode_vision);
+/******  视觉控制数据******************/
   int             Rmode_current  = S1;
   int             n              = 1;
   bool          Recording_flag = false;
-  void          Change_Place(String change_path , int mode_vision);
   int             Priority;  // 视觉串口优先级
   bool          vision_up = false;  // 开始结束判断(视觉)
 
