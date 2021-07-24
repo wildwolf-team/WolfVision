@@ -7,7 +7,7 @@ int main() {
   cv::Mat src_img_, roi_img_;
 
   mindvision::VideoCapture mv_capture_ = mindvision::VideoCapture(
-    mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_5000));
+    mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
 
   uart::SerialPort serial_ = uart::SerialPort(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/serial/uart_serial_config.xml"));
