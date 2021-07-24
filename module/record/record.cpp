@@ -33,6 +33,7 @@ void Record::RecordIng(cv::Mat src_img_r) {
   }
 }
 
+
 void Record::Change_Place(String path_, int mode_vision) {
   palce_change = path_;
   com_uart_judge = mode_vision;
@@ -57,7 +58,8 @@ void Record::Vision_judge(const cv::Mat src_input, int judge_, int current_mode)
       vision_up     = true;
       Rmode_current = S5;
       if (!Recording_flag) {
-        Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(Path_H++) + ".avi"), 1);
+        Path_Maker(1);
+        Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/" + std::to_string(Path_H) + ".avi"), 1);
       }
       Recording_flag = true;
     }
@@ -71,6 +73,7 @@ void Record::Vision_judge(const cv::Mat src_input, int judge_, int current_mode)
       RecordIng(src_input);
     }
     if (!Recording_flag && Rmode_last == S5) {
+      Path_Maker(2);
       writer.release();
     }
     Rmode_last = Rmode_current;
@@ -81,7 +84,8 @@ void Record::Vision_judge(const cv::Mat src_input, int judge_, int current_mode)
     if (!uart_lock) {
       uart_judge = true;
       if (!Recording_flag_uart) {
-        Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/Record" + std::to_string(Path_H++) + ".avi"), 2);
+        Path_Maker(1);
+        Change_Place(fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/" + std::to_string(Path_H) + ".avi"), 2);
         uart_lock = true;
       }
     }
@@ -97,6 +101,7 @@ void Record::Vision_judge(const cv::Mat src_input, int judge_, int current_mode)
   }
   if (!Recording_flag_uart && Rmode_last_uart == S5 && !uart_lock) {
     uart_lock = false;
+    Path_Maker(2);
     writer.release();
   }
   Rmode_last_uart = current_mode;
