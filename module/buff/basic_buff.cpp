@@ -240,9 +240,18 @@ void Detector::readBuffConfig(const cv::FileStorage& _fs) {
   _fs["AREA_RATIO_MAX"] >> buff_config_.param.AREA_RATIO_MAX;
   _fs["AREA_RATIO_MIN"] >> buff_config_.param.AREA_RATIO_MIN;
 
+  // center_r
   _fs["BIG_LENTH_R"] >> buff_config_.param.BIG_LENTH_R;
 
   _fs["CENTER_R_ROI_SIZE"] >> buff_config_.param.CENTER_R_ROI_SIZE;
+
+  _fs["CENTER_R_ASPECT_RATIO_MIN"] >> buff_config_.param.CENTER_R_ASPECT_RATIO_MIN;
+  _fs["CENTER_R_ASPECT_RATIO_MAX"] >> buff_config_.param.CENTER_R_ASPECT_RATIO_MAX;
+  buff_config_.param.CENTER_R_ASPECT_RATIO_MIN *= 0.01;
+  buff_config_.param.CENTER_R_ASPECT_RATIO_MAX *= 0.01;
+
+  _fs["CENTER_R_AREA_MIN"] >> buff_config_.param.CENTER_R_AREA_MIN;
+  _fs["CENTER_R_AREA_MAX"] >> buff_config_.param.CENTER_R_AREA_MAX;
 
   // filter coefficient
   _fs["FILTER_COEFFICIENT"] >> buff_config_.param.FILTER_COEFFICIENT;
@@ -737,13 +746,13 @@ cv::Point2f Detector::findCircleR(cv::Mat& _input_src_img, cv::Mat& _input_bin_i
 
     fmt::print("[{}] 矩形 {} 比例:{}\n", center_yellow, i, center_r_.aspectRatio());
 
-    if (center_r_.aspectRatio() < 0.9f || center_r_.aspectRatio() > 1.25f) {
+    if (center_r_.aspectRatio() < buff_config_.param.CENTER_R_ASPECT_RATIO_MIN || center_r_.aspectRatio() > buff_config_.param.CENTER_R_ASPECT_RATIO_MAX) {
       continue;
     }
 
     fmt::print("[{}] 矩形 {} 面积:{}\n", center_yellow, i, center_r_.Rect().boundingRect().area());
 
-    if (center_r_.Rect().boundingRect().area() < 1000 || center_r_.Rect().boundingRect().area() > 3500) {
+    if (center_r_.Rect().boundingRect().area() < buff_config_.param.CENTER_R_AREA_MIN || center_r_.Rect().boundingRect().area() > buff_config_.param.CENTER_R_AREA_MAX) {
       continue;
     }
 
@@ -1030,9 +1039,9 @@ void Detector::calculateTargetPointSet(
              8);  // orange
   }
 
-  cv::circle(_input_dst_img, _final_center_r, radio_, cv::Scalar(0, 255, 125), 2, 8, 0);  // 轨迹圆
-  cv::circle(_input_dst_img, pre_center_, 3, cv::Scalar(255, 0, 0), 3, 8, 0);             // 预测值的中点
-  cv::line(_input_dst_img, pre_center_, _final_center_r, cv::Scalar(0, 255, 255), 2);     // 预测点和圆心的连线
+  cv::circle(_input_dst_img, _final_center_r, radio_, cv::Scalar(0, 255, 125), 2, 8, 0);                       // 轨迹圆
+  cv::circle(_input_dst_img, pre_center_, 3, cv::Scalar(255, 0, 0), 3, 8, 0);                                  // 预测值的中点
+  cv::line(_input_dst_img, pre_center_, _final_center_r, cv::Scalar(0, 255, 255), 2);                          // 预测点和圆心的连线
   cv::line(_input_dst_img, current_target_.Armor().Rect().center, _final_center_r, cv::Scalar(0, 255, 0), 2);  // 装甲板和圆心的连线
 
   // 顺时针表示顶点顺序,红黄蓝绿

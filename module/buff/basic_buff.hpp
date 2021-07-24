@@ -78,6 +78,14 @@ struct Buff_Param {
   // 圆心roi矩形大小
   int CENTER_R_ROI_SIZE;
 
+  // 圆心矩形比例
+  float CENTER_R_ASPECT_RATIO_MIN;
+  float CENTER_R_ASPECT_RATIO_MAX;
+
+  // 圆心矩形面积
+  int CENTER_R_AREA_MIN;
+  int CENTER_R_AREA_MAX;
+
   // 滤波器系数
   float FILTER_COEFFICIENT;
 
