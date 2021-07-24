@@ -516,7 +516,7 @@ inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img,
       break;
   }
 
-  if (image_config_.gray_edit) {
+  if (image_config_.color_edit) {
     cv::imshow(window_name, bin_color_img);
   }
 
