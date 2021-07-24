@@ -1,0 +1,32 @@
+%YAML:1.0
+
+---
+#版本1.1
+
+
+# "相机录制模式设置"
+# 1 视频
+# 2 照片
+RECORD_MODE: 1
+
+# "录制开关"
+# 1 开启录制
+# 0 关闭录制
+RECORD_SWITCH: 1
+
+# "录制位置存放"
+# 默认为数字1 可以自行更改
+# 但不更该相对路径，只改变文件名称
+PATH_: 1
+
+# "视觉电控优先级"
+# 1 电控+视觉
+# else 电控
+VISION_ELECTRONIC_LOCK: 1
+
+# "fsp帧率控制"
+# NoteBoook 60 -120 testing
+# Small Conputer 15-20
+FPS_RECORD: 20
+...
+

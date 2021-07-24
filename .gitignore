@@ -31,3 +31,7 @@ build
 
 # virtual enviroment
 .venv
+
+#Camera
+.mvdat
+.config
