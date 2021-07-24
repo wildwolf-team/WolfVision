@@ -149,11 +149,10 @@ class PnP {
       rd = vertex[2];
     }
 
-    target2d.emplace_back(lu);
-    target2d.emplace_back(ru);
-    target2d.emplace_back(rd);
     target2d.emplace_back(ld);
-
+    target2d.emplace_back(rd);
+    target2d.emplace_back(ru);
+    target2d.emplace_back(lu);
     return target2d;
   }
 
