@@ -38,19 +38,22 @@ enum Color {
 enum RunMode {
   DEFAULT_MODE,
   // Self-Scanning Mode
-
   SUP_SHOOT,
-
   // Talisman Mode
   ENERGY_AGENCY,
-
-  SENTRY_MODE,
-  BASE_MODE,
+  // Hitting the sentry Mode
+  SENTRY_STRIKE_MODE,
+  // Little top mode
   TOP_MODE,
+  // Record video Mode
+  RECORD_MODE,
+  // Plane Mode
   PLANE_MODE,
-  OCR_SENTRYSELF_MODE,
+  // Sentrys autonomous mode
+  SENTINEL_AUTONOMOUS_MODE,
+  // Radar Mode
+  RADAR_MODE,
 };
-
 // Describe the current robot ID information
 enum RobotID {
   HERO = 1,
