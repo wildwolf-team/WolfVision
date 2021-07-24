@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <queue>
+#include <abstract_kalman.hpp>
 
 namespace basic_kalman {
 
