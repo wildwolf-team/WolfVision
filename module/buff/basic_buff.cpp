@@ -1,6 +1,9 @@
 #include "basic_buff.hpp"
 
 namespace basic_buff {
+#ifdef DEBUG_STATIC
+std::vector<cv::Mat> Detector::split_img_;
+#endif
 
 Detector::Detector(const std::string& _buff_config_address) {
   // 读取buff配置文件
@@ -168,10 +171,16 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
   if (is_find_target_) {
     /* 计算云台角度 */
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
+#ifdef DEBUG_MANUAL
+    send_info.yaw_angle = angleCalculation(pre_center_, 0.0048, src_img_.size(), 8).x;
+    send_info.yaw_angle = angleCalculation(pre_center_, 0.0048, src_img_.size(), 8).y;
+#else
     send_info.yaw_angle   = buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
     send_info.pitch_angle = buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
-    send_info.depth       = final_target_z_;
-    send_info.data_type   = is_find_target_;
+#endif  // DEBUG_MANUAL
+
+    send_info.depth     = final_target_z_;
+    send_info.data_type = is_find_target_;
 
     fmt::print("[{}] Info, yaw: {}, pitch: {}, depth: {}\n", idntifier_yellow, send_info.yaw_angle, send_info.pitch_angle, send_info.depth);
   } else {
@@ -944,9 +953,9 @@ float Detector::doPredict(const float& _bullet_velocity, const bool& _is_find_ta
 
   fmt::print("[{}] Info, 提前了: {} 度 \n", predict_yellow, predict_quantity * 180 / CV_PI);
 
-#ifdef DEBUG
+#ifdef DEBUG_KALMAN
   predict_quantity = buff_filter_.run(predict_quantity);
-#endif  // DEBUG
+#endif  // DEBUG_KALMAN
 
   return predict_quantity;
 }
@@ -1026,14 +1035,21 @@ void Detector::calculateTargetPointSet(
   final_target_z_ = sqrt((target_y_ * target_y_) + (target_x_ * target_x_));
   /* 通过模型计算最终目标点的位置信息（预测点） */
 
-  // 保存最终目标的顶点，暂时用的是排序点的返序存入才比较稳定，正确使用应为0123
+  // 保存最终目标的顶点，暂时用的是排序点的返序存入才比较稳定，正确使用应为0123, pnp内已进行反向放置
   _target_2d_point.clear();
   cv::Point2f target_vertex[4];
   target_rect_.points(target_vertex);
+#ifdef DEBUG_ORDER
   _target_2d_point.push_back(target_vertex[0]);
   _target_2d_point.push_back(target_vertex[1]);
   _target_2d_point.push_back(target_vertex[2]);
   _target_2d_point.push_back(target_vertex[3]);
+#else
+  _target_2d_point.push_back(target_vertex[3]);
+  _target_2d_point.push_back(target_vertex[2]);
+  _target_2d_point.push_back(target_vertex[1]);
+  _target_2d_point.push_back(target_vertex[0]);
+#endif  // DEBUG_ORDER
 
 #ifndef RELEASE
   /* 绘制图像 */

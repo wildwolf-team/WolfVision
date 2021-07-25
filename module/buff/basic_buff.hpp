@@ -16,6 +16,12 @@
 #include "utils/fps.hpp"
 
 double fps::FPS::last_time;
+
+#define DEBUG_KALMAN
+#define DEBUG_ORDER
+#define DEBUG_MANUAL
+#define DEBUG_STATIC
+
 namespace basic_buff {
 
 auto idntifier_green     = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "basic_buff");
@@ -220,8 +226,12 @@ class Detector {
   cv::Mat ele_ = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));  // 椭圆内核
 
   // BGR
+  #ifdef DEBUG_STATIC
+  static std::vector<cv::Mat> split_img_;   // 分通道图
+  #else
   std::vector<cv::Mat> split_img_;   // 分通道图
-  int                  average_th_;  // 平均阈值
+  #endif  // DEBUG_STATIC
+  int                         average_th_;  // 平均阈值
 
   // HSV
   cv::Mat hsv_img_;  // hsv预处理输入图
@@ -393,14 +403,15 @@ class Detector {
   float fixed_forecast_quantity_;  // 固定预测量（扇叶的单帧移动量）
   float final_forecast_quantity_;  // 最终合成的预测量
 
-#ifdef DEBUG
+#ifdef DEBUG_KALMAN
 
  private:
   // 卡尔曼滤波器
   basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.01f, 0.03f, 1.f, 0.f, 0.f);
+  // basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.005f, 0.001f, 1.f, 0.f, 0.f);
 
   float last_final_radian_ = 0.f;
-#endif  // DEBUG
+#endif  // DEBUG_KALMAN
 
  private:
   /* 计算获取最终目标（矩形、顶点） */
@@ -428,9 +439,10 @@ class Detector {
 
   basic_pnp::PnP buff_pnp_ = basic_pnp::PnP(fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_407.xml"), fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
 
+#ifdef DEBUG_MANUAL
   /* 手动计算云台角度 */
-
   cv::Point2f angleCalculation(const cv::Point2f& _target_center, const float& _unit_pixel_length, const cv::Size& _image_size, const float& _focal_length);
+#endif  // DEBUG_MANUAL
 
  private:
   /* 自动控制 */
