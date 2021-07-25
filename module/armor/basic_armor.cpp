@@ -44,6 +44,7 @@ Detector::Detector(const std::string _armor_config) {
 
   fs_armor["ARMOR_EDIT"]             >> armor_config_.armor_edit;
   fs_armor["ARMOR_DRAW"]             >> armor_config_.armor_draw;
+  fs_armor["ARMOR_FORECAST"]         >> armor_config_.armor_forecast;
   fs_armor["ARMOR_HEIGHT_RATIO_MIN"] >> armor_config_.light_height_ratio_min;
   fs_armor["ARMOR_HEIGHT_RATIO_MAX"] >> armor_config_.light_height_ratio_max;
 
@@ -248,18 +249,21 @@ bool Detector::sentryMode(const cv::Mat& _src_img,
 void Detector::initialPredictionData(const float _gyro_speed_data,
                                      const int _bullet_velocity,
                                      const float _yaw_angle) {
-  std::string window_name = {"[basic_armor] sentryMode() -> sentry_trackbar"};
-  cv::namedWindow(window_name);
-  cv::createTrackbar("proportion_direction_", window_name,
-                     &proportion_direction_, 100, NULL);
-  cv::createTrackbar("forecast_size_", window_name, &forecast_size_, 100, NULL);
-  cv::createTrackbar("forecast_max_size_", window_name, &forecast_max_size_,
-                     100, NULL);
-  cv::createTrackbar("judge_direction_", window_name, &judge_direction_, 100,
-                     NULL);
-  cv::createTrackbar("abrupt_variable_", window_name, &abrupt_variable_, 500,
-                     NULL);
-  cv::imshow(window_name, sentry_trackbar_);
+  if (armor_config_.armor_forecast) {
+    std::string window_name = {"[basic_armor] sentryMode() -> sentry_trackbar"};
+    cv::namedWindow(window_name);
+    cv::createTrackbar("proportion_direction_", window_name,
+                       &proportion_direction_, 100, NULL);
+    cv::createTrackbar("forecast_size_", window_name, &forecast_size_, 100,
+                       NULL);
+    cv::createTrackbar("forecast_max_size_", window_name, &forecast_max_size_,
+                       100, NULL);
+    cv::createTrackbar("judge_direction_", window_name, &judge_direction_, 100,
+                       NULL);
+    cv::createTrackbar("abrupt_variable_", window_name, &abrupt_variable_, 500,
+                       NULL);
+    cv::imshow(window_name, sentry_trackbar_);
+  }
 
   num_cnt_++;
   if (num_cnt_ % 2 == 0) {

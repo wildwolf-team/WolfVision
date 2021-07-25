@@ -44,6 +44,7 @@ struct Armor_Data {
 struct Armor_Config {
   int armor_edit;
   int armor_draw;
+  int armor_forecast;
   int light_height_ratio_min;
   int light_height_ratio_max;
   int light_width_ratio_min;
