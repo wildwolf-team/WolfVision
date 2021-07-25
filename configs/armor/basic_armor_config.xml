@@ -80,6 +80,12 @@
 <LIGHT_PERIMETER_MIN>25</LIGHT_PERIMETER_MIN>
 <LIGHT_PERIMETER_MAX>1000</LIGHT_PERIMETER_MAX>
 <!--
+  ARMOR_EDIT - 是否调整击打哨兵预测模型
+  - 1 Enable
+  - 0 Disable
+-->
+<ARMOR_FORECAST>0</ARMOR_FORECAST>
+<!--
   ARMOR_EDIT - 是否调整装甲板参数
   - 1 Enable
   - 0 Disable
