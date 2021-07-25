@@ -176,6 +176,9 @@
   <OFFSET_ARMOR_YAW>55</OFFSET_ARMOR_YAW>
   <OFFSET_ARMOR_PITCH>170</OFFSET_ARMOR_PITCH>
 
+  <!-- 手算pitch 轴弹道补偿 这里填的指是 X100 倍的数字 -->
+  <OFFSET_MANUAL_ARMOR_PITCH>250</OFFSET_MANUAL_ARMOR_PITCH>
+  
   <!--~~~~~~~~~~~~~~  能量机关设置部分  ~~~~~~~~~~~~~~-->
 
 </opencv_storage>

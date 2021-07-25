@@ -275,6 +275,10 @@ void Detector::readBuffConfig(const cv::FileStorage& _fs) {
   buff_config_.param.OFFSET_ARMOR_YAW *= 0.01;
   buff_config_.param.OFFSET_ARMOR_PITCH *= 0.01;
 
+  // 手算pitch 轴弹道补偿
+  _fs["OFFSET_MANUAL_ARMOR_PITCH"] >> buff_config_.param.OFFSET_MANUAL_ARMOR_PITCH;
+  buff_config_.param.OFFSET_MANUAL_ARMOR_PITCH *= 0.01;
+
   // 输出提示
   fmt::print("✔️ ✔️ ✔️ 🌈 能量机关初始化参数 读取成功 🌈 ✔️ ✔️ ✔️\n");
 }
@@ -1051,6 +1055,25 @@ void Detector::calculateTargetPointSet(
   cv::circle(_input_dst_img, _target_2d_point[3], 10, cv::Scalar(0, 255, 0), -1, 8, 0);
   /* 绘制图像 */
 #endif  // RELEASE
+}
+
+cv::Point2f Detector::angleCalculation(const cv::Point2f& _target_center, const float& _unit_pixel_length, const cv::Size& _image_size, const float& _focal_length) {
+  cv::Point2f angle2f;
+
+  float target_projection_x = fabs(_image_size.width * 0.5 - _target_center.x) * _unit_pixel_length;
+  angle2f.x                 = atan2(target_projection_x, _focal_length) * 180 / CV_PI;
+  if (_target_center.x <= (_image_size.width * 0.5)) {
+    angle2f.x = -1 * angle2f.x;
+  }
+
+  float target_projection_y = fabs(_image_size.height * 0.5 - _target_center.y) * _unit_pixel_length;
+  angle2f.y                 = atan2(target_projection_y, _focal_length) * 180 / CV_PI;
+  if (_target_center.y <= (_image_size.height * 0.5)) {
+    angle2f.y = -1 * angle2f.y;
+  }
+  angle2f.y += buff_config_.param.OFFSET_MANUAL_ARMOR_PITCH;
+
+  return angle2f;
 }
 
 void Detector::updateLastData(const bool& _is_find_target) {

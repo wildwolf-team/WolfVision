@@ -105,6 +105,9 @@ struct Buff_Param {
   // yaw 和 pitch 轴弹道补偿
   float OFFSET_ARMOR_YAW;
   float OFFSET_ARMOR_PITCH;
+
+  // 手算pitch 轴弹道补偿
+  float OFFSET_MANUAL_ARMOR_PITCH;
 };
 
 struct Buff_Ctrl {
@@ -424,6 +427,10 @@ class Detector {
   /* 计算云台角度 */
 
   basic_pnp::PnP buff_pnp_ = basic_pnp::PnP(fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_407.xml"), fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
+
+  /* 手动计算云台角度 */
+
+  cv::Point2f angleCalculation(const cv::Point2f& _target_center, const float& _unit_pixel_length, const cv::Size& _image_size, const float& _focal_length);
 
  private:
   /* 自动控制 */
