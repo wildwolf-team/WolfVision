@@ -12,5 +12,6 @@
 #include "module/ml/onnx_inferring.hpp"
 #include "module/record/record.hpp"
 #include "module/roi/basic_roi.hpp"
+#include "utils/reset_mv_camera.hpp"
 
 auto idntifier = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "wolfvision");
