@@ -165,9 +165,7 @@ int main() {
 #endif
     global_fps_.calculateFPSGlobal();
     if (global_fps_.returnFps() > 500) {
-      mv_capture_.~VideoCapture();
-      mv_capture_ = mindvision::VideoCapture(
-        mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
+      int i[[maybe_unused]] = std::system("echo 1 | sudo -S reboot");
     }
   }
   return 0;
