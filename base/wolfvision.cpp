@@ -56,21 +56,23 @@ int main() {
         serial_.writeData(basic_buff_.runTask(src_img_, serial_.returnReceive()));
         break;
       case uart::SENTRY_STRIKE_MODE:
-        roi_img_ = roi_.returnROIResultMat(src_img_);
-        if (basic_armor_.runBasicArmor(roi_img_, serial_.returnReceive())) {
-          basic_armor_.fixFinalArmorCenter(0, roi_.returnRectTl());
-          roi_.setLastRoiRect(basic_armor_.returnFinalArmorRotatedRect(0),
-            basic_armor_.returnFinalArmorDistinguish(0));
-            pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
-            basic_armor_.returnFinalArmorDistinguish(0),
-            basic_armor_.returnFinalArmorRotatedRect(0));
+        if (basic_armor_.sentryMode(src_img_, serial_.returnReceive())) {
+          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
+                        basic_armor_.returnFinalArmorDistinguish(0),
+                        basic_armor_.returnFinalArmorRotatedRect(0));
           serial_.updataWriteData(pnp_.returnYawAngle(),
-            pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
+                                  pnp_.returnPitchAngle(),
+                                  pnp_.returnDepth(),
+                                  basic_armor_.returnArmorNum(),
+                                  0);
         } else {
-          serial_.updataWriteData(-pnp_.returnYawAngle(), pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnLostCnt() > 0 ? 1 : 0, 0);
+          serial_.updataWriteData(-pnp_.returnYawAngle(),
+                                  pnp_.returnPitchAngle(),
+                                  pnp_.returnDepth(),
+                                  basic_armor_.returnLostCnt() > 0 ? 1 : 0,
+                                  0);
         }
-        roi_.setLastRoiSuccess(basic_armor_.returnArmorNum());
-
+        
         break;
       case uart::TOP_MODE:
         roi_img_ = roi_.returnROIResultMat(src_img_);
@@ -144,6 +146,10 @@ int main() {
     }
     if (record_.Return_switch()) {
       record_.Vision_judge(src_img_, cv::waitKey(1), serial_.returnReceiveMode());
+    }
+    // 非击打哨兵模式时初始化
+    if (serial_.returnReceiveMode() != uart::SENTRY_STRIKE_MODE) { 
+      basic_armor_.initializationSentryMode();
     }
     mv_capture_.cameraReleasebuff();
     basic_armor_.freeMemory();

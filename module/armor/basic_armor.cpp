@@ -96,7 +96,7 @@ bool Detector::findLight() {
     cv::createTrackbar("angle_min", window_name,
                        &light_config_.angle_min, 1800, NULL);
     cv::createTrackbar("angle_max", window_name,
-                       &light_config_.angle_max, 1800, NULL);
+                      &light_config_.angle_max, 1800, NULL);
 
     cv::createTrackbar("perimeter_min", window_name,
                        &light_config_.perimeter_min, 100000, NULL);
@@ -190,6 +190,129 @@ bool Detector::runBasicArmor(const cv::Mat&           _src_img,
   return false;
 }
 
+bool Detector::sentryMode(const cv::Mat& _src_img,
+                          const uart::Receive_Data _receive_data) {
+  if (sentry_cnt_ == 0) {
+    initialPredictionData(_receive_data.Receive_Pitch_Angle_Info.pitch_angle,
+                          _receive_data.bullet_velocity,
+                          _receive_data.Receive_Yaw_Angle_Info.yaw_angle);
+    runImage(_src_img, _receive_data.my_color);
+    draw_img_ = _src_img.clone();
+    if (findLight()) {
+      if (fittingArmor()) {
+        finalArmor();
+        lost_cnt_ = 10;
+        // 限制最大预测位置
+        if (abs(forecast_pixels_) >
+            armor_[0].armor_rect.size.width * forecast_max_size_ * 0.1) {
+          forecast_pixels_ =
+              armor_[0].armor_rect.size.width * forecast_max_size_ * 0.1;
+        }
+
+        if (filter_direction_ > 0.3) {
+          armor_[0].armor_rect.center.x -= abs(forecast_pixels_);
+        } else if (filter_direction_ < -0.3) {
+          armor_[0].armor_rect.center.x += abs(forecast_pixels_);
+        }
+        last_armor_rect_ = armor_[0].armor_rect;
+        cv::rectangle(draw_img_, armor_[0].armor_rect.boundingRect(),
+                      cv::Scalar(0, 255, 0), 3, 8);
+        if (armor_config_.armor_draw == 1 || light_config_.light_draw == 1 ||
+            armor_config_.armor_edit == 1 || light_config_.light_edit == 1) {
+          cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
+          draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
+        }
+        return true;
+      }
+    }
+    if (armor_config_.armor_draw == 1 ||
+        light_config_.light_draw == 1 ||
+        armor_config_.armor_edit == 1 ||
+        light_config_.light_edit == 1) {
+      cv::imshow("[basic_armor] getWriteData() -> draw_img_", draw_img_);
+
+      draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
+    }
+    return false;
+  } else {
+    if (sentry_cnt_ < 5) {
+      // 计算陀螺仪初始化位置
+      initial_gyroscope_ += _receive_data.Receive_Yaw_Angle_Info.yaw_angle;
+      initial_gyroscope_ *= 0.5;
+    }
+    sentry_cnt_--;
+    return false;
+  }
+}
+
+void Detector::initialPredictionData(const float _gyro_speed_data,
+                                     const int _bullet_velocity,
+                                     const float _yaw_angle) {
+  std::string window_name = {"[basic_armor] sentryMode() -> sentry_trackbar"};
+  cv::namedWindow(window_name);
+  cv::createTrackbar("proportion_direction_", window_name,
+                     &proportion_direction_, 100, NULL);
+  cv::createTrackbar("forecast_size_", window_name, &forecast_size_, 100, NULL);
+  cv::createTrackbar("forecast_max_size_", window_name, &forecast_max_size_,
+                     100, NULL);
+  cv::createTrackbar("judge_direction_", window_name, &judge_direction_, 100,
+                     NULL);
+  cv::createTrackbar("abrupt_variable_", window_name, &abrupt_variable_, 500,
+                     NULL);
+  cv::imshow(window_name, sentry_trackbar_);
+
+  num_cnt_++;
+  if (num_cnt_ % 2 == 0) {
+    if (_gyro_speed_data > judge_direction_ * 0.01) {
+      current_direction_ = 1;
+    } else if (_gyro_speed_data < -judge_direction_ * 0.01) {
+      current_direction_ = -1;
+    } else {
+      current_direction_ = 0;
+    }
+    // 延时滤波
+    filter_direction_ = (1 - proportion_direction_ * 0.01) * last_direction_ +
+                        proportion_direction_ * 0.01 * current_direction_;
+    last_direction_ = filter_direction_;
+    // 计算偏差角度
+    deviation_angle_ = _yaw_angle - initial_gyroscope_;
+    if (last_deviation_angle_ != 0) {
+      deviation_angle_ = (deviation_angle_ + last_deviation_angle_) * 0.5;
+    }
+    last_deviation_angle_ = deviation_angle_;
+  }
+
+  // 计算水平深度
+  actual_z_ = sentry_dist_ / cos(deviation_angle_ * CV_PI / 180);
+
+  // 计算实际深度
+  actual_depth_ =
+      std::sqrt(actual_z_ * actual_z_ + sentry_height_ * sentry_height_);
+
+  // 计算预测角度 角速度 * 时间
+  forecast_angle_ =
+      static_cast<float>(actual_depth_ * 0.001 / _bullet_velocity) *
+      _gyro_speed_data;
+
+  // 计算像素点个数
+  forecast_pixels_ = abs(camera_focal_ * tan(forecast_angle_ * CV_PI / 180) *
+                         forecast_size_ * 100 / 4.8);
+
+  kalman_.setParam(1, 5, 1.0);
+
+  forecast_pixels_ = kalman_.run(forecast_pixels_);
+
+  forecast_pixels_ =
+      (last_last_forecast_pixels_ + last_forecast_pixels_ + forecast_pixels_) *
+      0.33;
+  last_last_forecast_pixels_ = last_forecast_pixels_;
+  last_forecast_pixels_ = forecast_pixels_;
+
+  if (num_cnt_ % 10 == 0) {
+    num_cnt_ = 0;
+  }
+}
+
 void Detector::finalArmor() {
   armor_success = true;
 
@@ -256,8 +379,8 @@ bool Detector::fittingArmor() {
       armor_data_.right_light = light_[light_right];
 
       float error_angle =
-        atan((light_[light_right].center.y - light_[light_left].center.y) /
-             (light_[light_right].center.x - light_[light_left].center.x));
+          atan((light_[light_right].center.y - light_[light_left].center.y) /
+               (light_[light_right].center.x - light_[light_left].center.x));
 
       if (error_angle < 100.f) {
         armor_data_.tan_angle = atan(error_angle) * 180 / CV_PI;
@@ -311,23 +434,23 @@ bool Detector::lightJudge(const int i, const int j) {
         armor_data_.height * armor_config_.light_y_different * 0.1) {
       if (fabs(armor_data_.left_light.size.height - armor_data_.right_light.size.height) <
           armor_data_.height * armor_config_.light_height_different * 0.1) {
-            armor_data_.width =
-              getDistance(armor_data_.left_light.center,
-                          armor_data_.right_light.center);
+        armor_data_.width =
+          getDistance(armor_data_.left_light.center,
+                      armor_data_.right_light.center);
 
         armor_data_.aspect_ratio = armor_data_.width / armor_data_.height;
 
         if (fabs(armor_data_.left_light.angle - armor_data_.right_light.angle) <
             armor_config_.armor_angle_different * 0.1) {
-            cv::RotatedRect rects = cv::RotatedRect(
+          cv::RotatedRect rects = cv::RotatedRect(
               (armor_data_.left_light.center + armor_data_.right_light.center) / 2,
               cv::Size(armor_data_.width , armor_data_.height),
               armor_data_.tan_angle);
 
           armor_data_.armor_rect      = rects;
           armor_data_.distance_center =
-            getDistance(armor_data_.armor_rect.center,
-                        cv::Point(draw_img_.cols, draw_img_.rows));
+              getDistance(armor_data_.armor_rect.center,
+                          cv::Point(draw_img_.cols, draw_img_.rows));
           if (armor_data_.aspect_ratio > armor_config_.small_armor_aspect_min * 0.1 &&
               armor_data_.aspect_ratio < armor_config_.armor_type_th * 0.1) {
             armor_data_.distinguish = 0;
@@ -359,10 +482,10 @@ int Detector::averageColor() {
 
   cv::RotatedRect rects =
     cv::RotatedRect((armor_data_.left_light.center + armor_data_.right_light.center) / 2,
-                    cv::Size(armor_data_.width - (armor_data_.left_light_width + armor_data_.right_light_width),
-                    ((armor_data_.left_light_height + armor_data_.right_light_height) / 2)),
-                    armor_data_.tan_angle);
-  cv::rectangle(draw_img_ , rects.boundingRect(), cv::Scalar(255, 0, 0), 3, 8);
+      cv::Size(armor_data_.width - (armor_data_.left_light_width + armor_data_.right_light_width),
+          ((armor_data_.left_light_height + armor_data_.right_light_height) / 2)),
+      armor_data_.tan_angle);
+  cv::rectangle(draw_img_, rects.boundingRect(), cv::Scalar(255, 0, 0), 3, 8);
 
   armor_data_.armor_rect = rects;
   cv::Rect _rect         = rects.boundingRect();
@@ -569,8 +692,7 @@ inline cv::Mat Detector::hsvPretreat(const cv::Mat& _src_img,
         cv::createTrackbar("red_v_min:", window_name,
                            &image_config_.v_red_min, 255, NULL);
         cv::createTrackbar("red_v_max:", window_name,
-                           &image_config_.v_red_max,
-                           255, NULL);
+                           &image_config_.v_red_max, 255, NULL);
         cv::imshow(window_name, hsv_trackbar_);
       }
 

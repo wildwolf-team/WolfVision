@@ -12,6 +12,7 @@
 #include <opencv2/imgproc.hpp>
 
 #include "devices/serial/uart_serial.hpp"
+#include "module/filter/basic_kalman.hpp"
 
 namespace basic_armor {
 
@@ -118,10 +119,25 @@ class Detector {
   inline Armor_Data      returnFinalArmor(const int _num)                 { return armor_[_num]; }
   inline int             returnFinalArmorDistinguish(const int _num)      { return armor_[_num].distinguish; }
   inline cv::RotatedRect returnFinalArmorRotatedRect(const int _num)      { return armor_[_num].armor_rect; }
+  bool sentryMode(const cv::Mat&           _src_img,
+                  const uart::Receive_Data _receive_data);
+  void initialPredictionData(const float   _gyro_speed,
+                             const int     _bullet_velocity,
+                             const float   _yaw_angle);
+  inline cv::RotatedRect returnLastFinalArmorRotatefRect()                { return last_armor_rect_; }
+  inline int             returnSentryDepth()                              { return actual_depth_; }
   inline void fixFinalArmorCenter(const int _num, const cv::Point2f _tl) {
     armor_[_num].armor_rect.center += _tl;
   }
-
+  inline void initializationSentryMode() {
+    sentry_cnt_        = 5;
+    initial_gyroscope_ = 0.f;
+    deviation_angle_   = 0.f;
+    actual_z_          = 0;
+    actual_depth_      = 0;
+    forecast_angle_    = 0.f;
+    forecast_pixels_   = 0;
+  }
   void runImage(const cv::Mat &_src_img, const int _my_color);
 
   cv::Mat bgrPretreat(const cv::Mat &_src_img, const int _my_color);
@@ -130,12 +146,13 @@ class Detector {
 
   cv::Mat fuseImage(const cv::Mat _bin_gray_img, const cv::Mat _bin_color_img);
 
-
  private:
   Armor_Config armor_config_;
   Image_Config image_config_;
   Light_Config light_config_;
   Armor_Data   armor_data_;
+
+  basic_kalman::Kalman1 kalman_ = basic_kalman::Kalman1();
 
   cv::Mat frame;
   cv::Mat draw_img_;
@@ -147,15 +164,16 @@ class Detector {
   cv::Mat bin_color_img;
   cv::Mat bin_red_color_img;
   cv::Mat bin_blue_color_img;
-  const cv::Mat light_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
-  const cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
-  const cv::Mat gray_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);
-  const cv::Mat bgr_trackbar_   = cv::Mat::zeros(1, 300, CV_8UC1);
-  const cv::Mat hsv_trackbar_   = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat light_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat armor_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat sentry_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat gray_trackbar_   = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat bgr_trackbar_    = cv::Mat::zeros(1, 300, CV_8UC1);
+  const cv::Mat hsv_trackbar_    = cv::Mat::zeros(1, 300, CV_8UC1);
   const cv::Mat ele_ = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
 
   cv::Rect armor_roi;
-
+  cv::RotatedRect last_armor_rect_;
   cv::Point lost_armor_center;
   cv::Point armor_center;
 
@@ -173,6 +191,54 @@ class Detector {
   int armor_position      = 0;
   int armor_direction     = 0;
   int num                 = 0;
+
+  int num_cnt_                   = 0;
+  // 哨兵模型初始化计数器
+  int sentry_cnt_                = 15;
+  // 哨兵装甲板到枪管高度
+  const int sentry_height_       = 350;
+  // 哨兵到环形高度水平面垂直深度
+  const int sentry_dist_         = 3380;
+  // 哨兵到初始化位置实际水平深度
+  int actual_z_                  = 0;
+  // 哨兵到枪管实际深度
+  int actual_depth_              = 0;
+  // 预测像素点数量
+  int forecast_pixels_           = 0;
+  // 上一帧预测像素点数量
+  int last_forecast_pixels_      = 0;
+  // 上上帧预测像素点数量
+  int last_last_forecast_pixels_ = 0;
+  // 相机焦距
+  const int camera_focal_        = 8;
+  // 延时滤波占比
+  int proportion_direction_      = 5;
+  // 预测效果大小 * 0.1
+  int forecast_size_             = 10;
+  // 预测最大效果 * 装甲板宽度 * 0.1
+  int forecast_max_size_         = 15;
+  // 判断正负范围
+  int judge_direction_           = 10;
+  // 像素点宽度 1080p 1mm 4个像素点
+  const int pixel_width_         = 4;
+  // 最大突变量
+  int abrupt_variable_           = 10;
+  // 射击延迟
+  float firing_delay_            = 0.3;
+  // 实际运动方向
+  float filter_direction_        = 0.f;
+  // 上一帧运动方向
+  float last_direction_          = 0.f;
+  // 这一帧运动方向
+  float current_direction_       = 0.f;
+  // 预测角度
+  float forecast_angle_          = 0.f;
+  // 哨兵到初始化位置的偏差角度
+  float deviation_angle_         = 0.f;
+  // 上一次哨兵到初始化位置的偏差角度
+  float last_deviation_angle_    = 0.f;
+  // 初始化陀螺仪Yaw轴位置
+  float initial_gyroscope_       = 0.f;
 };
 
 }  // namespace basic_armor
