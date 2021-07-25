@@ -90,7 +90,7 @@ struct Receive_Data {
   } Receive_Pitch_Angle_Info;
 
   Receive_Data() {
-    my_color                             = BLUE;
+    my_color                             = ALL;
     now_run_mode                         = SUP_SHOOT;
     my_robot_id                          = INFANTRY;
     acceleration                         = 0.f;
