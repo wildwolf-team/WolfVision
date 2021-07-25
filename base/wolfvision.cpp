@@ -72,7 +72,7 @@ int main() {
                                   basic_armor_.returnLostCnt() > 0 ? 1 : 0,
                                   0);
         }
-        
+
         break;
       case uart::TOP_MODE:
         roi_img_ = roi_.returnROIResultMat(src_img_);
@@ -148,7 +148,7 @@ int main() {
       record_.Vision_judge(src_img_, cv::waitKey(1), serial_.returnReceiveMode());
     }
     // 非击打哨兵模式时初始化
-    if (serial_.returnReceiveMode() != uart::SENTRY_STRIKE_MODE) { 
+    if (serial_.returnReceiveMode() != uart::SENTRY_STRIKE_MODE) {
       basic_armor_.initializationSentryMode();
     }
     mv_capture_.cameraReleasebuff();
