@@ -5,8 +5,7 @@ int main() {
   fmt::print("[{}] WolfVision config file path: {}\n", idntifier, CONFIG_FILE_PATH);
 
   cv::Mat src_img_, roi_img_;
-
-  mindvision::VideoCapture mv_capture_ = mindvision::VideoCapture(
+  mindvision::VideoCapture* mv_capture_ = new mindvision::VideoCapture(
     mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
 
   uart::SerialPort serial_ = uart::SerialPort(
@@ -37,8 +36,8 @@ int main() {
   basic_roi::RoI roi_;
   while (true) {
     global_fps_.getTick();
-    if (mv_capture_.isindustryimgInput()) {
-      src_img_ = mv_capture_.image();
+    if (mv_capture_->isindustryimgInput()) {
+      src_img_ = mv_capture_->image();
     } else {
       cap_.read(src_img_);
     }
@@ -56,20 +55,22 @@ int main() {
         serial_.writeData(basic_buff_.runTask(src_img_, serial_.returnReceive()));
         break;
       case uart::SENTRY_STRIKE_MODE:
-        roi_img_ = roi_.returnROIResultMat(src_img_);
-        if (basic_armor_.runBasicArmor(roi_img_, serial_.returnReceive())) {
-          basic_armor_.fixFinalArmorCenter(0, roi_.returnRectTl());
-          roi_.setLastRoiRect(basic_armor_.returnFinalArmorRotatedRect(0),
-            basic_armor_.returnFinalArmorDistinguish(0));
-            pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
-            basic_armor_.returnFinalArmorDistinguish(0),
-            basic_armor_.returnFinalArmorRotatedRect(0));
+        if (basic_armor_.sentryMode(src_img_, serial_.returnReceive())) {
+          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
+                        basic_armor_.returnFinalArmorDistinguish(0),
+                        basic_armor_.returnFinalArmorRotatedRect(0));
           serial_.updataWriteData(pnp_.returnYawAngle(),
-            pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
+                                  pnp_.returnPitchAngle(),
+                                  pnp_.returnDepth(),
+                                  basic_armor_.returnArmorNum(),
+                                  0);
         } else {
-          serial_.updataWriteData(-pnp_.returnYawAngle(), pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnLostCnt() > 0 ? 1 : 0, 0);
+          serial_.updataWriteData(-pnp_.returnYawAngle(),
+                                  pnp_.returnPitchAngle(),
+                                  pnp_.returnDepth(),
+                                  basic_armor_.returnLostCnt() > 0 ? 1 : 0,
+                                  0);
         }
-        roi_.setLastRoiSuccess(basic_armor_.returnArmorNum());
 
         break;
       case uart::TOP_MODE:
@@ -145,7 +146,11 @@ int main() {
     if (record_.Return_switch()) {
       record_.Vision_judge(src_img_, cv::waitKey(1), serial_.returnReceiveMode());
     }
-    mv_capture_.cameraReleasebuff();
+    // 非击打哨兵模式时初始化
+    if (serial_.returnReceiveMode() != uart::SENTRY_STRIKE_MODE) {
+      basic_armor_.initializationSentryMode();
+    }
+    mv_capture_->cameraReleasebuff();
     basic_armor_.freeMemory();
 
 #ifndef RELEASE
@@ -159,9 +164,18 @@ int main() {
 #endif
     global_fps_.calculateFPSGlobal();
     if (global_fps_.returnFps() > 500) {
-      mv_capture_.~VideoCapture();
-      mv_capture_ = mindvision::VideoCapture(
-        mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
+      mv_capture_->~VideoCapture();
+      while (!utils::resetMVCamera()) {
+        usleep(100);
+      }
+      usleep(100);
+      mv_capture_ = new mindvision::VideoCapture(mindvision::CameraParam(
+          0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
+
+      static int counter { 30 };
+      if (!--counter) {
+        int i [[maybe_unused]] = std::system("echo 1 | sudo -S reboot");
+      }
     }
   }
   return 0;
