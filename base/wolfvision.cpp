@@ -165,15 +165,18 @@ int main() {
     global_fps_.calculateFPSGlobal();
     if (global_fps_.returnFps() > 500) {
       mv_capture_->~VideoCapture();
+      static int counter_for_dev {100};
+      static int counter_for_new {30};
       while (!utils::resetMVCamera()) {
+        if (!--counter_for_dev) {
+          int i [[maybe_unused]] = std::system("echo 1 | sudo -S reboot");
+        }
         usleep(100);
       }
       usleep(100);
       mv_capture_ = new mindvision::VideoCapture(mindvision::CameraParam(
           0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
-
-      static int counter { 30 };
-      if (!--counter) {
+      if (!--counter_for_new) {
         int i [[maybe_unused]] = std::system("echo 1 | sudo -S reboot");
       }
     }
