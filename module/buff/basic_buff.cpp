@@ -172,8 +172,13 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
     /* 计算云台角度 */
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
 #ifdef DEBUG_MANUAL
-    send_info.yaw_angle = angleCalculation(pre_center_, 0.0048, src_img_.size(), 8).x;
-    send_info.yaw_angle = angleCalculation(pre_center_, 0.0048, src_img_.size(), 8).y;
+    send_info.yaw_angle   = angleCalculation(pre_center_, 0.0048, src_img_.size(), 8).x;
+    send_info.pitch_angle = angleCalculation(pre_center_, 0.0048, src_img_.size(), 8).y;
+    cv::Point yaw_angle   = cv::Point(dst_img_.cols - 100, 60);
+    cv::putText(dst_img_, std::to_string(send_info.yaw_angle), yaw_angle, cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 0), 1, 8, false);
+    cv::Point pitch_angle = cv::Point(dst_img_.cols - 100, 70);
+    cv::putText(dst_img_, std::to_string(send_info.pitch_angle), pitch_angle, cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(25, 255, 255), 1, 8, false);
+
 #else
     send_info.yaw_angle   = buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
     send_info.pitch_angle = buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
@@ -890,12 +895,22 @@ void Detector::calDirection() {
   if (filter_direction_ > 0.1) {
     fmt::print("[{}] 转动方向:顺时针转动\n", judgement_yellow);
 
-    final_direction_      = 1;
+#ifndef DEBUG_BARREL_OFFSET
+    final_direction_ = 1;
+#else
+    final_direction_      = 0;
+#endif
+
     last_final_direction_ = final_direction_;
   } else if (filter_direction_ < -0.1) {
     fmt::print("[{}] 转动方向:逆时针转动\n", judgement_yellow);
 
-    final_direction_      = -1;
+#ifndef DEBUG_BARREL_OFFSET
+    final_direction_ = -1;
+#else
+    final_direction_      = 0;
+#endif
+
     last_final_direction_ = final_direction_;
   } else {
     fmt::print("[{}] 转动方向:不转动\n", judgement_yellow);
@@ -1039,17 +1054,11 @@ void Detector::calculateTargetPointSet(
   _target_2d_point.clear();
   cv::Point2f target_vertex[4];
   target_rect_.points(target_vertex);
-#ifdef DEBUG_ORDER
-  _target_2d_point.push_back(target_vertex[0]);
-  _target_2d_point.push_back(target_vertex[1]);
-  _target_2d_point.push_back(target_vertex[2]);
-  _target_2d_point.push_back(target_vertex[3]);
-#else
+
   _target_2d_point.push_back(target_vertex[3]);
   _target_2d_point.push_back(target_vertex[2]);
   _target_2d_point.push_back(target_vertex[1]);
   _target_2d_point.push_back(target_vertex[0]);
-#endif  // DEBUG_ORDER
 
 #ifndef RELEASE
   /* 绘制图像 */
