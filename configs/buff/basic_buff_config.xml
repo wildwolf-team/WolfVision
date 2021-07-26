@@ -10,7 +10,7 @@
   - 2 Alpha
   记得调整原参数
   -->
-  <IS_PARAM_ADJUSTMENT>1</IS_PARAM_ADJUSTMENT>
+  <IS_PARAM_ADJUSTMENT>0</IS_PARAM_ADJUSTMENT>
 
   <!-- 
   IS_SHOW_BIN_IMG - 是否显示二值图像
@@ -163,21 +163,25 @@
   <!--
     OFFSET_FIXED_RADIAN - 固定预测值的补偿 -减少预测量，+增加预测量
     直接预测值为0.7 = 0.35*2
-    预测值的补偿值：-0.05  0.1是弹丸在平面一层的pitch补偿量时的最佳效果
+    预测值的补偿值：-0.05  0.1是弹丸在平面一层的pitch补偿量时的最佳效果 没加卡尔曼 加了卡尔曼0.13
   -->
-  <OFFSET_FIXED_RADIAN>0.1</OFFSET_FIXED_RADIAN>
+  <OFFSET_FIXED_RADIAN>0.12</OFFSET_FIXED_RADIAN>
 
   <!-- 
     OFFSET_TARGET_Z_ - 模型深度补偿（左半边比右半边距离要远）
    -->
   <OFFSET_TARGET_Z>0.0</OFFSET_TARGET_Z>
 
-  <!-- yaw 和 pitch 轴弹道补偿 这里填的指是 X100 倍的数字 -->
-  <OFFSET_ARMOR_YAW>55</OFFSET_ARMOR_YAW>
-  <OFFSET_ARMOR_PITCH>170</OFFSET_ARMOR_PITCH>
+  <!-- 
+    yaw 和 pitch 轴弹道补偿 这里填的指是 X100 倍的数字 
+    yaw :55
+    pitch:170
+  -->
+  <OFFSET_ARMOR_YAW>67</OFFSET_ARMOR_YAW>
+  <OFFSET_ARMOR_PITCH>90</OFFSET_ARMOR_PITCH>
 
   <!-- 手算pitch 轴弹道补偿 这里填的指是 X100 倍的数字 -->
-  <OFFSET_MANUAL_ARMOR_PITCH>250</OFFSET_MANUAL_ARMOR_PITCH>
+  <OFFSET_MANUAL_ARMOR_PITCH>-450</OFFSET_MANUAL_ARMOR_PITCH>
   
   <!--~~~~~~~~~~~~~~  能量机关设置部分  ~~~~~~~~~~~~~~-->
 
