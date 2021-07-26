@@ -1,7 +1,11 @@
 #!/bin/bash
 
-echo "Please enter your root passwd:"
-read PASSWORD
+PASSWORD=""
+
+if [ -z $PASSWORD ]; then
+    echo "Please replace \"\" with your root password and add this script to start up"
+    exit 0
+fi
 
 if ! [ -f /tmp/watch_dog.sh ]; then
     touch /tmp/watch_dog.sh
