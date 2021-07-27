@@ -140,6 +140,10 @@ int main() {
         record_.RecordIng(src_img_);
         break;
       default:
+        if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
+            pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
+        }
+        serial_.updataWriteData(pnp_.returnYawAngle(), pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
         break;
       }
     }
