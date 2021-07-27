@@ -172,6 +172,8 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
     /* 计算云台角度 */
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
 #ifdef DEBUG_MANUAL
+    // send_info.yaw_angle = current_predict_quantity*100;
+    // send_info.pitch_angle = final_forecast_quantity_*100;
     send_info.yaw_angle   = angleCalculation(pre_center_, 0.0048, src_img_.size(), 8).x;
     send_info.pitch_angle = angleCalculation(pre_center_, 0.0048, src_img_.size(), 8).y;
     cv::Point yaw_angle   = cv::Point(dst_img_.cols - 100, 60);
@@ -189,7 +191,7 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
 
     fmt::print("[{}] Info, yaw: {}, pitch: {}, depth: {}\n", idntifier_yellow, send_info.yaw_angle, send_info.pitch_angle, send_info.depth);
   } else {
-    send_info = uart::Write_Data();
+    send_info             = uart::Write_Data();
   }
 
   /* TODO(fqjun) :自动控制 */
@@ -952,6 +954,19 @@ void Detector::calVelocity() {
 }
 
 float Detector::doPredict(const float& _bullet_velocity, const bool& _is_find_target) {
+#ifdef DEBUG_KALMAN
+#  ifndef RELEASE
+  std::string window_name = {"[basic_buff] kalman -> trackbar"};
+
+  cv::namedWindow(window_name);
+  cv::createTrackbar("Q*0.01:", window_name, &Q, 1000, nullptr);
+  cv::createTrackbar("R*0.01:", window_name, &R, 1000, nullptr);
+
+  cv::imshow(window_name, kalman_trackbar_img_);
+#  endif  // !RELEASE
+
+  buff_filter_.setParam(Q, R, Q);
+#endif  // DEBUG_KALMAN
   // 判断是否发现目标，没有返回0，有则进行计算预测
   if (!(_is_find_target)) {
     target_z_ = 0.f;
@@ -969,7 +984,9 @@ float Detector::doPredict(const float& _bullet_velocity, const bool& _is_find_ta
   fmt::print("[{}] Info, 提前了: {} 度 \n", predict_yellow, predict_quantity * 180 / CV_PI);
 
 #ifdef DEBUG_KALMAN
-  predict_quantity = buff_filter_.run(predict_quantity);
+
+  current_predict_quantity = predict_quantity;
+  predict_quantity         = buff_filter_.run(predict_quantity);
 #endif  // DEBUG_KALMAN
 
   return predict_quantity;

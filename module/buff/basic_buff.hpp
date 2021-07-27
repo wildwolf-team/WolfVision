@@ -18,7 +18,7 @@
 double fps::FPS::last_time;
 
 // #define DEBUG_KALMAN
-// #define DEBUG_MANUAL
+#define DEBUG_MANUAL
 // #define DEBUG_STATIC
 // #define DEBUG_BARREL_OFFSET
 
@@ -225,13 +225,13 @@ class Detector {
 
   cv::Mat ele_ = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));  // 椭圆内核
 
-  // BGR
-  #ifdef DEBUG_STATIC
-  static std::vector<cv::Mat> split_img_;   // 分通道图
-  #else
-  std::vector<cv::Mat> split_img_;   // 分通道图
-  #endif  // DEBUG_STATIC
-  int                         average_th_;  // 平均阈值
+// BGR
+#ifdef DEBUG_STATIC
+  static std::vector<cv::Mat> split_img_;  // 分通道图
+#else
+  std::vector<cv::Mat> split_img_;  // 分通道图
+#endif              // DEBUG_STATIC
+  int average_th_;  // 平均阈值
 
   // HSV
   cv::Mat hsv_img_;  // hsv预处理输入图
@@ -410,7 +410,12 @@ class Detector {
   // basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.01f, 0.03f, 1.f, 0.f, 0.f);
   basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.02f, 0.03f, 1.f, 0.f, 0.f);
 
-  float last_final_radian_ = 0.f;
+  int   Q                        = 3;
+  int   R                        = 2;
+  float current_predict_quantity = 0.f;
+
+  cv::Mat kalman_trackbar_img_ = cv::Mat::zeros(1, 300, CV_8UC1);  // 预处理
+  float   last_final_radian_   = 0.f;
 #endif  // DEBUG_KALMAN
 
  private:
