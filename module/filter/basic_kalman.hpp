@@ -19,7 +19,7 @@ class Kalman1 {
     x_ = x0;
     p_ = p0;
   }
-  void setParam(int& Q, int& R, int& t) {
+  void setParam(int Q, int R, int t) {
     if (R < 1) R = 1;
     if (Q < 1) Q = 1;
     if (t < 1) t = 1;
