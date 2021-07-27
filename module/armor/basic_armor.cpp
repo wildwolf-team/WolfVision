@@ -252,16 +252,13 @@ void Detector::initialPredictionData(const float _gyro_speed_data,
   if (armor_config_.armor_forecast) {
     std::string window_name = {"[basic_armor] sentryMode() -> sentry_trackbar"};
     cv::namedWindow(window_name);
-    cv::createTrackbar("proportion_direction_", window_name,
-                       &proportion_direction_, 100, NULL);
-    cv::createTrackbar("forecast_size_", window_name, &forecast_size_, 100,
-                       NULL);
-    cv::createTrackbar("forecast_max_size_", window_name, &forecast_max_size_,
-                       100, NULL);
-    cv::createTrackbar("judge_direction_", window_name, &judge_direction_, 100,
-                       NULL);
-    cv::createTrackbar("abrupt_variable_", window_name, &abrupt_variable_, 500,
-                       NULL);
+    cv::createTrackbar("proportion_direction_", window_name, &proportion_direction_, 100, NULL);
+    cv::createTrackbar("forecast_size_", window_name, &forecast_size_, 10000, NULL);
+    cv::createTrackbar("forecast_max_size_", window_name, &forecast_max_size_, 100, NULL);
+    cv::createTrackbar("judge_direction_", window_name, &judge_direction_, 100, NULL);
+    cv::createTrackbar("abrupt_variable_", window_name, &abrupt_variable_, 500, NULL);
+    cv::createTrackbar("Q", window_name, &Q_, 100, NULL);
+    cv::createTrackbar("R", window_name, &R_, 100, NULL);
     cv::imshow(window_name, sentry_trackbar_);
   }
 
@@ -275,42 +272,40 @@ void Detector::initialPredictionData(const float _gyro_speed_data,
       current_direction_ = 0;
     }
     // 延时滤波
-    filter_direction_ = (1 - proportion_direction_ * 0.01) * last_direction_ +
-                        proportion_direction_ * 0.01 * current_direction_;
-    last_direction_ = filter_direction_;
+    filter_direction_ = (1 - proportion_direction_ * 0.01) * last_direction_ + proportion_direction_ * 0.01 * current_direction_;
+    last_direction_   = filter_direction_;
     // 计算偏差角度
     deviation_angle_ = _yaw_angle - initial_gyroscope_;
     if (last_deviation_angle_ != 0) {
       deviation_angle_ = (deviation_angle_ + last_deviation_angle_) * 0.5;
     }
     last_deviation_angle_ = deviation_angle_;
+
+    // 计算水平深度
+    actual_z_ = sentry_dist_ / cos(deviation_angle_ * CV_PI / 180);
+
+    // 计算实际深度
+    actual_depth_ = std::sqrt(actual_z_ * actual_z_ + sentry_height_ * sentry_height_);
+
+    // // 计算预测角度 角速度 * 时间
+    forecast_angle_ = static_cast<float>(actual_depth_ * 0.001 / _bullet_velocity) * _gyro_speed_data;
+
+    // 计算像素点个数
+    forecast_pixels_ = abs(camera_focal_ * tan(forecast_angle_ * CV_PI / 180) * forecast_size_ * 100 / 4.8);
+
+    kalman_.setParam(R_, Q_, 1.0);
+
+    forecast_pixels_ = (last_last_forecast_pixels_ + last_forecast_pixels_ + forecast_pixels_) * 0.333;
+
+    if (forecast_pixels_ - last_forecast_pixels_ > abrupt_variable_) {
+      forecast_pixels_ = last_forecast_pixels_ + abrupt_variable_;
+    } else if (forecast_pixels_ - last_forecast_pixels_ < -abrupt_variable_) {
+      forecast_pixels_ = last_forecast_pixels_ - abrupt_variable_;
+    }
+    last_last_forecast_pixels_ = last_forecast_pixels_;
+    last_forecast_pixels_      = forecast_pixels_;
+    forecast_pixels_           = kalman_.run(forecast_pixels_);
   }
-
-  // 计算水平深度
-  actual_z_ = sentry_dist_ / cos(deviation_angle_ * CV_PI / 180);
-
-  // 计算实际深度
-  actual_depth_ =
-      std::sqrt(actual_z_ * actual_z_ + sentry_height_ * sentry_height_);
-
-  // 计算预测角度 角速度 * 时间
-  forecast_angle_ =
-      static_cast<float>(actual_depth_ * 0.001 / _bullet_velocity) *
-      _gyro_speed_data;
-
-  // 计算像素点个数
-  forecast_pixels_ = abs(camera_focal_ * tan(forecast_angle_ * CV_PI / 180) *
-                         forecast_size_ * 100 / 4.8);
-
-  kalman_.setParam(1, 5, 1.0);
-
-  forecast_pixels_ = kalman_.run(forecast_pixels_);
-
-  forecast_pixels_ =
-      (last_last_forecast_pixels_ + last_forecast_pixels_ + forecast_pixels_) *
-      0.33;
-  last_last_forecast_pixels_ = last_forecast_pixels_;
-  last_forecast_pixels_ = forecast_pixels_;
 
   if (num_cnt_ % 10 == 0) {
     num_cnt_ = 0;

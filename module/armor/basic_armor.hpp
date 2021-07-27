@@ -191,6 +191,8 @@ class Detector {
   int optimal_armor       = 0;
   int armor_position      = 0;
   int armor_direction     = 0;
+  int Q_                  = 10;
+  int R_                  = 5;
   int num                 = 0;
 
   int num_cnt_                   = 0;
@@ -213,9 +215,9 @@ class Detector {
   // 相机焦距
   const int camera_focal_        = 8;
   // 延时滤波占比
-  int proportion_direction_      = 5;
+  int proportion_direction_      = 15;
   // 预测效果大小 * 0.1
-  int forecast_size_             = 10;
+  int forecast_size_             = 3000;
   // 预测最大效果 * 装甲板宽度 * 0.1
   int forecast_max_size_         = 15;
   // 判断正负范围
