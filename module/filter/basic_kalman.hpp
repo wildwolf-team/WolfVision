@@ -19,6 +19,7 @@ class Kalman1 {
     x_ = x0;
     p_ = p0;
   }
+
   void setParam(int Q, int R, int t) {
     if (R < 1) R = 1;
     if (Q < 1) Q = 1;
@@ -33,14 +34,17 @@ class Kalman1 {
     kg_    = p_pre_ / (p_pre_ + R_);          // kg(k) = p(k|k-1)H'/(Hp(k|k-1)'+R)
     x_     = x_pre_ + kg_ * (data - x_pre_);  // x(k|k) = X(k|k-1)+kg(k)(Z(k)-HX(k|k-1))
     p_     = (1 - kg_) * p_pre_;              // p(k|k) = (I-kg(k)H)P(k|k-1)
+
     return x_;
   }
+  
   float merge_run(float data1, float data2) {
     x_pre_ = data1;
     p_pre_ = p_ + Q_;                          // p(k|k-1) = Ap(k-1|k-1)A'+Q
     kg_    = p_pre_ / (p_pre_ + R_);           // kg(k) = p(k|k-1)H'/(Hp(k|k-1)'+R)
     x_     = x_pre_ + kg_ * (data2 - x_pre_);  // x(k|k) = X(k|k-1)+kg(k)(Z(k)-HX(k|k-1))
     p_     = (1 - kg_) * p_pre_;               // p(k|k) = (I-kg(k)H)P(k|k-1)
+
     return x_;
   }
 
