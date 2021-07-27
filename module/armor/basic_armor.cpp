@@ -304,7 +304,7 @@ void Detector::initialPredictionData(const float _gyro_speed_data,
     }
     last_last_forecast_pixels_ = last_forecast_pixels_;
     last_forecast_pixels_      = forecast_pixels_;
-    forecast_pixels_           = kalman_.run(forecast_pixels_);
+    // forecast_pixels_           = kalman_.run(forecast_pixels_);
   }
 
   if (num_cnt_ % 10 == 0) {
