@@ -10,11 +10,18 @@
 #include "abstract_center_r.hpp"
 #include "abstract_target.hpp"
 #include "devices/serial/uart_serial.hpp"
+#include "filter/basic_kalman.hpp"
 #include "module/angle_solve/basic_pnp.hpp"
 #include "roi/basic_roi.hpp"
 #include "utils/fps.hpp"
 
 double fps::FPS::last_time;
+
+// #define DEBUG_KALMAN
+#define DEBUG_MANUAL
+// #define DEBUG_STATIC
+// #define DEBUG_BARREL_OFFSET
+
 namespace basic_buff {
 
 auto idntifier_green     = fmt::format(fg(fmt::color::green) | fmt::emphasis::bold, "basic_buff");
@@ -70,16 +77,20 @@ struct Buff_Param {
   // 面积比 MAX MIN
   float AREA_RATIO_MAX;
   float AREA_RATIO_MIN;
-
   // 圆心R距离小轮廓中心的距离系数
   float BIG_LENTH_R;
 
   /* 圆心限制条件 */
   // 圆心roi矩形大小
   int CENTER_R_ROI_SIZE;
-  // 面积
 
-  // 轮廓面积
+  // 圆心矩形比例
+  float CENTER_R_ASPECT_RATIO_MIN;
+  float CENTER_R_ASPECT_RATIO_MAX;
+
+  // 圆心矩形面积
+  int CENTER_R_AREA_MIN;
+  int CENTER_R_AREA_MAX;
 
   // 滤波器系数
   float FILTER_COEFFICIENT;
@@ -96,6 +107,13 @@ struct Buff_Param {
 
   // 模型深度补偿（左半边比右半边距离要远）
   float OFFSET_TARGET_Z;
+
+  // yaw 和 pitch 轴弹道补偿
+  float OFFSET_ARMOR_YAW;
+  float OFFSET_ARMOR_PITCH;
+
+  // 手算pitch 轴弹道补偿
+  float OFFSET_MANUAL_ARMOR_PITCH;
 };
 
 struct Buff_Ctrl {
@@ -112,13 +130,11 @@ struct Buff_Cfg {
 // 能量机关类 继承抽象类
 class Detector {
  public:
-  // 初始化参数结构体
   Detector() = default;
   explicit Detector(const std::string& _buff_config_path);
 
   ~Detector() = default;
 
-  // 总执行函数（接口）
   /**
    * @brief 总执行函数（接口）
    * @param  _input_img       输入图像
@@ -209,9 +225,13 @@ class Detector {
 
   cv::Mat ele_ = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));  // 椭圆内核
 
-  // BGR
-  std::vector<cv::Mat> split_img_;   // 分通道图
-  int                  average_th_;  // 平均阈值
+// BGR
+#ifdef DEBUG_STATIC
+  static std::vector<cv::Mat> split_img_;  // 分通道图
+#else
+  std::vector<cv::Mat> split_img_;  // 分通道图
+#endif              // DEBUG_STATIC
+  int average_th_;  // 平均阈值
 
   // HSV
   cv::Mat hsv_img_;  // hsv预处理输入图
@@ -231,9 +251,8 @@ class Detector {
    */
   void findTarget(cv::Mat& _input_dst_img, cv::Mat& _input_bin_img, std::vector<abstract_target::Target>& _target_box);
 
-  fan_armor::Detector small_target_;  // 内轮廓
-
-  abstract_blade::FanBlade big_target_;  // 外轮廓
+  fan_armor::Detector      small_target_;  // 内轮廓
+  abstract_blade::FanBlade big_target_;    // 外轮廓
 
   abstract_target::Target              candidated_target_;  // 当前检测得到的打击目标（遍历使用）
   abstract_target::Target              current_target_;     // 当前检测打击目标（现在）
@@ -370,7 +389,7 @@ class Detector {
    */
   float fixedPredict(const float& _bullet_velocity);
 
-  // 变化预测量
+  // 变化预测量 TODO(fqjun)
   void mutativePredict(const float& _input_predict_quantity, float& _output_predict_quantity);
 
   float current_radian_;        // 当前弧度
@@ -383,6 +402,21 @@ class Detector {
   float bullet_tof_;               // 子弹飞行时间
   float fixed_forecast_quantity_;  // 固定预测量（扇叶的单帧移动量）
   float final_forecast_quantity_;  // 最终合成的预测量
+
+#ifdef DEBUG_KALMAN
+
+ private:
+  // 卡尔曼滤波器
+  // basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.01f, 0.03f, 1.f, 0.f, 0.f);
+  basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.02f, 0.03f, 1.f, 0.f, 0.f);
+
+  int   Q                        = 3;
+  int   R                        = 2;
+  float current_predict_quantity = 0.f;
+
+  cv::Mat kalman_trackbar_img_ = cv::Mat::zeros(1, 300, CV_8UC1);  // 预处理
+  float   last_final_radian_   = 0.f;
+#endif  // DEBUG_KALMAN
 
  private:
   /* 计算获取最终目标（矩形、顶点） */
@@ -410,6 +444,9 @@ class Detector {
 
   basic_pnp::PnP buff_pnp_ = basic_pnp::PnP(fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_407.xml"), fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
 
+  /* 手动计算云台角度 */
+  cv::Point2f angleCalculation(const cv::Point2f& _target_center, const float& _unit_pixel_length, const cv::Size& _image_size, const float& _focal_length);
+
  private:
   /* 自动控制 */
 
@@ -422,15 +459,7 @@ class Detector {
   // 帧率测试
   fps::FPS buff_fps_1_{"Part 1"};
   fps::FPS buff_fps_2_{"Part 2"};
-  fps::FPS buff_fps_;  // 计算时间
+  fps::FPS buff_fps_;
 };
 
-inline void Detector::getInput(cv::Mat& _input_img, const int& _my_color) {
-  this->src_img_  = _input_img;
-  this->my_color_ = _my_color;
-  this->src_img_.copyTo(this->dst_img_);
-  this->is_find_target_ = false;
-}
-
-inline void Detector::displayDst() { imshow("dst_img", this->dst_img_); }
 }  // namespace basic_buff

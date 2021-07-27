@@ -10,7 +10,7 @@
   - 2 Alpha
   记得调整原参数
   -->
-  <IS_PARAM_ADJUSTMENT>1</IS_PARAM_ADJUSTMENT>
+  <IS_PARAM_ADJUSTMENT>0</IS_PARAM_ADJUSTMENT>
 
   <!-- 
   IS_SHOW_BIN_IMG - 是否显示二值图像
@@ -36,7 +36,7 @@
   <RED_BUFF_GRAY_TH>60</RED_BUFF_GRAY_TH>
   <RED_BUFF_COLOR_TH>49</RED_BUFF_COLOR_TH>
   <BLUE_BUFF_GRAY_TH>64</BLUE_BUFF_GRAY_TH>
-  <BLUE_BUFF_COLOR_TH>154</BLUE_BUFF_COLOR_TH>
+  <BLUE_BUFF_COLOR_TH>122</BLUE_BUFF_COLOR_TH>
 
   <!-- 
     - HSV-red 
@@ -122,6 +122,22 @@
   -->
   <CENTER_R_ROI_SIZE>180</CENTER_R_ROI_SIZE>
 
+  <!-- 
+    圆心矩形比例 *0.01
+    CENTER_R_ASPECT_RATIO_MIN - 最小值
+    CENTER_R_ASPECT_RATIO_MAX - 最大值
+  -->
+  <CENTER_R_ASPECT_RATIO_MIN>90</CENTER_R_ASPECT_RATIO_MIN>
+  <CENTER_R_ASPECT_RATIO_MAX>125</CENTER_R_ASPECT_RATIO_MAX>
+
+  <!-- 
+    圆心矩形面积 
+    CENTER_R_AREA_MIN - 最小值
+    CENTER_R_AREA_MAX - 最大值
+  -->
+  <CENTER_R_AREA_MIN>1000</CENTER_R_AREA_MIN>
+  <CENTER_R_AREA_MAX>3500</CENTER_R_AREA_MAX>
+
   <!--
     FILTER_COEFFICIENT - 滤波器系数
     滤波系数越小，滤波结果越平稳，但是灵敏度越低；
@@ -131,11 +147,11 @@
 
   <!--
     能量机关打击模型参数 单位 mm
-    BUFF_H         - 能量机关中心高度
+    BUFF_H         - 能量机关中心高度 单项赛：2386 对抗赛：2296
     BUFF_RADIUS    - 能量机关半径
     PLATFORM_H     - 狙击点高度
     BARREL_ROBOT_H - 枪管离机器人底面高度
-    TARGET_X       - 目标的水平直线距离 可调 6500,6761,7100
+    TARGET_X       - 目标的水平直线距离 单项赛：6956 对抗赛：7100
     相机离车身边界：前：150，左：250
   -->
   <BUFF_H>2386</BUFF_H>
@@ -147,15 +163,26 @@
   <!--
     OFFSET_FIXED_RADIAN - 固定预测值的补偿 -减少预测量，+增加预测量
     直接预测值为0.7 = 0.35*2
-    预测值的补偿值：-0.05  0.1是弹丸在平面一层的pitch补偿量时的最佳效果
+    预测值的补偿值：-0.05  0.1是弹丸在平面一层的pitch补偿量时的最佳效果 没加卡尔曼 加了卡尔曼0.13
   -->
-  <OFFSET_FIXED_RADIAN>0.1</OFFSET_FIXED_RADIAN>
+  <OFFSET_FIXED_RADIAN>0.12</OFFSET_FIXED_RADIAN>
 
   <!-- 
     OFFSET_TARGET_Z_ - 模型深度补偿（左半边比右半边距离要远）
    -->
   <OFFSET_TARGET_Z>0.0</OFFSET_TARGET_Z>
 
+  <!-- 
+    yaw 和 pitch 轴弹道补偿 这里填的指是 X100 倍的数字 
+    yaw :55
+    pitch:170
+  -->
+  <OFFSET_ARMOR_YAW>67</OFFSET_ARMOR_YAW>
+  <OFFSET_ARMOR_PITCH>90</OFFSET_ARMOR_PITCH>
+
+  <!-- 手算pitch 轴弹道补偿 这里填的指是 X100 倍的数字 -->
+  <OFFSET_MANUAL_ARMOR_PITCH>-450</OFFSET_MANUAL_ARMOR_PITCH>
+  
   <!--~~~~~~~~~~~~~~  能量机关设置部分  ~~~~~~~~~~~~~~-->
 
 </opencv_storage>
