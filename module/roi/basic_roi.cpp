@@ -114,25 +114,25 @@ cv::Mat RoI::returnROIResultMat(const cv::Mat& _input_img) {
       roi_armor_data_.last_rect = cv::Rect(0, 0, 0, 0);
       return _input_img;
     }
-    if (roi_armor_data_.lost_count < 5) {
-      BigLastRoiRect(roi_armor_data_.last_roi_armor_rect, width_big_num * 0.1,
-                     height_big_num * 0.1);
-      roi_armor_data_.last_rect =
-          makeRectSafeThird(_input_img, roi_armor_data_.last_roi_armor_rect);
-      return _input_img(roi_armor_data_.last_rect);
-    } else if (roi_armor_data_.lost_count < 7) {
-      BigLastRoiRect(roi_armor_data_.last_roi_armor_rect, width_big_num * 0.1,
-                     height_big_num * 0.1);
-      roi_armor_data_.last_rect =
-          makeRectSafeThird(_input_img, roi_armor_data_.last_roi_armor_rect);
-      return _input_img(roi_armor_data_.last_rect);
-    } else if (roi_armor_data_.lost_count < 9) {
+    if (roi_armor_data_.lost_count < 10) {
       BigLastRoiRect(roi_armor_data_.last_roi_armor_rect, width_big_num * 0.1,
                      height_big_num * 0.1);
       roi_armor_data_.last_rect =
           makeRectSafeThird(_input_img, roi_armor_data_.last_roi_armor_rect);
       return _input_img(roi_armor_data_.last_rect);
     } else if (roi_armor_data_.lost_count < 15) {
+      BigLastRoiRect(roi_armor_data_.last_roi_armor_rect, width_big_num * 0.1,
+                     height_big_num * 0.1);
+      roi_armor_data_.last_rect =
+          makeRectSafeThird(_input_img, roi_armor_data_.last_roi_armor_rect);
+      return _input_img(roi_armor_data_.last_rect);
+    } else if (roi_armor_data_.lost_count < 20) {
+      BigLastRoiRect(roi_armor_data_.last_roi_armor_rect, width_big_num * 0.1,
+                     height_big_num * 0.1);
+      roi_armor_data_.last_rect =
+          makeRectSafeThird(_input_img, roi_armor_data_.last_roi_armor_rect);
+      return _input_img(roi_armor_data_.last_rect);
+    } else if (roi_armor_data_.lost_count < 25) {
       BigLastRoiRect(roi_armor_data_.last_roi_armor_rect, width_big_num * 0.1,
                      height_big_num * 0.1);
       roi_armor_data_.last_rect =
