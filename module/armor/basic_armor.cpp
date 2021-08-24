@@ -454,8 +454,7 @@ bool Detector::lightJudge(const int i, const int j) {
             armor_data_.distinguish = 0;
 
             return true;
-          }
-          else if (armor_data_.aspect_ratio > armor_config_.armor_type_th * 0.1 && armor_data_.aspect_ratio < armor_config_.big_armor_aspect_max * 0.1) {
+          } else if (armor_data_.aspect_ratio > armor_config_.armor_type_th * 0.1 && armor_data_.aspect_ratio < armor_config_.big_armor_aspect_max * 0.1) {
             armor_data_.distinguish = 1;
 
             return true;
