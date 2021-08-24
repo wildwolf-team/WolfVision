@@ -1,3 +1,13 @@
+/**
+ * @file fan_armor.cpp
+ * @author WCJJJ (1767851382@qq.com)
+ * @brief 扇叶装甲板类
+ * @date 2021-08-24
+ * 
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ * 
+ */
+
 #include "fan_armor.hpp"
 
 namespace fan_armor {
