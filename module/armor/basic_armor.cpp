@@ -381,11 +381,11 @@ bool Detector::fittingArmor() {
           atan((light_[light_right].center.y - light_[light_left].center.y) /
                (light_[light_right].center.x - light_[light_left].center.x));
 
-      if (error_angle < 100.f) {
+      if (error_angle < 10.f) {
         armor_data_.tan_angle = atan(error_angle) * 180 / CV_PI;
 
         if (lightJudge(light_left, light_right)) {
-          if (averageColor() < 100) {
+          if (averageColor() < 30) {
             armor_.push_back(armor_data_);
 
             if (armor_config_.armor_draw == 1 ||
@@ -427,7 +427,7 @@ bool Detector::lightJudge(const int i, const int j) {
       armor_data_.light_width_aspect  < armor_config_.light_width_ratio_max  * 0.1 &&
       armor_data_.light_width_aspect  > armor_config_.light_height_ratio_min * 0.1) {
     armor_data_.height =
-      (armor_data_.left_light.size.height + armor_data_.right_light.size.height) / 2;
+      MIN(armor_data_.left_light.size.height, armor_data_.right_light.size.height);
 
     if (fabs(armor_data_.left_light.center.y - armor_data_.right_light.center.y) <
         armor_data_.height * armor_config_.light_y_different * 0.1) {
@@ -437,26 +437,24 @@ bool Detector::lightJudge(const int i, const int j) {
           getDistance(armor_data_.left_light.center,
                       armor_data_.right_light.center);
 
-        armor_data_.aspect_ratio = armor_data_.width / armor_data_.height;
+        armor_data_.aspect_ratio = armor_data_.width / (MAX(armor_data_.left_light.size.height, armor_data_.right_light.size.height));
 
         if (fabs(armor_data_.left_light.angle - armor_data_.right_light.angle) <
             armor_config_.armor_angle_different * 0.1) {
           cv::RotatedRect rects = cv::RotatedRect(
               (armor_data_.left_light.center + armor_data_.right_light.center) / 2,
-              cv::Size(armor_data_.width , armor_data_.height),
+              cv::Size(armor_data_.width * 0.5 , armor_data_.height * 0.5 + 100),
               armor_data_.tan_angle);
 
           armor_data_.armor_rect      = rects;
           armor_data_.distance_center =
               getDistance(armor_data_.armor_rect.center,
                           cv::Point(draw_img_.cols, draw_img_.rows));
-          if (armor_data_.aspect_ratio > armor_config_.small_armor_aspect_min * 0.1 &&
-              armor_data_.aspect_ratio < armor_config_.armor_type_th * 0.1) {
+          if (armor_data_.aspect_ratio > armor_config_.small_armor_aspect_min * 0.1 && armor_data_.aspect_ratio < armor_config_.armor_type_th * 0.1) {
             armor_data_.distinguish = 0;
 
             return true;
-          } else if (armor_data_.aspect_ratio > armor_config_.armor_type_th * 0.1 &&
-                     armor_data_.aspect_ratio < armor_config_.big_armor_aspect_max * 0.1) {
+          } else if (armor_data_.aspect_ratio > armor_config_.armor_type_th * 0.1 && armor_data_.aspect_ratio < armor_config_.big_armor_aspect_max * 0.1) {
             armor_data_.distinguish = 1;
 
             return true;
@@ -526,7 +524,7 @@ cv::Mat Detector::fuseImage(const cv::Mat _bin_gray_img,
                             const cv::Mat _bin_color_img) {
   cv::bitwise_and(_bin_color_img, _bin_gray_img, _bin_color_img);
   cv::morphologyEx(_bin_color_img, _bin_color_img, cv::MORPH_DILATE, ele_);
-
+  cv::medianBlur(_bin_color_img, _bin_color_img, 3);
   return _bin_color_img;
 }
 
