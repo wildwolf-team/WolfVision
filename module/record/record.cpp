@@ -33,9 +33,8 @@ void Record::RecordIng(cv::Mat src_img_r) {
   }
 }
 
-
 void Record::Change_Place(String path_, int mode_vision) {
-  palce_change = path_;
+  palce_change   = path_;
   com_uart_judge = mode_vision;
   if (switch_r == 1) {
     if (mode_vision == 1) {
@@ -89,17 +88,17 @@ void Record::Vision_judge(const cv::Mat src_input, int judge_, int current_mode)
         uart_lock = true;
       }
     }
-  Recording_flag_uart = true;
+    Recording_flag_uart = true;
   }
   if (current_mode != S5 && Rmode_last_uart == S5) {
     Recording_flag_uart = false;
     uart_judge          = false;
-    uart_lock = false;
+    uart_lock           = false;
   }
   if (uart_judge) {
     RecordIng(src_input);
   }
-  if (!Recording_flag_uart && Rmode_last_uart == S5 && !uart_lock) {
+  if (!Recording_flag_uart && Rmode_last_uart == S5) {
     uart_lock = false;
     Path_Maker(2);
     writer.release();

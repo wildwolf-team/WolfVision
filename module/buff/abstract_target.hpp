@@ -1,3 +1,13 @@
+/**
+ * @file abstract_target.hpp
+ * @author WCJJJ (1767851382@qq.com)
+ * @brief 目标类
+ * @date 2021-08-24
+ * 
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ * 
+ */
+
 #pragma once
 
 #include <vector>

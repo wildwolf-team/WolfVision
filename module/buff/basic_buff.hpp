@@ -1,3 +1,13 @@
+/**
+ * @file basic_buff.hpp
+ * @author WCJJJ (1767851382@qq.com)
+ * @brief 能量机关
+ * @date 2021-08-24
+ * 
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ * 
+ */
+
 #pragma once
 
 #include <fmt/color.h>
@@ -140,6 +150,7 @@ class Detector {
    * @param  _input_img       输入图像
    * @param  _receive_info    串口接收结构体
    * @param  _send_info       串口发送结构体
+   * @author WCJ
    */
   void runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_info, uart::Write_Data& _send_info);
 
@@ -148,6 +159,7 @@ class Detector {
    * @param  _input_img       输入图像
    * @param  _receive_info    串口接收结构体
    * @return uart::Write_Data 串口发送结构体
+   * @author WCJ
    */
   uart::Write_Data runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_info);
 
@@ -155,6 +167,7 @@ class Detector {
   /**
    * @brief 获取参数更新结构体
    * @param[in]  _fs               文件对象
+   * @author WCJ
    */
   void readBuffConfig(const cv::FileStorage& _fs);
 
@@ -163,6 +176,7 @@ class Detector {
    * @details 图像和颜色
    * @param[in]  _input_img       输入图像
    * @param[in]  _my_color        己方颜色
+   * @author WCJ
    */
   void getInput(cv::Mat& _input_img, const int& _my_color);
 
@@ -201,18 +215,21 @@ class Detector {
    * @param[out] _output_img      输出图像（bin）
    * @param[in]  _my_color        颜色参数
    * @param[in]  _process_moudle  预处理模式
+   * @author WCJ HZH RCX
    */
   void imageProcessing(cv::Mat& _input_img, cv::Mat& _output_img, const int& _my_color, const Processing_Moudle& _process_moudle);
 
   /**
    * @brief BGR颜色空间预处理
    * @param  _my_color        颜色参数
+   * @author WCJ
    */
   void bgrProcessing(const int& _my_color);
 
   /**
    * @brief HSV颜色空间预处理
    * @param  _my_color        颜色参数
+   * @author WCJ
    */
   void hsvProcessing(const int& _my_color);
 
@@ -248,6 +265,7 @@ class Detector {
    * @param  _input_dst_img   输入图像
    * @param  _input_bin_img   输入二值图
    * @param  _target_box      输出目标容器
+   * @author WCJ HZH
    */
   void findTarget(cv::Mat& _input_dst_img, cv::Mat& _input_bin_img, std::vector<abstract_target::Target>& _target_box);
 
@@ -290,6 +308,7 @@ class Detector {
    * @param[in]  _target_box      扇叶目标容器
    * @return true                 发现目标
    * @return false                丢失目标
+   * @author WCJ
    */
   bool isFindTarget(cv::Mat& _input_img, std::vector<abstract_target::Target>& _target_box);
 
@@ -301,6 +320,7 @@ class Detector {
    * @param  _dst_img         输入dst画板图
    * @param  _is_find_target  是否发现扇叶目标
    * @return cv::Point2f          返回圆心R中点坐标
+   * @author WCJ HZH
    */
   cv::Point2f findCircleR(cv::Mat& _input_src_img, cv::Mat& _input_bin_img, cv::Mat& _dst_img, const bool& _is_find_target);
 
@@ -322,28 +342,33 @@ class Detector {
   /**
    * @brief 计算运转状态值：速度、方向、角度
    * @param  _is_find_target  是否发现目标
+   * @author WCJ
    */
   void judgeCondition(const bool& _is_find_target);
 
   /**
    * @brief 计算角度和角度差
+   * @author WCJ
    */
   void calAngle();
 
   /**
    * @brief 计算转动方向
    * @details 1：顺时针 -1：逆时针 0：不转动
+   * @author WCJ HZH
    */
   void calDirection();
 
   /**
    * @brief 获取风车转向
    * @return int
+   * @author WCJ
    */
   int getState();
 
   /**
    * @brief 计算当前扇叶转动速度
+   * @author WCJ
    */
   void calVelocity();
 
@@ -379,6 +404,7 @@ class Detector {
    * @param[in]  _bullet_velocity 子弹速度
    * @param[in]  _is_find_target  是否发现目标
    * @return float 预测量
+   * @author WCJ
    */
   float doPredict(const float& _bullet_velocity, const bool& _is_find_target);
 
@@ -386,6 +412,7 @@ class Detector {
    * @brief 计算固定预测量
    * @param[in]  _bullet_velocity 子弹速度
    * @return float  预测量
+   * @author WCJ
    */
   float fixedPredict(const float& _bullet_velocity);
 
@@ -428,6 +455,7 @@ class Detector {
    * @param  _target_2d_point  目标矩形顶点容器
    * @param  _input_dst_img    输入画板
    * @param  _is_find_target   是否有目标
+   * @author WCJ
    */
   void calculateTargetPointSet(const float& _predict_quantity, const cv::Point2f& _final_center_r, std::vector<cv::Point2f>& _target_2d_point, cv::Mat& _input_dst_img, const bool& _is_find_target);
 
@@ -445,6 +473,15 @@ class Detector {
   basic_pnp::PnP buff_pnp_ = basic_pnp::PnP(fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_407.xml"), fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
 
   /* 手动计算云台角度 */
+  /**
+   * @brief  手动计算云台角度
+   * @param  _target_center   目标中心点
+   * @param  _unit_pixel_length 成像像素元件长度 mm
+   * @param  _image_size      图像大小
+   * @param  _focal_length    相机焦距 mm
+   * @author WCJ
+   * @return cv::Point2f 
+   */
   cv::Point2f angleCalculation(const cv::Point2f& _target_center, const float& _unit_pixel_length, const cv::Size& _image_size, const float& _focal_length);
 
  private:
@@ -452,7 +489,11 @@ class Detector {
 
  private:
   /* 更新上一帧数据 */
-
+  /**
+   * @brief 更新上一帧数据
+   * @param  _is_find_target  是否有目标
+   * @author WCJ
+   */
   void updateLastData(const bool& _is_find_target);
 
  private:
