@@ -1,3 +1,16 @@
+/**
+ * @file uart_serial.hpp
+ * @author WCJJJ (1767851382@qq.com) 
+ *         XXXX（2796393320@qq.com）
+ *         HZKKK
+ *         RCXXX
+ * @brief 
+ * @date 2021-08-27
+ * 
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ * 
+ */
+
 #pragma once
 
 #include <string>
@@ -163,6 +176,16 @@ class SerialPort {
     return exchangebit_;
   }
 
+/**
+ * @brief 发送数据
+ * @param  _yaw             yaw 符号
+ * @param  yaw              yaw 绝对值
+ * @param  _pitch           pitch 符号
+ * @param  pitch            pitch 绝对值
+ * @param  depth            深度
+ * @param  data_type        是否发现目标
+ * @param  s_shooting       开火命令
+ */
   void writeData(const int&     _yaw,   const int16_t& yaw,
                  const int&     _pitch, const int16_t& pitch,
                  const int16_t& depth,  const int&     data_type = 0,
@@ -178,10 +201,21 @@ class SerialPort {
                            const int  _depth, const int   _data_type = 0,
                            const int  _is_shooting = 0);
 
+/**
+ * @brief 接收数据
+ */
   void receiveData();
 
+/**
+ * @brief 接收数据是否正常
+ * @return true 不正常
+ * @return false 正常
+ */
   bool isEmpty();
 
+/**
+ * @brief 更新数据信息
+ */
   void updateReceiveInformation();
 
  private:
@@ -212,11 +246,32 @@ class SerialPort {
 
   inline uint8_t checksumCRC(unsigned char* buf, uint16_t len);
 
+/**
+ * @brief Get the Data For CRC object
+ * @param  data_type        是否发现目标
+ * @param  is_shooting      开火命令
+ * @param  _yaw             yaw 符号
+ * @param  yaw              yaw 绝对值
+ * @param  _pitch           pitch 符号
+ * @param  pitch            pitch 绝对值
+ * @param  depth            深度
+ */
   void getDataForCRC(const int&     data_type, const int&     is_shooting,
                      const int&     _yaw,      const int16_t& yaw,
                      const int&     _pitch,    const int16_t& pitch,
                      const int16_t& depth);
 
+  /**
+ * @brief Get the Data For Send object
+ * @param  data_type        是否发现目标
+ * @param  is_shooting      开火命令
+ * @param  _yaw             yaw 符号
+ * @param  yaw              yaw 绝对值
+ * @param  _pitch           pitch 符号
+ * @param  pitch            pitch 绝对值
+ * @param  depth            深度
+ * @param  CRC              CRC 校验码
+ */
   void getDataForSend(const int&     data_type, const int&     is_shooting,
                       const int&     _yaw,      const int16_t& yaw,
                       const int&     _pitch,    const int16_t& pitch,

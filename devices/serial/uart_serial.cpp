@@ -1,3 +1,16 @@
+/**
+ * @file uart_serial.cpp
+ * @author WCJJJ (1767851382@qq.com) 
+ *         XXXX（2796393320@qq.com）
+ *         HZKKK
+ *         RCXXX
+ * @brief 
+ * @date 2021-08-27
+ * 
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ * 
+ */
+
 #include "uart_serial.hpp"
 
 namespace uart {
