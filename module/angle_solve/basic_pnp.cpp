@@ -85,7 +85,7 @@ void PnP::solvePnP(int             _ballet_speed,
 
   cv::Mat     ptz   = cameraPtz(tvec_);
   cv::Point3f angle = getAngle(ptz, _ballet_speed, 1);
-
+  // 固定偏移量
   pnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   pnp_info_.yaw_angle   = angle.x + pnp_config_.offset_armor_yaw;
   pnp_info_.depth       = angle.z;
