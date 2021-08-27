@@ -1,3 +1,12 @@
+/**
+ * @file wolfvision.hpp
+ * @author XX (2796393320@qq.com) WCJJJ (1767851382@qq.com)
+ * @brief 华广野狼团队视觉2021赛季代码
+ * @date 2021-08-28
+ *
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ *
+ */
 #pragma once
 
 #include <fmt/color.h>

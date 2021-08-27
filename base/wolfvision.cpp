@@ -1,9 +1,17 @@
+/**
+ * @file wolfvision.cpp
+ * @author XX (2796393320@qq.com) WCJJJ (1767851382@qq.com)
+ * @brief 华广野狼团队视觉2021赛季代码
+ * @date 2021-08-28
+ *
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ *
+ */
 #include "wolfvision.hpp"
 
 int main() {
   fmt::print("[{}] WolfVision built on g++ version: {}\n", idntifier, __VERSION__);
   fmt::print("[{}] WolfVision config file path: {}\n", idntifier, CONFIG_FILE_PATH);
-
   cv::Mat src_img_, roi_img_;
   mindvision::VideoCapture* mv_capture_ = new mindvision::VideoCapture(
     mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
@@ -45,15 +53,18 @@ int main() {
       serial_.updateReceiveInformation();
 
       switch (serial_.returnReceiveMode()) {
+      // 基础自瞄模式
       case uart::SUP_SHOOT:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
           pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
         }
         serial_.updataWriteData(pnp_.returnYawAngle(), pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
         break;
+      // 能量机关
       case uart::ENERGY_AGENCY:
         serial_.writeData(basic_buff_.runTask(src_img_, serial_.returnReceive()));
         break;
+      // 击打哨兵模式
       case uart::SENTRY_STRIKE_MODE:
         if (basic_armor_.sentryMode(src_img_, serial_.returnReceive())) {
           pnp_.solvePnP(serial_.returnReceiveBulletVelocity(),
@@ -73,6 +84,7 @@ int main() {
         }
 
         break;
+      // 反小陀螺模式（暂未完善）
       case uart::TOP_MODE:
         roi_img_ = roi_.returnROIResultMat(src_img_);
         if (basic_armor_.runBasicArmor(roi_img_, serial_.returnReceive())) {
@@ -93,12 +105,15 @@ int main() {
         roi_.setLastRoiSuccess(basic_armor_.returnArmorNum());
 
         break;
+      // 录制视频
       case uart::RECORD_MODE:
         record_.Rmode_current = 5;
         break;
+      // 无人机模式（空缺）
       case uart::PLANE_MODE:
 
         break;
+      // 哨兵模式（添加数字识别便于区分工程和其他车辆）
       case uart::SENTINEL_AUTONOMOUS_MODE:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
           if (basic_armor_.returnFinalArmorDistinguish(0) == 1) {
@@ -134,11 +149,13 @@ int main() {
           }
         }
         break;
+      // 雷达模式
       case uart::RADAR_MODE:
         fmt::print("RADIA_MODE");
         cv::imshow("RECORD_IMG", src_img_);
         record_.RecordIng(src_img_);
         break;
+      // 默认进入基础自瞄
       default:
         if (basic_armor_.runBasicArmor(src_img_, serial_.returnReceive())) {
             pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
@@ -166,6 +183,7 @@ int main() {
 #else
     usleep(1);
 #endif
+    // 看门狗放置相机掉线
     global_fps_.calculateFPSGlobal();
     if (global_fps_.returnFps() > 500) {
       mv_capture_->~VideoCapture();
