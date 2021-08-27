@@ -1,3 +1,12 @@
+/**
+ * @file basic_pnp.cpp
+ * @author XX (2796393320@qq.com)
+ * @brief 角度结算
+ * @date 2021-08-27
+ *
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ *
+ */
 #include "basic_pnp.hpp"
 
 namespace basic_pnp {
