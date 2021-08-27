@@ -1,3 +1,12 @@
+/**
+ * @file abstract_roi.hpp
+ * @author RCXXX
+ * @brief ROI基类
+ * @date 2021-08-27
+ *
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ *
+ */
 #pragma once
 
 #include <opencv2/core.hpp>
@@ -10,7 +19,13 @@ class RoI {
   RoI() : tl_(cv::Point2d(0, 0)) {}
 
   virtual ~RoI() {}
-
+  /**
+   * @brief 截取ROI图像
+   * 
+   * @param _input_img 需要截取的图像
+   * @param _rect 需要截取的位置(外接矩形)
+   * @return cv::Mat 截取后的图片
+   */
   cv::Mat cutRoIRect(const cv::Mat& _input_img,
                      const cv::Rect& _rect) {
     tl_ = _rect.tl();
@@ -18,7 +33,13 @@ class RoI {
 
     return roi_img_;
   }
-
+  /**
+   * @brief 截取ROI图像
+   *
+   * @param _input_img 需要截取的图像
+   * @param _rect 需要截取的位置(旋转矩形)
+   * @return cv::Mat 截取后的图片
+   */
   cv::Mat cutRoIRotatedRect(const cv::Mat&         _input_img,
                             const cv::RotatedRect& _rect) {
     int roi_w = MAX(_rect.size.width, _rect.size.height);
@@ -47,12 +68,22 @@ class RoI {
 
     return roi_img_r_rect;
   }
-
+  /**
+   * @brief 原点转换
+   * 
+   * @param _input_point ROI图像的点
+   * @return cv::Point2d 原图的点
+   */
   inline cv::Point2d coordMapping(const cv::Point& _input_point) {
     return cv::Point(_input_point.x + tl_.x,
                      _input_point.y + tl_.y);
   }
-
+  /**
+   * @brief Rect坐标转换
+   *
+   * @param _input_rect ROI图像的值
+   * @return cv::Rect 原图的值
+   */
   inline cv::Rect rectMapping(const cv::Rect& _input_rect) {
     cv::Point convert_tl = coordMapping(_input_rect.tl());
 
@@ -61,7 +92,12 @@ class RoI {
                     _input_rect.size().width,
                     _input_rect.size().height);
   }
-
+  /**
+   * @brief RotateRect坐标转换
+   *
+   * @param _input_r_rect ROI图像的值
+   * @return cv::RotatedRect 原图的值
+   */
   inline cv::RotatedRect rotatedRectMapping(const cv::RotatedRect& _input_r_rect) {
     return cv::RotatedRect(coordMapping(_input_r_rect.center),
                            _input_r_rect.size,
