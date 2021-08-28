@@ -21,12 +21,13 @@ class RoI {
   virtual ~RoI() {}
   /**
    * @brief 截取ROI图像
-   * 
+   *
    * @param _input_img 需要截取的图像
-   * @param _rect 需要截取的位置(外接矩形)
-   * @return cv::Mat 截取后的图片
+   * @param _rect      需要截取的位置(外接矩形)
+   * @return cv::Mat   返回截取后的图片
+   * @author RCX
    */
-  cv::Mat cutRoIRect(const cv::Mat& _input_img,
+  cv::Mat cutRoIRect(const cv::Mat&   _input_img,
                      const cv::Rect& _rect) {
     tl_ = _rect.tl();
     _input_img(_rect).copyTo(roi_img_);
@@ -37,8 +38,9 @@ class RoI {
    * @brief 截取ROI图像
    *
    * @param _input_img 需要截取的图像
-   * @param _rect 需要截取的位置(旋转矩形)
-   * @return cv::Mat 截取后的图片
+   * @param _rect      需要截取的位置 (旋转矩形)
+   * @return cv::Mat   返回截取后的图片
+   * @author RCX
    */
   cv::Mat cutRoIRotatedRect(const cv::Mat&         _input_img,
                             const cv::RotatedRect& _rect) {
@@ -70,19 +72,21 @@ class RoI {
   }
   /**
    * @brief 原点转换
-   * 
-   * @param _input_point ROI图像的点
-   * @return cv::Point2d 原图的点
+   *
+   * @param _input_point ROI 图像的点
+   * @return cv::Point2d 返回原图的点
+   * @author RCX
    */
   inline cv::Point2d coordMapping(const cv::Point& _input_point) {
     return cv::Point(_input_point.x + tl_.x,
                      _input_point.y + tl_.y);
   }
   /**
-   * @brief Rect坐标转换
+   * @brief Rect 坐标转换
    *
-   * @param _input_rect ROI图像的值
-   * @return cv::Rect 原图的值
+   * @param _input_rect ROI 图像的值
+   * @return cv::Rect   返回原图的值
+   * @author RCX
    */
   inline cv::Rect rectMapping(const cv::Rect& _input_rect) {
     cv::Point convert_tl = coordMapping(_input_rect.tl());
@@ -95,8 +99,9 @@ class RoI {
   /**
    * @brief RotateRect坐标转换
    *
-   * @param _input_r_rect ROI图像的值
-   * @return cv::RotatedRect 原图的值
+   * @param _input_r_rect    ROI 图像的值
+   * @return cv::RotatedRect 返回原图的值
+   * @author RCX
    */
   inline cv::RotatedRect rotatedRectMapping(const cv::RotatedRect& _input_r_rect) {
     return cv::RotatedRect(coordMapping(_input_r_rect.center),

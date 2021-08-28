@@ -29,15 +29,17 @@ class RoI : public abstract_roi::RoI {
 
  public:
   /**
-   * @brief 返回ROI的tl点
+   * @brief 返回 ROI 的 tl 点
    *
-   * @return cv::Point ROI的tl点
+   * @return cv::Point 返回 ROI 的 tl 点
+   * @author RCX
    */
   inline cv::Point returnRectTl() { return roi_armor_data_.last_rect.tl(); }
   /**
-   * @brief 设置是否进行ROI
-   * 
-   * @param _num 
+   * @brief 设置是否进行 ROI
+   *
+   * @param _num 装甲板数量
+   * @author WSL
    */
   inline void setLastRoiSuccess(int _num) {
     roi_armor_data_.last_armor_success = false;
@@ -47,12 +49,14 @@ class RoI : public abstract_roi::RoI {
     }
   }
   /**
-   * @brief 设置装甲板ROI基础范围
-   * 
-   * @param _rect 装甲板旋转矩形
+   * @brief 设置装甲板 ROI 基础范围
+   *
+   * @param _rect             装甲板旋转矩形
    * @param _ArmorDistinguish 装甲板类型
+   * @author WSL
    */
-  inline void setLastRoiRect(cv::RotatedRect _rect, int _ArmorDistinguish) {
+  inline void setLastRoiRect(cv::RotatedRect _rect,
+                             int             _ArmorDistinguish) {
     if (_ArmorDistinguish == 0) {
       roi_armor_data_.last_roi_armor_rect.center = _rect.center;
       roi_armor_data_.last_roi_armor_rect.size.width = _rect.size.width * 8;
@@ -66,14 +70,16 @@ class RoI : public abstract_roi::RoI {
     }
   }
   /**
-   * @brief ROI扩大倍数
-   * 
-   * @param _rect ROI的旋转矩形
-   * @param width_big_num 宽度增加的倍数
+   * @brief ROI 扩大倍数
+   *
+   * @param _rect          ROI 的旋转矩形
+   * @param width_big_num  宽度增加的倍数
    * @param height_big_num 高度增加的倍数
+   * @author WSL
    */
-  inline void BigLastRoiRect(cv::RotatedRect _rect, float width_big_num,
-                             float height_big_num) {
+  inline void BigLastRoiRect(cv::RotatedRect _rect,
+                             float           width_big_num,
+                             float           height_big_num) {
     roi_armor_data_.last_roi_armor_rect.size.width =
         _rect.size.width * width_big_num;
     roi_armor_data_.last_roi_armor_rect.size.height =
@@ -84,47 +90,52 @@ class RoI : public abstract_roi::RoI {
 
   ~RoI() = default;
   /**
-   * @brief 限制ROI范围
-   * 
+   * @brief 限制 ROI 范围
+   *
    * @param _input_img 图像
-   * @param _r_rect ROI区域
-   * @return cv::Rect 
+   * @param _r_rect    ROI 区域
+   * @return cv::Rect  返回安全的 Rect 参数
+   * @author RCX
    */
-  cv::Rect makeRectSafeFixed(const cv::Mat& _input_img,
+  cv::Rect makeRectSafeFixed(const cv::Mat&         _input_img,
                              const cv::RotatedRect& _r_rect);
   /**
    * @brief 限制ROI范围
    *
    * @param _input_img 图像
-   * @param _r_rect ROI区域
-   * @return cv::Rect
+   * @param _r_rect    ROI 区域
+   * @return cv::Rect  返回安全的 Rect 参数
+   * @author RCX
    */
-  cv::Rect makeRectSafeTailor(const cv::Mat& _input_img,
+  cv::Rect makeRectSafeTailor(const cv::Mat&         _input_img,
                               const cv::RotatedRect& _r_rect);
   /**
    * @brief 限制ROI范围
    *
    * @param _input_img 图像
-   * @param _r_rect ROI区域
-   * @return cv::Rect
+   * @param _r_rect    ROI 区域
+   * @return cv::Rect  返回安全的 Rect 参数
+   * @author RCX
    */
-  cv::Rect makeRectSafeTailor(const cv::Mat& _input_img,
+  cv::Rect makeRectSafeTailor(const cv::Mat&  _input_img,
                               const cv::Rect& _r_rect);
   /**
    * @brief 限制ROI范围
    *
    * @param _input_img 图像
-   * @param _r_rect ROI区域
-   * @return cv::Rect
+   * @param _r_rect    ROI 区域
+   * @return cv::Rect  返回安全的 Rect 参数
+   * @author WSL
    */
-  cv::Rect makeRectSafeThird(const cv::Mat& _input_img,
+  cv::Rect makeRectSafeThird(const cv::Mat&         _input_img,
                              const cv::RotatedRect& _r_rect);
 
   /**
-   * @brief 逐级扩大ROI范围 
-   * 
+   * @brief 逐级扩大ROI范围
+   *
    * @param _input_img 图像
-   * @return cv::Mat ROI图像
+   * @return cv::Mat   ROI图像
+   * @author WSL       返回安全的 Rect 参数
    */
   cv::Mat returnROIResultMat(const cv::Mat& _input_img);
 };

@@ -16,9 +16,9 @@ cv::Rect RoI::makeRectSafeFixed(const cv::Mat&         _input_img,
   int width  = _r_rect.boundingRect().width;
   int height = _r_rect.boundingRect().height;
 
-  cv::Point tl = cv::Point(_r_rect.center.x - width * 0.5f,
+  cv::Point tl = cv::Point(_r_rect.center.x - (width * 0.5f),
                            _r_rect.center.y - (height * 0.5f));
-  // 限制ROI出界条件
+  // 限制 ROI 出界条件
   if (tl.x < 0) {
     tl.x = 0;
   }
@@ -41,9 +41,9 @@ cv::Rect RoI::makeRectSafeTailor(const cv::Mat&         _input_img,
   int width  = _r_rect.boundingRect().width;
   int height = _r_rect.boundingRect().height;
 
-  cv::Point tl = cv::Point(_r_rect.center.x - width * 0.5f,
+  cv::Point tl = cv::Point(_r_rect.center.x - (width * 0.5f),
                            _r_rect.center.y - (height * 0.5f));
-  // 限制ROI出界条件
+  // 限制 ROI 出界条件
   if (tl.x < 0) {
     width -= 0 - tl.x;
     tl.x   = 0;
@@ -69,7 +69,7 @@ cv::Rect RoI::makeRectSafeTailor(const cv::Mat&  _input_img,
   int height = _r_rect.height;
 
   cv::Point tl = _r_rect.tl();
-  // 限制ROI出界条件
+  // 限制 ROI 出界条件
   if (tl.x < 0) {
     width -= 0 - tl.x;
     tl.x   = 0;
@@ -96,7 +96,7 @@ cv::Rect RoI::makeRectSafeThird(const cv::Mat&         _input_img,
 
   cv::Point tl = cv::Point(_r_rect.center.x - (width * 0.5f),
                            _r_rect.center.y - (height * 0.5f));
-  // 限制ROI出界条件
+  // 限制 ROI 出界条件
   if (tl.x < 0) {
     tl.x = 0;
   }
@@ -123,7 +123,7 @@ cv::Mat RoI::returnROIResultMat(const cv::Mat& _input_img) {
       roi_armor_data_.last_rect = cv::Rect(0, 0, 0, 0);
       return _input_img;
     }
-    // 根据设置次数调整ROI范围（逐级扩大）
+    // 根据设置次数调整 ROI 范围 （逐级扩大）
     if (roi_armor_data_.lost_count < 10) {
       BigLastRoiRect(roi_armor_data_.last_roi_armor_rect, width_big_num * 0.1,
                      height_big_num * 0.1);
@@ -155,7 +155,7 @@ cv::Mat RoI::returnROIResultMat(const cv::Mat& _input_img) {
   } else {
     // 丢失清零
     roi_armor_data_.lost_count = 0;
-    // 更新上一帧ROI参数
+    // 更新上一帧 ROI 参数
     roi_armor_data_.last_rect =
         makeRectSafeThird(_input_img, roi_armor_data_.last_roi_armor_rect);
     return _input_img(roi_armor_data_.last_rect);
