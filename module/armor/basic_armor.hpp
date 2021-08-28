@@ -121,7 +121,7 @@ class Detector {
   /**
    * @brief 识别装甲板
    * 
-   * @param _src_img       原图（CV_8UC3）
+   * @param _src_img       原图（ CV_8UC3 ）
    * @param _receive_data  串口接受的数据
    * @return true          识别到装甲板
    * @return false         没有识别到装甲板
@@ -219,7 +219,7 @@ class Detector {
   /**
    * @brief 击打哨兵模式
    *
-   * @param _src_img       原图（CV_8UC3）
+   * @param _src_img       原图（ CV_8UC3 ）
    * @param _receive_data  串口接受的数据
    * @return true          识别到装甲板
    * @return false         没有识别到装甲板
@@ -229,9 +229,9 @@ class Detector {
   /**
    * @brief 更新击打哨兵模式参数
    * 
-   * @param _gyro_speed       Yaw轴陀螺仪速度
+   * @param _gyro_speed       Yaw 轴陀螺仪速度
    * @param _bullet_velocity  子弹速度
-   * @param _yaw_angle        Yaw轴陀螺仪值
+   * @param _yaw_angle        Yaw 轴陀螺仪值
    */
   void initialPredictionData(const float   _gyro_speed,
                              const int     _bullet_velocity,
@@ -258,8 +258,8 @@ class Detector {
     armor_[_num].armor_rect.center += _tl;
   }
   /**
-   * @brief 初始化哨兵模式参数
-   * 
+   * @brief 初始化哨兵模式参数 (请在使用完哨兵模式的时候对其清空)
+   *
    */
   inline void initializationSentryMode() {
     sentry_cnt_        = 5;
