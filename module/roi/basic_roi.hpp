@@ -32,7 +32,7 @@ class RoI : public abstract_roi::RoI {
    * @brief 返回 ROI 的 tl 点
    *
    * @return cv::Point 返回 ROI 的 tl 点
-   * @author RCX
+   * @author WSL
    */
   inline cv::Point returnRectTl() { return roi_armor_data_.last_rect.tl(); }
   /**
@@ -78,12 +78,12 @@ class RoI : public abstract_roi::RoI {
    * @author WSL
    */
   inline void BigLastRoiRect(cv::RotatedRect _rect,
-                             float           width_big_num,
-                             float           height_big_num) {
+                             float           _width_big_num,
+                             float           _height_big_num) {
     roi_armor_data_.last_roi_armor_rect.size.width =
-        _rect.size.width * width_big_num;
+        _rect.size.width * _width_big_num;
     roi_armor_data_.last_roi_armor_rect.size.height =
-        _rect.size.height * height_big_num;
+        _rect.size.height * _height_big_num;
   }
 
   RoI() = default;
@@ -134,9 +134,9 @@ class RoI : public abstract_roi::RoI {
    * @brief 逐级扩大ROI范围
    *
    * @param _input_img 图像
-   * @return cv::Mat   ROI图像
-   * @author WSL       返回安全的 Rect 参数
-   */
+   * @return cv::Mat   返回 ROI 图像
+   * @author WSL
+   */     
   cv::Mat returnROIResultMat(const cv::Mat& _input_img);
 };
 

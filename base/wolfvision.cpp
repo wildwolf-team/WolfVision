@@ -151,8 +151,6 @@ int main() {
         break;
       // 雷达模式
       case uart::RADAR_MODE:
-        fmt::print("RADIA_MODE");
-        cv::imshow("RECORD_IMG", src_img_);
         record_.RecordIng(src_img_);
         break;
       // 默认进入基础自瞄

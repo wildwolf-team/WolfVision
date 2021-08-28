@@ -31,13 +31,13 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
 |      参数名         |           参数解释             |
 | ------------------ | -----------------------------|
 | `_src_img`         | 相机输入的图像，如：`src_img`|
-| `_r_rect`          | 需要ROI的范围|
+| `_r_rect`          | 需要 ROI 的范围|
 
 ## 二、 自定义函数及参数说明
 
 ---
 
-### 保证ROI不超过图片范围
+### 保证 ROI 不超过图片范围
 
 ```cpp
   /**
@@ -90,7 +90,7 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
   cv::Mat returnROIResultMat(const cv::Mat& _input_img);
   ```
 #### 使用方法请参考
-  ```C++
+  ```cpp
   roi_img_ = roi_.returnROIResultMat(src_img_);
   if (basic_armor_.runBasicArmor(roi_img_, serial_.returnReceive())) {
     basic_armor_.fixFinalArmorCenter(0, roi_.returnRectTl());
