@@ -184,12 +184,12 @@ class SerialPort {
  * @param  pitch            pitch 绝对值
  * @param  depth            深度
  * @param  data_type        是否发现目标
- * @param  s_shooting       开火命令
+ * @param  is_shooting      开火命令
  */
   void writeData(const int&     _yaw,   const int16_t& yaw,
                  const int&     _pitch, const int16_t& pitch,
                  const int16_t& depth,  const int&     data_type = 0,
-                 const int&     s_shooting = 0);
+                 const int&     is_shooting = 0);
   void writeData();
   void writeData(const Write_Data& _write_data);
 
