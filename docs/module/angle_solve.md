@@ -1,6 +1,5 @@
 # Angle_Solve 使用手册
 
----
 
 ## 一、使用说明
 
@@ -25,7 +24,7 @@
 
 在模式选择后调用接口函数即可,接口函数重载了12种调用方式：
 
-  ```C++
+  ```cpp
   void PnP::solvePnP(int _ballet_speed, int _armor_type, cv::Mat& _src_img, cv::RotatedRect _rect);
   void PnP::solvePnP(int _ballet_speed, int _armor_type, cv::Mat& _src_img, cv::Rect _rect);
   void PnP::solvePnP(int _ballet_speed, int _width, int _height,  cv::Mat& _src_img, cv::RotatedRect _rect);
@@ -61,11 +60,11 @@
 
 ### 初始化目标3d点
 
-```C++
+```cpp
 /**
  * @brief 初始化目标3d点
  * 
- * @param _armor_type 装甲板类型
+ * @param _armor_type               装甲板类型
  * @return std::vector<cv::Point3f> 返回目标3d点
  */
   std::vector<cv::Point3f> initialize3DPoints(int _armor_type);
@@ -73,8 +72,8 @@
   /**
  * @brief 初始化目标3d点
  * 
- * @param _width 目标实际宽度
- * @param _heigth 目标实际高度
+ * @param _width                    目标实际宽度
+ * @param _heigth                   目标实际高度
  * @return std::vector<cv::Point3f> 返回目标3d点
  */
 std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
@@ -82,7 +81,7 @@ std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
 
 ### 初始化目标2d点
 
-  ```C++
+  ```cpp
   /**
    * @brief 初始化目标2d点
    * 
@@ -101,7 +100,7 @@ std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
 
 ### 外接矩形转旋转矩形
 
-  ```C++
+  ```cpp
   /**
    * @brief 外接矩形转旋转矩形
    * 
@@ -113,7 +112,7 @@ std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
 
 ### 转换坐标系
 
-  ```C++
+  ```cpp
   /**
    * @brief 转换坐标系
    *
@@ -125,7 +124,7 @@ std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
 
 ### 绘制坐标系
 
-  ```C++
+  ```cpp
   /**
    * @brief 绘制坐标系
    * 
@@ -140,7 +139,7 @@ std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
 
 ### 计算子弹下坠
 
-  ```C++
+  ```cpp
     /**
    * @brief 计算子弹下坠
    * 
@@ -155,7 +154,7 @@ std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
 
 ### 计算预测量
 
-  ```C++
+  ```cpp
   /**
    * @brief 计算云台偏差角度
    * 
