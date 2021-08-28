@@ -1,6 +1,4 @@
-# RM_Buff 使用手册
-
----
+# Basic_Buff 使用手册
 
 ## 一、使用说明
 
@@ -30,7 +28,7 @@
 
 在模式选择后调用接口函数即可，接口函数重载了2种调用方式：
 
-  ```C++
+  ```cpp
   void runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_info, uart::Write_Data& _send_info);
 
   uart::Write_Data runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_info);
@@ -54,7 +52,7 @@
 
 ### 获取基本信息
 
-  ```C++
+  ```cpp
   /**
    * @brief 获取基本信息
    * @details 图像和颜色
@@ -66,7 +64,7 @@
 
 ### 预处理执行函数
 
-  ```C++
+  ```cpp
   /**
    * @brief 预处理执行函数
    * @param[in]  _input_img       输入图像（src）
@@ -91,7 +89,7 @@
 
 ### 查找目标
 
-  ```C++
+  ```cpp
   /**
    * @brief 查找目标
    * @param  _input_dst_img   输入图像
@@ -103,7 +101,7 @@
 
 ### 判断是否有目标
 
-  ```C++
+  ```cpp
   /**
    * @brief 判断是否有目标
    * @param[in]  _input_img       绘制未激活的目标
@@ -116,7 +114,7 @@
 
 ### 查找圆心
 
-  ```C++
+  ```cpp
   /**
    * @brief  查找圆心
    * @param  _input_src_img   输入src原图
@@ -131,7 +129,7 @@
 
 ### 计算运转状态值：速度、方向、角度
 
-  ```C++
+  ```cpp
   /**
    * @brief 计算运转状态值：速度、方向、角度
    * @param  _is_find_target  是否发现目标
@@ -163,7 +161,7 @@
 
 ### 计算预测量
 
-  ```C++
+  ```cpp
   /**
    * @brief 计算预测量
    * @param[in]  _bullet_velocity 子弹速度
@@ -183,7 +181,7 @@
 
 ### 计算最终目标矩形顶点点集
 
-  ```C++
+  ```cpp
   /**
    * @brief 计算最终目标矩形顶点点集
    * @param  _predict_quantity 预测量
@@ -198,7 +196,7 @@
 
 ### 计算云台角度
 
-  ```C++
+  ```cpp
   /**
    * @brief  手动计算云台角度
    * @param  _target_center   目标中心点
@@ -212,7 +210,7 @@
 
 ### 更新上一帧数据
 
-  ```C++
+  ```cpp
   /**
    * @brief 更新上一帧数据
    * @param  _is_find_target  是否有目标
