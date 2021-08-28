@@ -74,9 +74,9 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _armor_type 装甲板类型
-   * @param _src_img 原图（CV_8UC3）
-   * @param _rect 目标旋转矩形
+   * @param _armor_type   装甲板类型
+   * @param _src_img      原图（CV_8UC3）
+   * @param _rect         目标旋转矩形
    * @author XX
    */
   void solvePnP(int             _ballet_speed,
@@ -87,9 +87,9 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _armor_type 装甲板类型
-   * @param _src_img 原图（CV_8UC3）
-   * @param _rect 目标外接矩形
+   * @param _armor_type   装甲板类型
+   * @param _src_img      原图（CV_8UC3）
+   * @param _rect         目标外接矩形
    * @author XX
    */
   void solvePnP(int      _ballet_speed,
@@ -100,10 +100,10 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _width 目标实际宽度
-   * @param _height 目标实际高度
-   * @param _src_img 原图（CV_8UC3）
-   * @param _rect 目标旋转矩形
+   * @param _width        目标实际宽度
+   * @param _height       目标实际高度
+   * @param _src_img      原图（CV_8UC3）
+   * @param _rect         目标旋转矩形
    * @author XX
    */
   void solvePnP(int             _ballet_speed,
@@ -115,10 +115,10 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _width 目标实际宽度
-   * @param _height 目标实际高度
-   * @param _src_img 原图（CV_8UC3）
-   * @param _rect 目标外接矩形
+   * @param _width        目标实际宽度
+   * @param _height       目标实际高度
+   * @param _src_img      原图（CV_8UC3）
+   * @param _rect         目标外接矩形
    * @author XX
    */
   void solvePnP(int      _ballet_speed,
@@ -130,8 +130,8 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _armor_type 装甲板类型
-   * @param _rect 目标旋转矩形
+   * @param _armor_type   装甲板类型
+   * @param _rect         目标旋转矩形
    * @author XX
    */
   void solvePnP(int             _ballet_speed,
@@ -141,9 +141,9 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _width 目标实际宽度
-   * @param _height 目标实际高度
-   * @param _rect 目标外接矩形
+   * @param _width        目标实际宽度
+   * @param _height       目标实际高度
+   * @param _rect         目标外接矩形
    * @author XX
    */
   void solvePnP(int             _ballet_speed,
@@ -154,8 +154,8 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _armor_type 装甲板类型
-   * @param _rect 目标外接矩形
+   * @param _armor_type   装甲板类型
+   * @param _rect         目标外接矩形
    * @author XX
    */
   void solvePnP(int      _ballet_speed,
@@ -165,9 +165,9 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _width 目标实际宽度
-   * @param _height 目标实际高度
-   * @param _rect 目标外接矩形
+   * @param _width        目标实际宽度
+   * @param _height       目标实际高度
+   * @param _rect         目标外接矩形
    * @author XX
    */
   void solvePnP(int      _ballet_speed,
@@ -178,9 +178,9 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _armor_type 装甲板类型
-   * @param _rect 目标旋转矩形
-   * @param _depth 目标深度
+   * @param _armor_type   装甲板类型
+   * @param _rect         目标旋转矩形
+   * @param _depth        目标深度
    * @author XX
    */
   void solvePnP(int             _ballet_speed,
@@ -191,9 +191,9 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _armor_type 装甲板类型
-   * @param _target_2d 目标2d点坐标
-   * @param _depth 目标深度
+   * @param _armor_type   装甲板类型
+   * @param _target_2d    目标2d点坐标
+   * @param _depth        目标深度
    * @author XX
    */
   void solvePnP(int                      _ballet_speed,
@@ -204,9 +204,9 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _armor_type 装甲板类型
-   * @param _src_img 原图（CV_8UC3）
-   * @param _target_2d 目标2d点坐标
+   * @param _armor_type   装甲板类型
+   * @param _src_img      原图（CV_8UC3）
+   * @param _target_2d    目标2d点坐标
    * @author XX
    */
   void solvePnP(int                      _ballet_speed,
@@ -217,8 +217,8 @@ class PnP : public abstract_pnp::PnP {
    * @brief 角度结算
    *
    * @param _ballet_speed 子弹速度
-   * @param _armor_type 装甲板类型
-   * @param _target_2d 目标2d点坐标
+   * @param _armor_type   装甲板类型
+   * @param _target_2d    目标2d点坐标
    * @author XX
    */
   void solvePnP(int                      _ballet_speed,
