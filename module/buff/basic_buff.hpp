@@ -90,7 +90,7 @@ struct Buff_Param {
   // 圆心R距离小轮廓中心的距离系数
   float BIG_LENTH_R;
 
-  /* 圆心限制条件 */
+  // 圆心限制条件
   // 圆心roi矩形大小
   int CENTER_R_ROI_SIZE;
 
@@ -200,7 +200,7 @@ class Detector {
   abstract_target::Target last_target_;  //  上一个打击目标
 
  private:
-  /* 预处理 */
+  // 预处理
   /**
    * @brief 预处理的模式
    */
@@ -259,7 +259,7 @@ class Detector {
 #endif                                                      // !RELEASE
 
  private:
-  /* 查找目标 */
+  // 查找目标
   /**
    * @brief 查找目标
    * @param  _input_dst_img   输入图像
@@ -338,7 +338,7 @@ class Detector {
   cv::Point2f                              final_center_r_;    // 最终圆心（假定/真实）
 
  private:
-  /* 计算运转状态值：速度、方向、角度 */
+  // 计算运转状态值：速度、方向、角度
   /**
    * @brief 计算运转状态值：速度、方向、角度
    * @param  _is_find_target  是否发现目标
@@ -397,7 +397,7 @@ class Detector {
   double last_last_time_;  // 上上帧的时间
 
  private:
-  /* 计算预测量 */
+  // 计算预测量
 
   /**
    * @brief 计算预测量
@@ -446,7 +446,7 @@ class Detector {
 #endif  // DEBUG_KALMAN
 
  private:
-  /* 计算获取最终目标（矩形、顶点） */
+  // 计算获取最终目标（矩形、顶点）
 
   /**
    * @brief 计算最终目标矩形顶点点集
@@ -468,11 +468,11 @@ class Detector {
   float       radio_;         // 轨迹圆半径
 
  private:
-  /* 计算云台角度 */
+  // 计算云台角度
 
   basic_pnp::PnP buff_pnp_ = basic_pnp::PnP(fmt::format("{}{}", CONFIG_FILE_PATH, "/camera/mv_camera_config_407.xml"), fmt::format("{}{}", CONFIG_FILE_PATH, "/angle_solve/basic_pnp_config.xml"));
 
-  /* 手动计算云台角度 */
+  // 手动计算云台角度
   /**
    * @brief  手动计算云台角度
    * @param  _target_center   目标中心点
@@ -485,10 +485,10 @@ class Detector {
   cv::Point2f angleCalculation(const cv::Point2f& _target_center, const float& _unit_pixel_length, const cv::Size& _image_size, const float& _focal_length);
 
  private:
-  /* 自动控制 */
+  // 自动控制
 
  private:
-  /* 更新上一帧数据 */
+  // 更新上一帧数据
   /**
    * @brief 更新上一帧数据
    * @param  _is_find_target  是否有目标
