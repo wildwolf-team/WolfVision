@@ -26,11 +26,11 @@ Detector::Detector(const std::string& _buff_config_address) {
   target_rect_    = cv::RotatedRect();
   my_color_       = 0;
 
-  /* 预处理 */
+  // 预处理
   split_img_.reserve(3);
   average_th_ = 0;
 
-  /* 查找目标 */
+  // 查找目标
   action_cnt_        = 0;
   small_rect_area_   = 0.f;
   small_rect_length_ = 0.f;
@@ -44,10 +44,10 @@ Detector::Detector(const std::string& _buff_config_address) {
   area_ratio_min_int_                = buff_config_.param.AREA_RATIO_MIN * 100;
 #endif  // !RELEASE
 
-  /* 判断目标是否为空 */
+  // 判断目标是否为空
   is_find_target_ = false;
 
-  /* 计算运转状态值：速度、方向、角度 */
+  // 计算运转状态值：速度、方向、角度
   current_angle_        = 0.f;
   last_angle_           = 0.f;
   diff_angle_           = 0.f;
@@ -67,7 +67,7 @@ Detector::Detector(const std::string& _buff_config_address) {
   last_time_      = 0.0;
   last_last_time_ = 0.0;
 
-  /* 计算预测量 */
+  // 计算预测量
   barrel_buff_botton_h_ = (buff_config_.param.BUFF_H - buff_config_.param.BUFF_RADIUS) - (buff_config_.param.PLATFORM_H + buff_config_.param.BARREL_ROBOT_H);
   current_radian_       = 0.f;
   target_buff_h_        = 0.f;
@@ -79,7 +79,7 @@ Detector::Detector(const std::string& _buff_config_address) {
   fixed_forecast_quantity_ = 0.f;
   final_forecast_quantity_ = 0.f;
 
-  /* 计算获取最终目标（矩形、顶点） */
+  // 计算获取最终目标（矩形、顶点）
   theta_       = 0.0;
   final_angle_ = 0.f;
   sin_calcu_   = 0.f;
@@ -87,8 +87,8 @@ Detector::Detector(const std::string& _buff_config_address) {
   pre_center_  = cv::Point2f(0.f, 0.f);
   radio_       = 0.f;
 
-  /* 计算云台角度 */
-  /* 输入串口数据 */
+  // 计算云台角度
+  // 输入串口数据
 }
 
 inline void Detector::getInput(cv::Mat& _input_img, const int& _my_color) {
@@ -101,33 +101,33 @@ inline void Detector::getInput(cv::Mat& _input_img, const int& _my_color) {
 inline void Detector::displayDst() { imshow("[basic_buff] displayDst() -> dst_img_", dst_img_); }
 
 void Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_info, uart::Write_Data& _send_info) {
-  /* 获取基本信息 */
+  // 获取基本信息
   getInput(_input_img, _receive_info.my_color);
 
-  /* 预处理 */
+  // 预处理
   imageProcessing(src_img_, bin_img_, my_color_, static_cast<Processing_Moudle>(buff_config_.ctrl.PROCESSING_MODE));
 
-  /* 查找目标 */
+  // 查找目标
   findTarget(dst_img_, bin_img_, target_box_);
 
-  /* 判断目标是否为空 */
+  // 判断目标是否为空
   is_find_target_ = isFindTarget(dst_img_, target_box_);
 
-  /* 查找圆心 */
+  // 查找圆心
   final_center_r_ = findCircleR(src_img_, bin_img_, dst_img_, is_find_target_);
 
-  /* 计算运转状态值：速度、方向、角度 */
+  // 计算运转状态值：速度、方向、角度
   judgeCondition(is_find_target_);
 
-  /* 计算预测量 单位为弧度 */
+  // 计算预测量 单位为弧度
   final_forecast_quantity_ = doPredict(static_cast<float>(_receive_info.bullet_velocity), is_find_target_);
 
-  /* 计算获取最终目标（矩形、顶点） */
+  // 计算获取最终目标（矩形、顶点）
   calculateTargetPointSet(final_forecast_quantity_, final_center_r_, target_2d_point_, dst_img_, is_find_target_);
 
-  /* 计算云台角度 */
+  // 计算云台角度
   if (is_find_target_) {
-    /* 计算云台角度 */
+    // 计算云台角度
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
     _send_info.yaw_angle   = buff_pnp_.returnYawAngle() + buff_config_.param.OFFSET_ARMOR_YAW;
     _send_info.pitch_angle = buff_pnp_.returnPitchAngle() + buff_config_.param.OFFSET_ARMOR_PITCH;
@@ -139,47 +139,47 @@ void Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_i
     _send_info = uart::Write_Data();
   }
 
-  /* TODO(fqjun) :自动控制 */
+  // TODO(fqjun) :自动控制
 #ifndef RELEASE
   displayDst();
 #endif  // !RELEASE
 
-  /* 更新上一帧数据 */
+  // 更新上一帧数据
   updateLastData(is_find_target_);
 
-  /* 输入串口数据 */
+  // 输入串口数据
 }
 
 uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data& _receive_info) {
   uart::Write_Data send_info;
 
-  /* 获取基本信息 */
+  // 获取基本信息
   getInput(_input_img, _receive_info.my_color);
 
-  /* 预处理 */
+  // 预处理
   imageProcessing(src_img_, bin_img_, my_color_, static_cast<Processing_Moudle>(buff_config_.ctrl.PROCESSING_MODE));
 
-  /* 查找目标 */
+  // 查找目标
   findTarget(dst_img_, bin_img_, target_box_);
 
-  /* 判断目标是否为空 */
+  // 判断目标是否为空
   is_find_target_ = isFindTarget(dst_img_, target_box_);
 
-  /* 查找圆心 */
+  // 查找圆心
   final_center_r_ = findCircleR(src_img_, bin_img_, dst_img_, is_find_target_);
 
-  /* 计算运转状态值：速度、方向、角度 */
+  // 计算运转状态值：速度、方向、角度
   judgeCondition(is_find_target_);
 
-  /* 计算预测量 单位为弧度 */
+  // 计算预测量 单位为弧度
   final_forecast_quantity_ = doPredict(static_cast<float>(_receive_info.bullet_velocity), is_find_target_);
 
-  /* 计算获取最终目标（矩形、顶点） */
+  // 计算获取最终目标（矩形、顶点）
   calculateTargetPointSet(final_forecast_quantity_, final_center_r_, target_2d_point_, dst_img_, is_find_target_);
 
-  /* 计算云台角度 */
+  // 计算云台角度
   if (is_find_target_) {
-    /* 计算云台角度 */
+    // 计算云台角度
     buff_pnp_.solvePnP(28, 2, target_2d_point_, final_target_z_);
 #ifdef DEBUG_MANUAL
     // send_info.yaw_angle = current_predict_quantity*100;
@@ -204,11 +204,11 @@ uart::Write_Data Detector::runTask(cv::Mat& _input_img, const uart::Receive_Data
     send_info             = uart::Write_Data();
   }
 
-  /* TODO(fqjun) :自动控制 */
+  // TODO(fqjun) :自动控制
 #ifndef RELEASE
   displayDst();
 #endif
-  /* 更新上一帧数据 */
+  // 更新上一帧数据
   updateLastData(is_find_target_);
 
   return send_info;
@@ -369,7 +369,7 @@ void Detector::bgrProcessing(const int& _my_color) {
   case uart::RED: {
     fmt::print("[{}] Image pre-processing color: RED\n", process_yellow);
 
-    /* my_color 为红色，则处理红色的情况 灰度图与 RGB 同样做红色处理 */
+    // my_color 为红色，则处理红色的情况 灰度图与 RGB 同样做红色处理
     cv::subtract(split_img_[2], split_img_[0], bin_img_color_);  // r-b
 
 #ifndef RELEASE
@@ -397,7 +397,7 @@ void Detector::bgrProcessing(const int& _my_color) {
   case uart::BLUE: {
     fmt::print("[{}] Image pre-processing color: BLUE\n", process_yellow);
 
-    /* my_color为蓝色，则处理蓝色的情况 灰度图与RGB同样做蓝色处理 */
+    // my_color为蓝色，则处理蓝色的情况 灰度图与RGB同样做蓝色处理
     cv::subtract(split_img_[0], split_img_[2], bin_img_color_);  // b-r
 
 #ifndef RELEASE
@@ -1006,7 +1006,7 @@ float Detector::fixedPredict(const float& _bullet_velocity) {
   // 转换为弧度
   current_radian_ = current_angle_ * CV_PI / 180;
 
-  /* 通过模型计算当前目标点的位置信息（原扇叶） */
+  // 通过模型计算当前目标点的位置信息（原扇叶）
   // 计算能量机关的高度
   target_buff_h_ = 800 + sin(current_radian_ - CV_PI) * 800;
 
@@ -1017,7 +1017,7 @@ float Detector::fixedPredict(const float& _bullet_velocity) {
 
   // 计算能量机关目标的直线距离
   target_z_ = sqrt((target_y_ * target_y_) + (target_x_ * target_x_));
-  /* 通过模型计算当前目标点的位置信息（原扇叶） */
+  // 通过模型计算当前目标点的位置信息（原扇叶）
 
   // 计算子弹飞行时间
   bullet_tof_ = (target_z_ + buff_config_.param.OFFSET_TARGET_Z) / _bullet_velocity;
@@ -1068,14 +1068,14 @@ void Detector::calculateTargetPointSet(
   // 计算最终目标的旋转矩形
   target_rect_ = cv::RotatedRect(pre_center_, current_target_.Armor().Rect().size, 90);
 
-  /* 通过模型计算最终目标点的位置信息（预测点）TODO:待优化 */
+  // 通过模型计算最终目标点的位置信息（预测点）TODO:待优化
   // 计算能量机关的高度
   target_buff_h_ = 800 + sin(final_radian_ - CV_PI) * 800;
   target_y_      = target_buff_h_ + barrel_buff_botton_h_;
 
   // 计算能量机关目标的直线距离
   final_target_z_ = sqrt((target_y_ * target_y_) + (target_x_ * target_x_));
-  /* 通过模型计算最终目标点的位置信息（预测点） */
+  // 通过模型计算最终目标点的位置信息（预测点）
 
   // 保存最终目标的顶点，暂时用的是排序点的返序存入才比较稳定，正确使用应为0123, pnp内已进行反向放置
   _target_2d_point.clear();
@@ -1088,7 +1088,7 @@ void Detector::calculateTargetPointSet(
   _target_2d_point.push_back(target_vertex[0]);
 
 #ifndef RELEASE
-  /* 绘制图像 */
+  // 绘制图像
   // 最终目标装甲板（预测值）
   for (int k = 0; k < 4; ++k) {
     cv::line(_input_dst_img, _target_2d_point[k], _target_2d_point[(k + 1) % 4], cv::Scalar(0, 130, 255),
@@ -1105,7 +1105,7 @@ void Detector::calculateTargetPointSet(
   cv::circle(_input_dst_img, _target_2d_point[1], 10, cv::Scalar(0, 255, 255), -1, 8, 0);
   cv::circle(_input_dst_img, _target_2d_point[2], 10, cv::Scalar(255, 0, 0), -1, 8, 0);
   cv::circle(_input_dst_img, _target_2d_point[3], 10, cv::Scalar(0, 255, 0), -1, 8, 0);
-  /* 绘制图像 */
+  // 绘制图像
 #endif  // RELEASE
 }
 
