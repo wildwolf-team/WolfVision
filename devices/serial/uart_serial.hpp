@@ -4,7 +4,7 @@
  *         XXXX（2796393320@qq.com）
  *         HZKKK
  *         RCXXX
- * @brief 
+ * @brief  串口通讯
  * @date 2021-08-27
  * 
  * @copyright Copyright (c) 2021 GUCROBOT_WOLF
