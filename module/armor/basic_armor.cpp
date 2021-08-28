@@ -1,10 +1,19 @@
+/**
+ * @file basic_armor.cpp
+ * @author XX (2796393320@qq.com)
+ * @brief 装甲板识别
+ * @date 2021-08-28
+ *
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ *
+ */
 #include "basic_armor.hpp"
 
 namespace basic_armor {
 
 Detector::Detector(const std::string _armor_config) {
   cv::FileStorage fs_armor(_armor_config, cv::FileStorage::READ);
-
+  // 初始化基本参数
   fs_armor["GRAY_EDIT"]          >> image_config_.gray_edit;
   fs_armor["COLOR_EDIT"]         >> image_config_.color_edit;
   fs_armor["METHOD"]             >> image_config_.method;
@@ -89,7 +98,7 @@ bool Detector::findLight() {
     fmt::print("[{}] Info, quantity of contours less than 2\n", idntifier_green);
     return false;
   }
-
+  // 调参开关
   if (light_config_.light_edit == 1) {
     std::string window_name = {"[basic_armor] findLight() -> light_trackbar"};
     cv::namedWindow(window_name);
@@ -130,7 +139,7 @@ bool Detector::findLight() {
     static float _h        = MAX(box.size.width, box.size.height);
     static float _w        = MIN(box.size.width, box.size.height);
     static float light_w_h = _h / _w;
-
+    // 判断灯条的条件
     if (box.angle < light_config_.angle_max     &&
         box.angle > -light_config_.angle_min    &&
         light_w_h < light_config_.ratio_w_h_max &&
@@ -160,13 +169,14 @@ bool Detector::findLight() {
 
 bool Detector::runBasicArmor(const cv::Mat&           _src_img,
                              const uart::Receive_Data _receive_data) {
+  // 预处理
   runImage(_src_img, _receive_data.my_color);
   draw_img_ = _src_img.clone();
-
   if (findLight()) {
     if (fittingArmor()) {
       finalArmor();
       lost_cnt_ = 10;
+      // 画图开关
       if (armor_config_.armor_draw == 1 ||
           light_config_.light_draw == 1 ||
           armor_config_.armor_edit == 1 ||
@@ -194,6 +204,7 @@ bool Detector::runBasicArmor(const cv::Mat&           _src_img,
 bool Detector::sentryMode(const cv::Mat& _src_img,
                           const uart::Receive_Data _receive_data) {
   if (sentry_cnt_ == 0) {
+    // 更新哨兵预测方向及预测量
     initialPredictionData(_receive_data.Receive_Pitch_Angle_Info.pitch_angle,
                           _receive_data.bullet_velocity,
                           _receive_data.Receive_Yaw_Angle_Info.yaw_angle);
@@ -209,7 +220,7 @@ bool Detector::sentryMode(const cv::Mat& _src_img,
           forecast_pixels_ =
               armor_[0].armor_rect.size.width * forecast_max_size_ * 0.1;
         }
-
+        // 添加预测值
         if (filter_direction_ > 0.3) {
           armor_[0].armor_rect.center.x -= abs(forecast_pixels_);
         } else if (filter_direction_ < -0.3) {
@@ -236,8 +247,8 @@ bool Detector::sentryMode(const cv::Mat& _src_img,
     }
     return false;
   } else {
+    // 初始化陀螺仪零点
     if (sentry_cnt_ < 5) {
-      // 计算陀螺仪初始化位置
       initial_gyroscope_ += _receive_data.Receive_Yaw_Angle_Info.yaw_angle;
       initial_gyroscope_ *= 0.5;
     }
@@ -263,7 +274,9 @@ void Detector::initialPredictionData(const float _gyro_speed_data,
   }
 
   num_cnt_++;
+  // 隔帧计算
   if (num_cnt_ % 2 == 0) {
+    // 判断方向
     if (_gyro_speed_data > judge_direction_ * 0.01) {
       current_direction_ = 1;
     } else if (_gyro_speed_data < -judge_direction_ * 0.01) {
@@ -306,7 +319,7 @@ void Detector::initialPredictionData(const float _gyro_speed_data,
     last_forecast_pixels_      = forecast_pixels_;
     // forecast_pixels_           = kalman_.run(forecast_pixels_);
   }
-
+  // 计数器归零
   if (num_cnt_ % 10 == 0) {
     num_cnt_ = 0;
   }
@@ -319,7 +332,7 @@ void Detector::finalArmor() {
     fmt::print("[{}] Info, only one armor\n", idntifier_green);
   } else {
     fmt::print("[{}] Info, multiple armors\n", idntifier_green);
-
+    // 离图像中心点大小排序从小到大
     std::sort(armor_.begin(), armor_.end(),
       [](Armor_Data _a, Armor_Data _b) {
       return _a.distance_center < _b.distance_center;
@@ -365,7 +378,7 @@ bool Detector::fittingArmor() {
   for (size_t i = 0; i != light_.size(); ++i) {
     for (size_t j = i + 1; j != light_.size(); ++j) {
       int light_left = 0, light_right = 0;
-
+      // 区分左右灯条
       if (light_[i].center.x > light_[j].center.x) {
         light_left  = j;
         light_right = i;
@@ -376,18 +389,19 @@ bool Detector::fittingArmor() {
 
       armor_data_.left_light  = light_[light_left];
       armor_data_.right_light = light_[light_right];
-
+      // 装甲板倾斜弧度
       float error_angle =
           atan((light_[light_right].center.y - light_[light_left].center.y) /
                (light_[light_right].center.x - light_[light_left].center.x));
 
       if (error_angle < 10.f) {
         armor_data_.tan_angle = atan(error_angle) * 180 / CV_PI;
-
+        // 拟合装甲板条件判断
         if (lightJudge(light_left, light_right)) {
+          // 装甲板内颜色平均强度
           if (averageColor() < 30) {
+            // 储存装甲板
             armor_.push_back(armor_data_);
-
             if (armor_config_.armor_draw == 1 ||
                 armor_config_.armor_edit == 1) {
               rectangle(draw_img_, armor_data_.armor_rect.boundingRect(),
@@ -421,16 +435,17 @@ bool Detector::lightJudge(const int i, const int j) {
       armor_data_.left_light_height / armor_data_.right_light_height;
   armor_data_.light_width_aspect  =
       armor_data_.left_light_width / armor_data_.right_light_width;
-
+  // 左右灯条高宽比
   if (armor_data_.light_height_aspect < armor_config_.light_height_ratio_max * 0.1 &&
       armor_data_.light_height_aspect > armor_config_.light_height_ratio_min * 0.1 &&
       armor_data_.light_width_aspect  < armor_config_.light_width_ratio_max  * 0.1 &&
       armor_data_.light_width_aspect  > armor_config_.light_height_ratio_min * 0.1) {
     armor_data_.height =
       MIN(armor_data_.left_light.size.height, armor_data_.right_light.size.height);
-
+    // 灯条y轴位置差
     if (fabs(armor_data_.left_light.center.y - armor_data_.right_light.center.y) <
         armor_data_.height * armor_config_.light_y_different * 0.1) {
+      // 灯条高度差
       if (fabs(armor_data_.left_light.size.height - armor_data_.right_light.size.height) <
           armor_data_.height * armor_config_.light_height_different * 0.1) {
         armor_data_.width =
@@ -438,7 +453,7 @@ bool Detector::lightJudge(const int i, const int j) {
                       armor_data_.right_light.center);
 
         armor_data_.aspect_ratio = armor_data_.width / (MAX(armor_data_.left_light.size.height, armor_data_.right_light.size.height));
-
+        // 灯条角度差
         if (fabs(armor_data_.left_light.angle - armor_data_.right_light.angle) <
             armor_config_.armor_angle_different * 0.1) {
           cv::RotatedRect rects = cv::RotatedRect(
@@ -447,13 +462,16 @@ bool Detector::lightJudge(const int i, const int j) {
               armor_data_.tan_angle);
 
           armor_data_.armor_rect      = rects;
+          // 装甲板保存灯条离中心点的距离
           armor_data_.distance_center =
               getDistance(armor_data_.armor_rect.center,
                           cv::Point(draw_img_.cols, draw_img_.rows));
+          // 小装甲板比例范围
           if (armor_data_.aspect_ratio > armor_config_.small_armor_aspect_min * 0.1 && armor_data_.aspect_ratio < armor_config_.armor_type_th * 0.1) {
             armor_data_.distinguish = 0;
 
             return true;
+          // 大装甲板比例范围
           } else if (armor_data_.aspect_ratio > armor_config_.armor_type_th * 0.1 && armor_data_.aspect_ratio < armor_config_.big_armor_aspect_max * 0.1) {
             armor_data_.distinguish = 1;
 
@@ -486,7 +504,7 @@ int Detector::averageColor() {
 
   armor_data_.armor_rect = rects;
   cv::Rect _rect         = rects.boundingRect();
-
+  // ROI 安全条件
   if (_rect.x <= 0) {
     _rect.x = 0;
   }
@@ -499,7 +517,7 @@ int Detector::averageColor() {
   if (_rect.x + _rect.width >= bin_gray_img.cols) {
     _rect.width = bin_gray_img.cols - _rect.x;
   }
-
+  // 计算颜色平均强度
   static cv::Mat roi    = bin_gray_img(_rect);
   int average_intensity = static_cast<int>(mean(roi).val[0]);
 
@@ -508,6 +526,7 @@ int Detector::averageColor() {
 
 void Detector::runImage(const cv::Mat&  _src_img,
                         const int       _my_color) {
+  // 选择预处理类型（ BGR / HSV ）
   switch (image_config_.method) {
     case 0:
       bin_color_img = fuseImage(grayPretreat(_src_img, _my_color),
@@ -535,6 +554,7 @@ inline cv::Mat Detector::grayPretreat(const cv::Mat& _src_img,
   std::string window_name = {"[basic_armor] grayPretreat() -> gray_trackbar"};
   switch (_my_color) {
     case uart::RED:
+      // my_color 为红色，则处理蓝色的情况
       if (image_config_.gray_edit) {
         cv::namedWindow(window_name);
         cv::createTrackbar("blue_gray_th", window_name,
@@ -546,6 +566,7 @@ inline cv::Mat Detector::grayPretreat(const cv::Mat& _src_img,
                     255, cv::THRESH_BINARY);
       break;
     case uart::BLUE:
+      // my_color 为蓝色，则处理红色的情况
       if (image_config_.gray_edit) {
         cv::namedWindow(window_name);
         cv::createTrackbar("red_gray_th", window_name,
@@ -557,6 +578,7 @@ inline cv::Mat Detector::grayPretreat(const cv::Mat& _src_img,
                     255, cv::THRESH_BINARY);
       break;
     default:
+      // my_color 为默认值，则处理红蓝双色的情况
       if (image_config_.gray_edit) {
         cv::namedWindow(window_name);
         cv::createTrackbar("red_gray_th", window_name,
@@ -591,6 +613,7 @@ inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img,
   std::string window_name = {"[basic_armor] brgPretreat() -> color_trackbar"};
   switch (_my_color) {
     case uart::RED:
+      // my_color 为红色，则处理蓝色的情况
       cv::subtract(_split[0], _split[2], bin_color_img);
 
       if (image_config_.color_edit) {
@@ -604,6 +627,7 @@ inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img,
                     image_config_.blue_armor_color_th, 255, cv::THRESH_BINARY);
       break;
     case uart::BLUE:
+      // my_color 为蓝色，则处理红色的情况
       cv::subtract(_split[2], _split[0], bin_color_img);
 
       if (image_config_.color_edit) {
@@ -617,6 +641,7 @@ inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img,
                     image_config_.red_armor_color_th, 255, cv::THRESH_BINARY);
       break;
     default:
+      // my_color 为默认值，则处理红蓝双色的情况
       cv::subtract(_split[2], _split[0], bin_red_color_img);
       cv::subtract(_split[0], _split[2], bin_blue_color_img);
 
@@ -648,6 +673,7 @@ inline cv::Mat Detector::hsvPretreat(const cv::Mat& _src_img,
   cv::cvtColor(_src_img, hsv_img, cv::COLOR_BGR2HSV_FULL);
   std::string window_name = {"[basic_armor] hsvPretreat() -> hsv_trackbar"};
   switch (_my_color) {
+    // my_color 为红色，则处理蓝色的情况
     case uart::RED:
       if (image_config_.color_edit) {
         cv::namedWindow(window_name);
@@ -676,6 +702,7 @@ inline cv::Mat Detector::hsvPretreat(const cv::Mat& _src_img,
                   bin_color_img);
       break;
     case uart::BLUE:
+      // my_color 为蓝色，则处理红色的情况
       if (image_config_.color_edit) {
         cv::namedWindow("hsv_trackbar");
         cv::createTrackbar("red_h_min:", window_name,
@@ -703,6 +730,7 @@ inline cv::Mat Detector::hsvPretreat(const cv::Mat& _src_img,
                   bin_color_img);
       break;
     default:
+      // my_color 为默认值，则处理红蓝双色的情况
       if (image_config_.color_edit) {
         cv::namedWindow("hsv_trackbar");
         cv::createTrackbar("red_h_min:", window_name,
