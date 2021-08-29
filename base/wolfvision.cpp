@@ -34,10 +34,15 @@ int main() {
   onnx_inferring::model model_ = onnx_inferring::model(
     fmt::format("{}{}", SOURCE_PATH, "/module/ml/mnist-8.onnx"));
 
-  Record_mode::Record record_ = Record_mode::Record(
+  RecordMode::ReCord record_ = RecordMode::ReCord(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_mode.yaml"),
-                                                    fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/" + to_string(record_.Path_H) + ".avi"),
+                                                    fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/1.avi"),
                                                     cv::Size(1280, 800));  // 记得修改分辨率
+  cv::VideoWriter vw_src;
+  ostringstream   s_src;  // 构造输出流对象
+  vw_src << src_img_;
+  s_src << CONFIG_FILE_PATH <<"/" << ++record_.path_ << ".avi";
+  vw_src.open(s_src.str(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 66, cv::Size(1280, 800), true);
 
   basic_roi::RoI save_roi;
   fps::FPS       global_fps_;
@@ -108,7 +113,7 @@ int main() {
         break;
       // 录制视频
       case uart::RECORD_MODE:
-        record_.Rmode_current = 5;
+        vw_src << src_img_;
         break;
       // 无人机模式（空缺）
       case uart::PLANE_MODE:
@@ -152,7 +157,6 @@ int main() {
         break;
       // 雷达模式
       case uart::RADAR_MODE:
-        record_.RecordIng(src_img_);
         break;
       // 默认进入基础自瞄
       default:
@@ -163,9 +167,11 @@ int main() {
         break;
       }
     }
-    if (record_.Return_switch()) {
-      record_.Vision_judge(src_img_, cv::waitKey(1), serial_.returnReceiveMode());
+    if (record_.last_mode_ != uart::RECORD_MODE && serial_.returnReceiveMode() == uart::RECORD_MODE) {
+      vw_src.release();
+      fmt::print("VideoWriter ended");
     }
+    record_.last_mode_ = serial_.returnReceiveMode();
     // 非击打哨兵模式时初始化
     if (serial_.returnReceiveMode() != uart::SENTRY_STRIKE_MODE) {
       basic_armor_.initializationSentryMode();

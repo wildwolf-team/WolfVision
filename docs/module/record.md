@@ -1,24 +1,66 @@
-### 视频录制文件添加
-------------------------------------
-
-### 修改步骤
-### 1 修改对应的分辨率
-| 相机 | 小电脑 |
-|   ---   |    ---      |
-| 1280 x 800 | 640 x 480|
-
-### 2 打开对应的开关
-#### 打开record.yaml(/config/record/record_mode.yaml)
->RECORD_MODE------------------------------录制模式<br>
->RECORD_SWITCH ---------------------------------开关<br>
->PATH_ ------------------------------------------位置存放<br>
->VISION_ELECTRONIC_LOCK---视觉电控控制开关<br>
-
-* **录制的时候默认为1即可**
-### **具体说明**：
-#### 1 串口按键<br> 串口输入<u>5</u>为录制开始，切换为其他的模式可以停止录制
-#### 2 视觉控制按键<br><u>'s'</u> 开始录制 <br><u>'e'</u>结束录制 
+# RM_Record 使用手册
 
 
-### **待修改之处**：
-**Debuging**
+## 一、使用说明
+
+---
+
+### 步骤一：头文件说明
+
+- 包含头文件`record.hpp`
+- 包含的源文件`record.cpp`
+### 步骤二：实例化对象
+
+实例化对象时调用构造函数：`Record(std::string record_path_, std::string path_in, cv::Size size)`
+
+参数解释:
+- `path_in` 为 `保存路径的变量参数` 的路径地址
+- `record_path_`为`xml文件`
+- `size` 为 `传入的图像大小`
+### 步骤三：函数说明
+
+在录制模式下调用这个函数即可
+
+  ```cpp
+visionJudge(const cv::Mat input_img, int judge, int current_mode);
+RecordIng(cv::Mat img_)
+  ```
+  参数解释：
+  |      参数名         |           参数解释             |
+  | ------------------ | -----------------------------|
+  | `input_img`         | 相机输入的图像，如：`src_img_`   |
+  | `judge`    |判断是否使用录制开关              |
+|`current_mode`| 读取当前模式|
+
+## 二、自定义函数及参数说明
+
+---
+
+### 相机录制函数
+第二个录制函数直接调用接口
+
+  ```cpp
+    /**
+   * @brief  传入图像设置
+   * @param input_img 传入图像
+   * @param judge 是否录制判断
+   * @param current_mode 当前模式输入
+   */
+  void            visionJudge(const cv::Mat input_img, int judge, int current_mode);
+ ```
+ ```cpp
+   /**
+  * @brief 录制函数
+  * @param img_ 传入图像
+  * 
+  */
+  void RecordIng(cv::Mat img_);
+
+  ```
+
+```cpp
+  cv::VideoWriter vw_image_;  //录制对象说明
+  int             path_ = 0;  // 路径
+  ModeSet         mode_;
+  int             last_mode_;  // 记录上次串口模式
+```
