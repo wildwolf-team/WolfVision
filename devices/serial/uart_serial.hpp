@@ -145,30 +145,83 @@ class SerialPort {
   explicit SerialPort(std::string _serial_config);
 
   ~SerialPort();
-
+  /**
+   * @brief 返回接受数据的结构体
+   * 
+   * @return Receive_Data 
+   */
   inline Receive_Data returnReceive() { return receive_data_; }
-
+  /**
+   * @brief 返回陀螺仪 Yaw 速度或者加速度
+   * @details 或者返回陀螺仪 Yaw 加速度
+   * @return float
+   */
   inline float returnReceiveAcceleration()   { return receive_data_.acceleration; }
+  /**
+   * @brief 返回子弹速度
+   * 
+   * @return int 
+   */
   inline int   returnReceiveBulletVelocity() { return receive_data_.bullet_velocity; }
+  /**
+   * @brief 返回机器人 ID
+   * 
+   * @return int 
+   */
   inline int   returnReceiveRobotId()        { return receive_data_.my_robot_id; }
+  /**
+   * @brief 返回自身颜色
+   * 
+   * @return int 
+   */
   inline int   returnReceiceColor()          { return receive_data_.my_color; }
+  /**
+   * @brief 返回模式选择
+   * 
+   * @return int 
+   */
   inline int   returnReceiveMode()           { return receive_data_.now_run_mode; }
+  /**
+   * @brief 返回陀螺仪 Pitch 轴数据
+   * 
+   * @return float 
+   */
   inline float returnReceivePitch()          { return receive_data_.Receive_Pitch_Angle_Info.pitch_angle; }
-  inline float receiveYaw()                  { return receive_data_.Receive_Yaw_Angle_Info.yaw_angle; }
-
+  /**
+   * @brief 返回陀螺仪 Yaw 轴数据
+   * 
+   * @return float 
+   */
+  inline float returnReceiveYaw()                  { return receive_data_.Receive_Yaw_Angle_Info.yaw_angle; }
+  /**
+   * @brief 返回高八位数据
+   * 
+   * @param Byte 
+   * @return unsigned char 
+   */
   inline unsigned char returnHighBit(const int& Byte) {
     exchangebyte_ = (Byte >> 8) & 0xff;
 
     return exchangebyte_;
   }
-
+  /**
+   * @brief 返回低八位数据
+   * 
+   * @param Byte 
+   * @return unsigned char 
+   */
   inline unsigned char returnLowBit(const int& Byte) {
     exchangebyte_ = Byte & 0xff;
 
     return exchangebyte_;
   }
-
-
+  /**
+   * @brief 合并数据
+   * 
+   * @param highbit   高八位数据
+   * @param lowbit    低八位数据
+   * @return int16_t  合并后数据
+   */
   inline int16_t mergeIntoBytes(const unsigned char& highbit,
                                 const unsigned char& lowbit) {
     exchangebit_ = (highbit << 8) | lowbit;
@@ -176,46 +229,65 @@ class SerialPort {
     return exchangebit_;
   }
 
-/**
- * @brief 发送数据
- * @param  _yaw             yaw 符号
- * @param  yaw              yaw 绝对值
- * @param  _pitch           pitch 符号
- * @param  pitch            pitch 绝对值
- * @param  depth            深度
- * @param  data_type        是否发现目标
- * @param  is_shooting      开火命令
- */
+  /**
+   * @brief 发送数据
+   * @param  _yaw             yaw 符号
+   * @param  yaw              yaw 绝对值
+   * @param  _pitch           pitch 符号
+   * @param  pitch            pitch 绝对值
+   * @param  depth            深度
+   * @param  data_type        是否发现目标
+   * @param  is_shooting      开火命令
+   */
   void writeData(const int&     _yaw,   const int16_t& yaw,
                  const int&     _pitch, const int16_t& pitch,
                  const int16_t& depth,  const int&     data_type = 0,
                  const int&     is_shooting = 0);
   void writeData();
+  /**
+   * @brief 发送数据
+   *
+   * @param _write_data     需要发送的 Write_Data 结构体
+   */
   void writeData(const Write_Data& _write_data);
-
+  /**
+   * @brief 发送数据
+   *
+   * @param _yaw          yaw 数据
+   * @param _pitch        pitch 数据
+   * @param _depth        深度
+   * @param _data_type    是否发现目标
+   * @param _is_shooting  开火命令
+   */
   void updataWriteData(const float _yaw,   const float _pitch,
                        const int   _depth, const int   _data_type = 0,
                        const int   _is_shooting = 0);
-
+  /**
+   * @brief 数据转换为结构体
+   *
+   * @param _yaw          yaw 数据
+   * @param _pitch        pitch 数据
+   * @param _depth        深度
+   * @param _data_type    是否发现目标
+   * @param _is_shooting  开火命令
+   * @return Write_Data   返回写入数据结构体
+   */
   Write_Data gainWriteData(const float _yaw,  const float _pitch,
                            const int  _depth, const int   _data_type = 0,
                            const int  _is_shooting = 0);
-
-/**
- * @brief 接收数据
- */
+  /**
+   * @brief 接收数据
+   */
   void receiveData();
-
-/**
- * @brief 接收数据是否正常
- * @return true 不正常
- * @return false 正常
- */
+  /**
+   * @brief 接收数据是否正常
+   * @return true  不正常
+   * @return false 正常
+   */
   bool isEmpty();
-
-/**
- * @brief 更新数据信息
- */
+  /**
+   * @brief 更新数据信息
+   */
   void updateReceiveInformation();
 
  private:
