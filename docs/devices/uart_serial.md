@@ -148,6 +148,6 @@
    * 
    * @return float 
    */
-  inline float receiveYaw();
+  inline float returnReceiveYaw();
 
   ```

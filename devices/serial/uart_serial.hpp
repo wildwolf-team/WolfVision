@@ -192,7 +192,7 @@ class SerialPort {
    * 
    * @return float 
    */
-  inline float receiveYaw()                  { return receive_data_.Receive_Yaw_Angle_Info.yaw_angle; }
+  inline float returnReceiveYaw()                  { return receive_data_.Receive_Yaw_Angle_Info.yaw_angle; }
   /**
    * @brief 返回高八位数据
    * 
