@@ -108,7 +108,7 @@
    */
   inline Receive_Data returnReceive();
   /**
-   * @brief 返回陀螺仪 Yaw 速度
+   * @brief 返回陀螺仪 Yaw 速度或者加速度
    * 
    * @return float 
    */
