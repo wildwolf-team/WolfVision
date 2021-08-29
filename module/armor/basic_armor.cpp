@@ -300,7 +300,7 @@ void Detector::initialPredictionData(const float _gyro_speed_data,
     // 计算实际深度
     actual_depth_ = std::sqrt(actual_z_ * actual_z_ + sentry_height_ * sentry_height_);
 
-    // // 计算预测角度 角速度 * 时间
+    // 计算预测角度 角速度 * 时间
     forecast_angle_ = static_cast<float>(actual_depth_ * 0.001 / _bullet_velocity) * _gyro_speed_data;
 
     // 计算像素点个数
@@ -442,7 +442,7 @@ bool Detector::lightJudge(const int i, const int j) {
       armor_data_.light_width_aspect  > armor_config_.light_height_ratio_min * 0.1) {
     armor_data_.height =
       MIN(armor_data_.left_light.size.height, armor_data_.right_light.size.height);
-    // 灯条y轴位置差
+    // 灯条 y 轴位置差
     if (fabs(armor_data_.left_light.center.y - armor_data_.right_light.center.y) <
         armor_data_.height * armor_config_.light_y_different * 0.1) {
       // 灯条高度差

@@ -20,7 +20,7 @@ class RoI {
 
   virtual ~RoI() {}
   /**
-   * @brief 截取ROI图像
+   * @brief 截取 ROI 图像
    *
    * @param _input_img 需要截取的图像
    * @param _rect      需要截取的位置(外接矩形)
@@ -35,7 +35,7 @@ class RoI {
     return roi_img_;
   }
   /**
-   * @brief 截取ROI图像
+   * @brief 截取 ROI 图像
    *
    * @param _input_img 需要截取的图像
    * @param _rect      需要截取的位置 (旋转矩形)
@@ -97,7 +97,7 @@ class RoI {
                     _input_rect.size().height);
   }
   /**
-   * @brief RotateRect坐标转换
+   * @brief RotateRect 坐标转换
    *
    * @param _input_r_rect    ROI 图像的值
    * @return cv::RotatedRect 返回原图的值

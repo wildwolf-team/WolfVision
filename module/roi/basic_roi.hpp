@@ -100,7 +100,7 @@ class RoI : public abstract_roi::RoI {
   cv::Rect makeRectSafeFixed(const cv::Mat&         _input_img,
                              const cv::RotatedRect& _r_rect);
   /**
-   * @brief 限制ROI范围
+   * @brief 限制 ROI 范围
    *
    * @param _input_img 图像
    * @param _r_rect    ROI 区域
@@ -110,7 +110,7 @@ class RoI : public abstract_roi::RoI {
   cv::Rect makeRectSafeTailor(const cv::Mat&         _input_img,
                               const cv::RotatedRect& _r_rect);
   /**
-   * @brief 限制ROI范围
+   * @brief 限制 ROI 范围
    *
    * @param _input_img 图像
    * @param _r_rect    ROI 区域
@@ -120,7 +120,7 @@ class RoI : public abstract_roi::RoI {
   cv::Rect makeRectSafeTailor(const cv::Mat&  _input_img,
                               const cv::Rect& _r_rect);
   /**
-   * @brief 限制ROI范围
+   * @brief 限制 ROI 范围
    *
    * @param _input_img 图像
    * @param _r_rect    ROI 区域
@@ -131,7 +131,7 @@ class RoI : public abstract_roi::RoI {
                              const cv::RotatedRect& _r_rect);
 
   /**
-   * @brief 逐级扩大ROI范围
+   * @brief 逐级扩大 ROI 范围
    *
    * @param _input_img 图像
    * @return cv::Mat   返回 ROI 图像

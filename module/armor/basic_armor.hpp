@@ -131,8 +131,8 @@ class Detector {
   /**
    * @brief 计算两点之间距离
    * 
-   * @param a       点A
-   * @param b       点B
+   * @param a       点 A
+   * @param b       点 B
    * @return float  两点之间距离
    */
   float getDistance(const cv::Point a, const cv::Point b);
@@ -197,9 +197,9 @@ class Detector {
   inline bool            returnSuccessArmor()                             { return armor_success; }
   /**
    * @brief 返回最优装甲板的结构体
-   * 
-   * @param _num         第0个为最优装甲板
-   * @return Armor_Data  返回第 _num 个装甲板的结构体
+   *
+   * @param _num         返回第 _num 个装甲板的结构体（第 0 个为最优装甲板）
+   * @return Armor_Data  返回装甲板的结构体
    */
   inline Armor_Data      returnFinalArmor(const int _num)                 { return armor_[_num]; }
   /**
@@ -213,7 +213,7 @@ class Detector {
    * @brief 返回最优装甲板的旋转矩形
    *
    * @param _num             返回第 _num 个装甲板的旋转矩形
-   * @return cv::RotatedRect 返回装甲板类型
+   * @return cv::RotatedRect 返回装甲板的旋转矩形
    */
   inline cv::RotatedRect returnFinalArmorRotatedRect(const int _num)      { return armor_[_num].armor_rect; }
   /**
@@ -405,7 +405,7 @@ class Detector {
   float deviation_angle_         = 0.f;
   // 上一次哨兵到初始化位置的偏差角度
   float last_deviation_angle_    = 0.f;
-  // 初始化陀螺仪Yaw轴位置
+  // 初始化陀螺仪 Yaw 轴位置
   float initial_gyroscope_       = 0.f;
 };
 
