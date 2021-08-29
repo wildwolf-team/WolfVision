@@ -39,7 +39,7 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
 
 ```cpp
   /**
-   * @brief 限制ROI范围
+   * @brief 限制 ROI 范围
    * 
    * @param _input_img 图像
    * @param _r_rect    ROI 区域
@@ -48,7 +48,7 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
   cv::Rect makeRectSafeFixed(const cv::Mat& _input_img,
                              const cv::RotatedRect& _r_rect);
   /**
-   * @brief 限制ROI范围
+   * @brief 限制 ROI 范围
    *
    * @param _input_img 图像
    * @param _r_rect    ROI 区域
@@ -57,7 +57,7 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
   cv::Rect makeRectSafeTailor(const cv::Mat& _input_img,
                               const cv::RotatedRect& _r_rect);
   /**
-   * @brief 限制ROI范围
+   * @brief 限制 ROI 范围
    *
    * @param _input_img 图像
    * @param _r_rect    ROI 区域
@@ -66,7 +66,7 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
   cv::Rect makeRectSafeTailor(const cv::Mat& _input_img,
                               const cv::Rect& _r_rect);
   /**
-   * @brief 限制ROI范围
+   * @brief 限制 ROI 范围
    *
    * @param _input_img 图像
    * @param _r_rect    ROI 区域
@@ -80,7 +80,7 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
 
   ```cpp
   /**
-   * @brief 返回ROI图像（逐级扩大 ROI 范围） 
+   * @brief 返回 ROI 图像（逐级扩大 ROI 范围） 
    * 
    * @param _input_img 图像
    * @return cv::Mat   ROI 图像

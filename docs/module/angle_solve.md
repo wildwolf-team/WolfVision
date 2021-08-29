@@ -58,39 +58,39 @@
 
 ---
 
-### 初始化目标3d点
+### 初始化目标 3d 点
 
 ```cpp
 /**
- * @brief 初始化目标3d点
+ * @brief 初始化目标 3d 点
  * 
  * @param _armor_type               装甲板类型
- * @return std::vector<cv::Point3f> 返回目标3d点
+ * @return std::vector<cv::Point3f> 返回目标 3d 点
  */
   std::vector<cv::Point3f> initialize3DPoints(int _armor_type);
 
   /**
- * @brief 初始化目标3d点
+ * @brief 初始化目标 3d 点
  * 
  * @param _width                    目标实际宽度
  * @param _heigth                   目标实际高度
- * @return std::vector<cv::Point3f> 返回目标3d点
+ * @return std::vector<cv::Point3f> 返回目标 3d 点
  */
 std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
 ```
 
-### 初始化目标2d点
+### 初始化目标 2d 点
 
   ```cpp
   /**
-   * @brief 初始化目标2d点
+   * @brief 初始化目标 2d 点
    * 
    * @param _rect 目标旋转矩形
    * @return std::vector<cv::Point2f> 
    */
   std::vector<cv::Point2f> initialize2DPoints(cv::RotatedRect _rect);
   /**
-   * @brief 初始化目标2d点
+   * @brief 初始化目标 2d 点
    *
    * @param _rect 目标外接矩形
    * @return std::vector<cv::Point2f>
@@ -116,7 +116,7 @@ std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
   /**
    * @brief 转换坐标系
    *
-   * @param _t 旋转向量
+   * @param _t       旋转向量
    * @return cv::Mat 返回转化后的旋转向量
    */
   cv::Mat cameraPtz(cv::Mat& _t);
@@ -128,11 +128,11 @@ std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
   /**
    * @brief 绘制坐标系
    * 
-   * @param _draw_img 画板
-   * @param _rvec     旋转矩阵
-   * @param _tvec     旋转向量
-   * @param _cameraMatrix 相机内参
-   * @param _distcoeffs   相机外参
+   * @param _draw_img      画板
+   * @param _rvec          旋转矩阵
+   * @param _tvec          旋转向量
+   * @param _cameraMatrix  相机内参
+   * @param _distcoeffs    相机外参
    */
   void drawCoordinate(cv::Mat& _draw_img, cv::Mat& _rvec, cv::Mat& _tvec,cv::Mat& _cameraMatrix, cv::Mat& _distcoeffs);
   ```
@@ -143,11 +143,11 @@ std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
     /**
    * @brief 计算子弹下坠
    * 
-   * @param _dist 目标深度
-   * @param _tvec_y 目标高度 
-   * @param _ballet_speed 子弹速度
-   * @param _company 计算单位
-   * @return float 返回补偿角度
+   * @param _dist          目标深度
+   * @param _tvec_y        目标高度 
+   * @param _ballet_speed  子弹速度
+   * @param _company       计算单位
+   * @return float         返回补偿角度
    */
   float getPitch(float _dist, float _tvec_y, float _ballet_speed, const int _company = 1);
   ```
@@ -158,20 +158,20 @@ std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
   /**
    * @brief 计算云台偏差角度
    * 
-   * @param _pos_in_ptz 旋转向量
-   * @param _bullet_speed 子弹速度
-   * @param _company 计算子弹下坠单位
-   * @return cv::Point3f 返回Yaw Pitch轴的偏移量和深度（mm）
+   * @param _pos_in_ptz    旋转向量
+   * @param _bullet_speed  子弹速度
+   * @param _company       计算子弹下坠单位
+   * @return cv::Point3f   返回Yaw Pitch轴的偏移量和深度（mm）
    */
   cv::Point3f getAngle(const cv::Mat& _pos_in_ptz, const int _bullet_speed, const int _company);
   /**
    * @brief 计算云台偏差角度
    *
-   * @param _pos_in_ptz 旋转向量
-   * @param _bullet_speed 子弹速度
-   * @param _company 子弹下坠单位
-   * @param _depth 距目标的深度
-   * @return cv::Point3f 返回Yaw Pitch轴的偏移量和深度（mm）
+   * @param _pos_in_ptz    旋转向量
+   * @param _bullet_speed  子弹速度
+   * @param _company       子弹下坠单位
+   * @param _depth         距目标的深度
+   * @return cv::Point3f   返回Yaw Pitch轴的偏移量和深度（mm）
    */
   cv::Point3f getAngle(const cv::Mat& _pos_in_ptz, const int _bullet_speed, const int _company, const int _depth);
 

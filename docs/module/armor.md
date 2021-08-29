@@ -180,8 +180,8 @@
   /**
    * @brief 返回最优装甲板的结构体
    * 
-   * @param _num         第0个为最优装甲板
-   * @return Armor_Data  返回第 _num 个装甲板的结构体
+   * @param _num         返回第 _num 个装甲板的结构体（第0个为最优装甲板）
+   * @return Armor_Data  返回装甲板的结构体
    */
   inline Armor_Data      returnFinalArmor(const int _num);
   /**
@@ -195,7 +195,7 @@
    * @brief 返回最优装甲板的旋转矩形
    *
    * @param _num             返回第 _num 个装甲板的旋转矩形
-   * @return cv::RotatedRect 返回装甲板类型
+   * @return cv::RotatedRect 返回装甲板的旋转矩形
    */
   inline cv::RotatedRect returnFinalArmorRotatedRect(const int _num);
   ```
