@@ -28,7 +28,7 @@ class RoI {
    * @author RCX
    */
   cv::Mat cutRoIRect(const cv::Mat&   _input_img,
-                     const cv::Rect& _rect) {
+                     const cv::Rect&  _rect) {
     tl_ = _rect.tl();
     _input_img(_rect).copyTo(roi_img_);
 
