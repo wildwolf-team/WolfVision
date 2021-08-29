@@ -1,3 +1,12 @@
+/**
+ * @file mv_video_capture.cpp
+ * @author RCX
+ * @brief 相机读取类
+ * @date 2021-08-29
+ *
+ * @copyright Copyright (c) 2021 GUCROBOT_WOLF
+ *
+ */
 #include "mv_video_capture.hpp"
 
 namespace mindvision {
@@ -100,7 +109,7 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
   CameraGetAeState(hCamera, &AEstate);
   CameraSetAeState(hCamera, FALSE);
   CameraSetExposureTime(hCamera, _CAMERA_EXPOSURETIME);
-
+  // 设置颜色增益
   CameraSetGain(hCamera, 145, 130, 105);
 
   // 让SDK进入工作模式
