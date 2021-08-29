@@ -152,7 +152,7 @@ class SerialPort {
    */
   inline Receive_Data returnReceive() { return receive_data_; }
   /**
-   * @brief 返回陀螺仪 Yaw 速度
+   * @brief 返回陀螺仪 Yaw 速度或者加速度
    * 
    * @return float 
    */
