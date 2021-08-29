@@ -1,4 +1,4 @@
-# uart_serial 使用手册
+# Uart_Serial 使用手册
 
 
 ## 一、使用说明
@@ -79,7 +79,7 @@
                        const int   _is_shooting = 0);
 ```
 
-### 接受数据
+### 接收数据
 
   ```cpp
   /**

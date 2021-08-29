@@ -1,4 +1,4 @@
-# mv_video_capture 使用手册
+# Mv_Video_Capture 使用手册
 
 
 ## 一、使用说明
