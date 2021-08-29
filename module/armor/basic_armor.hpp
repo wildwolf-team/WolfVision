@@ -153,7 +153,7 @@ class Detector {
   Light_Config light_config_;
   Armor_Data   armor_data_;
 
-  basic_kalman::Kalman1 kalman_ = basic_kalman::Kalman1();
+  basic_kalman::firstKalman kalman_ = basic_kalman::firstKalman();
 
   cv::Mat frame;
   cv::Mat draw_img_;
