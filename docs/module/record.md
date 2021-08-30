@@ -64,3 +64,5 @@ RecordIng(cv::Mat img_)
   ModeSet         mode_;
   int             last_mode_;  // 记录上次串口模式
 ```
+
+ps:本模块功能还在改进完善当中,在赛场并未使用
