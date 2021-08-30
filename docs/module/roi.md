@@ -38,56 +38,33 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
 ### 保证 ROI 不超过图片范围
 
 ```cpp
-  /**
-   * @brief 限制 ROI 范围
-   * 
-   * @param _input_img 图像
-   * @param _r_rect    ROI 区域
-   * @return cv::Rect  返回安全的 Rect 参数
-   */
   cv::Rect makeRectSafeFixed(const cv::Mat& _input_img,
                              const cv::RotatedRect& _r_rect);
-  /**
-   * @brief 限制 ROI 范围
-   *
-   * @param _input_img 图像
-   * @param _r_rect    ROI 区域
-   * @return cv::Rect 返回安全的 Rect 参数
-   */
   cv::Rect makeRectSafeTailor(const cv::Mat& _input_img,
                               const cv::RotatedRect& _r_rect);
-  /**
-   * @brief 限制 ROI 范围
-   *
-   * @param _input_img 图像
-   * @param _r_rect    ROI 区域
-   * @return cv::Rect  返回安全的 Rect 参数
-   */
   cv::Rect makeRectSafeTailor(const cv::Mat& _input_img,
                               const cv::Rect& _r_rect);
-  /**
-   * @brief 限制 ROI 范围
-   *
-   * @param _input_img 图像
-   * @param _r_rect    ROI 区域
-   * @return cv::Rect  返回安全的 Rect 参数
-   */
   cv::Rect makeRectSafeThird(const cv::Mat& _input_img,
                              const cv::RotatedRect& _r_rect);
 ```
 
+  设计思路  
+  对传入的ROI区域和_input_img图片边框进行对比，防止ROI裁剪超出_input_img的边界而产生的程序错误。  
+
 ### 返回ROI图像
 
   ```cpp
-  /**
-   * @brief 返回 ROI 图像（逐级扩大 ROI 范围） 
-   * 
-   * @param _input_img 图像
-   * @return cv::Mat   ROI 图像
-   */
   cv::Mat returnROIResultMat(const cv::Mat& _input_img);
   ```
-#### 使用方法请参考
+
+  函数设计目的  
+  防止画面中出现多个装甲板时，最优装甲板位置判断反复横跳。 
+
+  设计思路  
+  当自瞄在当前帧检测到某一个装甲板为最优目标装甲板，保存该装甲板在图片上的外接矩阵信息，下一帧根据保存的外接矩阵信息截取特定ROI图片传入自瞄。若传入ROI图片检测不到装甲板，则逐渐扩大ROI图片的大小。  
+  
+ 
+### 使用方法请参考
   ```cpp
   roi_img_ = roi_.returnROIResultMat(src_img_);
   if (basic_armor_.runBasicArmor(roi_img_, serial_.returnReceive())) {
