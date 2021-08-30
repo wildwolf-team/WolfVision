@@ -5,7 +5,7 @@
 
 ### 步骤一：头文件说明
 
-- 包含头文件`basic_pnp.hpp`
+- 包含头文件 `basic_pnp.hpp`
 
 | 文件名                  | 文件说明                                   |
 | ---------------------- | ------------------------------------------- |
@@ -68,7 +68,7 @@
   std::vector<cv::Point2f> initialize2DPoints(cv::Rect _rect);
   ```
   设计思路:  
-  在OpenCV 提供的`pnp`姿态结算算法中，`SOLVEPNP_ITERATIVE`方法只能用4个共面的特征点来解位姿,使用5个特征点或4点非共面的特征点都得不到正确的位姿。这里提供了`cv::RotatedRect`和`cv::Rect`类型的转换。保证只有四个点进行姿态解算。并且顺序为 左上->右上->右下->左下。
+  在OpenCV 提供的 `pnp` 姿态结算算法中，`SOLVEPNP_ITERATIVE` 方法只能用4个共面的特征点来解位姿,使用5个特征点或4点非共面的特征点都得不到正确的位姿。这里提供了 `cv::RotatedRect` 和 `cv::Rect` 类型的转换。保证只有四个点进行姿态解算。并且顺序为 左上->右上->右下->左下。
 ### 外接矩形转旋转矩形
 
   ```cpp
@@ -81,7 +81,7 @@
   cv::Mat cameraPtz(cv::Mat& _t);
   ```
   设计思路:  
-  相机计算出来的角度偏移量是相对于相机的坐标系，我们需要将坐标系转换为云台坐标系(即云台 Yaw 轴和 Pitch 轴的交点)。请修改`basic_pnp_config.xml`文件中的这个位置。
+  相机计算出来的角度偏移量是相对于相机的坐标系，我们需要将坐标系转换为云台坐标系(即云台 Yaw 轴和 Pitch 轴的交点)。请修改 `basic_pnp_config.xml` 文件中的这个位置。
   ```xml
   <!--
   PTZ_CAMERA_X - 相机与云台的 X 轴偏移(左负右正)
@@ -110,7 +110,7 @@
   void drawCoordinate(cv::Mat& _draw_img, cv::Mat& _rvec, cv::Mat& _tvec,cv::Mat& _cameraMatrix, cv::Mat& _distcoeffs);
   ```
   设计思路:  
-  绘制`pnp`姿态结算中的，姿态的结果并以三种颜色的线绘制出来。在云台抖动的时候，可以迅速的找出问题。
+  绘制 `pnp` 姿态结算中的，姿态的结果并以三种颜色的线绘制出来。在云台抖动的时候，可以迅速的找出问题。
 ### 计算子弹下坠
 
   ```cpp
@@ -125,7 +125,7 @@
   cv::Point3f getAngle(const cv::Mat& _pos_in_ptz, const int _bullet_speed, const int _company, const int _depth);
   ```
   设计思路:  
-  对OpenCV 提供的`pnp`姿态结算算法。得到的数据进行解析。得到云台 Yaw 和 Pitch 轴的偏移角度。例如:
+  对OpenCV 提供的 `pnp` 姿态结算算法。得到的数据进行解析。得到云台 Yaw 和 Pitch 轴的偏移角度。例如:
   ```cpp
   // Yaw
   angle.x = static_cast<float>(atan2(xyz[0], xyz[2]));
