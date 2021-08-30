@@ -2,7 +2,6 @@
 
 ## 一、 使用说明
 
----
 
 ### 头文件说明
 
@@ -33,7 +32,6 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
 
 ## 二、 自定义函数及参数说明
 
----
 
 ### 保证 ROI 不超过图片范围
 
