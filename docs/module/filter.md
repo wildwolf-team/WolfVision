@@ -21,7 +21,7 @@
   
 ### 步骤三：函数说明
 
-在模式选择后调用接口函数即可，接口函数重载了2种调用方式：
+调用接口函数即可，接口函数有针对不同数据处理的两个函数：
 
   ```cpp
   float run(float _data);
@@ -44,35 +44,35 @@
 ### 一阶滤波器
  ```cpp
 /**
-  * @brief 针对单个数据的一阶卡尔曼
+  * @brief            针对单个数据的一阶卡尔曼
   * 
-  * @param _data  传入需要滤波的数据
+  * @param _data      传入需要滤波的数据
   * @return float     返回滤波完毕的数据
   * @author SHL 
   */
   float run(float _data) {
-    x_pre_ = x_;                                                            // x(k|k-1) = AX(k-1|k-1)+BU(k)
-    p_pre_ = p_ + Q_;                                                // p(k|k-1) = Ap(k-1|k-1)A'+Q
-    kg_    = p_pre_ / (p_pre_ + R_);                      // kg(k) = p(k|k-1)H'/(Hp(k|k-1)'+R)
-    x_     = x_pre_ + kg_ * (_data - x_pre_);       // x(k|k) = X(k|k-1)+kg(k)(Z(k)-HX(k|k-1))
-    p_     = (1 - kg_) * p_pre_;                                  // p(k|k) = (I-kg(k)H)P(k|k-1)
+    x_pre_ = x_;                                  // x(k|k-1) = AX(k-1|k-1)+BU(k)
+    p_pre_ = p_ + Q_;                             // p(k|k-1) = Ap(k-1|k-1)A'+Q
+    kg_    = p_pre_ / (p_pre_ + R_);              // kg(k)    = p(k|k-1)H'/(Hp(k|k-1)'+R)
+    x_     = x_pre_ + kg_ * (_data - x_pre_);     // x(k|k)   = X(k|k-1)+kg(k)(Z(k)-HX(k|k-1))
+    p_     = (1 - kg_) * p_pre_;                  // p(k|k)   = (I-kg(k)H)P(k|k-1)
 
     return x_;
   }
   /**
-   * @brief  针对两个数据具有一定相关性的一阶卡尔曼
+   * @brief         针对两个数据具有一定相关性的一阶卡尔曼
    * 
    * @param _data1  传入需要滤波的数据
    * @param _data2  传入需要滤波的数据
-   * @return float       传出处理后数据
+   * @return float  传出处理后数据
    * @author SHL 
    */
   float mergeRun(float _data1, float _data2) {
     x_pre_ = _data1;
-    p_pre_ = p_ + Q_;                                                 // p(k|k-1) = Ap(k-1|k-1)A'+Q
-    kg_    = p_pre_ / (p_pre_ + R_);                      // kg(k) = p(k|k-1)H'/(Hp(k|k-1)'+R)
-    x_     = x_pre_ + kg_ * (_data2 - x_pre_);    // x(k|k) = X(k|k-1)+kg(k)(Z(k)-HX(k|k-1))
-    p_     = (1 - kg_) * p_pre_;                                 // p(k|k) = (I-kg(k)H)P(k|k-1)
+    p_pre_ = p_ + Q_;                             // p(k|k-1) = Ap(k-1|k-1)A'+Q
+    kg_    = p_pre_ / (p_pre_ + R_);              // kg(k)    = p(k|k-1)H'/(Hp(k|k-1)'+R)
+    x_     = x_pre_ + kg_ * (_data2 - x_pre_);    // x(k|k)   = X(k|k-1)+kg(k)(Z(k)-HX(k|k-1))
+    p_     = (1 - kg_) * p_pre_;                  // p(k|k)   = (I-kg(k)H)P(k|k-1)
 
     return x_;
   }
@@ -84,8 +84,8 @@
    * 
    * @param Q  过程噪声
    * @param R  测量噪声
-   * @param t   公式数据
-   * @author SHL 
+   * @param t  公式数据
+   * @author   SHL 
    */
   void setParam(int _Q, int _R, int _t) {
     if (_R < 1) _R = 1;
