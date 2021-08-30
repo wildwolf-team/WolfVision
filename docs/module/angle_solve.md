@@ -20,7 +20,7 @@
   
 ### 步骤三：函数说明
 
-在模式选择后调用接口函数即可,接口函数重载了12种调用方式：
+在模式选择后调用接口函数即可,接口函数重载了 12 种调用方式：
 
   ```cpp
   void PnP::solvePnP(int _ballet_speed, int _armor_type, cv::Mat& _src_img, cv::RotatedRect _rect);
@@ -60,7 +60,7 @@
   std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth);
   ```
   设计思路:  
-  将装甲板模型放在类的参数里面，通过选择可以得到不同的装甲板模型(0 小装甲板 1 大装甲板 2 能量机关)也提供了接口可以进行自定义目标实际高度和宽度。
+  将装甲板模型放在类的参数里面，通过选择可以得到不同的装甲板模型( 0 小装甲板 1 大装甲板 2 能量机关 )，也提供了接口可以进行自定义目标实际高度和宽度。
 ### 初始化目标 2d 点
 
   ```cpp
@@ -68,7 +68,7 @@
   std::vector<cv::Point2f> initialize2DPoints(cv::Rect _rect);
   ```
   设计思路:  
-  在OpenCV 提供的 `pnp` 姿态结算算法中，`SOLVEPNP_ITERATIVE` 方法只能用4个共面的特征点来解位姿,使用5个特征点或4点非共面的特征点都得不到正确的位姿。这里提供了 `cv::RotatedRect` 和 `cv::Rect` 类型的转换。保证只有四个点进行姿态解算。并且顺序为 左上->右上->右下->左下。
+  在 OpenCV 提供的 `pnp` 姿态结算算法中，`SOLVEPNP_ITERATIVE` 方法只能用 4 个共面的特征点来解位姿，使用 5 个特征点或 4 点非共面的特征点都得不到正确的位姿。这里提供了 `cv::RotatedRect` 和 `cv::Rect` 类型的转换。保证只有 4 个点进行姿态解算。并且顺序为 左上->右上->右下->左下。
 ### 外接矩形转旋转矩形
 
   ```cpp
@@ -81,7 +81,7 @@
   cv::Mat cameraPtz(cv::Mat& _t);
   ```
   设计思路:  
-  相机计算出来的角度偏移量是相对于相机的坐标系，我们需要将坐标系转换为云台坐标系(即云台 Yaw 轴和 Pitch 轴的交点)。请修改 `basic_pnp_config.xml` 文件中的这个位置。
+  相机计算出来的角度偏移量是相对于相机的坐标系，我们需要将坐标系转换为云台坐标系( 即云台 Yaw 轴和 Pitch 轴的交点 )。请修改 `basic_pnp_config.xml` 文件中的这个位置。
   ```xml
   <!--
   PTZ_CAMERA_X - 相机与云台的 X 轴偏移(左负右正)
