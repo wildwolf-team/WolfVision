@@ -5,7 +5,7 @@
 
 ### 步骤一：头文件说明
 
-- 包含头文件`mv_video_capture.hpp`
+- 包含头文件 `mv_video_capture.hpp`
 
 ### 步骤二：实例化对象
 
@@ -41,9 +41,7 @@
 ### 初始化相机参数
 
   ```cpp
-  int cameraInit(const int _CAMERA_RESOLUTION_COLS,
-                 const int _CAMERA_RESOLUTION_ROWS,
-                 const int _CAMERA_EXPOSURETIME);
+  int cameraInit(const int _CAMERA_RESOLUTION_COLS, const int _CAMERA_RESOLUTION_ROWS, const int _CAMERA_EXPOSURETIME);
   ```
   设计思路:  
   设置当前相机的各种参数，确定读取后图像的大小和曝光时间，来保证在本次代码中读取到的图像效果基本一致。
