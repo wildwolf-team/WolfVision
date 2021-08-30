@@ -41,6 +41,7 @@ class ReCord {
    * @param judge 是否录制判断
    * @param current_mode 当前模式输入
    */
+  // 根据传入的图像和录制视频的判断来进行视频的保存
   void            visionRecord(const cv::Mat input_img, int judge, int current_mode);
   cv::VideoWriter vw_image_;  // 录制对象说明
   int             path_ = 0;  // 路径计数
@@ -55,6 +56,7 @@ class ReCord {
   * @param img_ 传入图像
   * 
   */
+  // 这个函数通过输入的原图像来进行视频的保存
   void recorDing(cv::Mat img_);
 };
 }  // namespace RecordMode
