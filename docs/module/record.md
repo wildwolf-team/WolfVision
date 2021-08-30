@@ -22,8 +22,8 @@
 在录制模式下调用这个函数即可
 
   ```cpp
-visionJudge(const cv::Mat input_img, int judge, int current_mode);
-RecordIng(cv::Mat img_)
+visionRecord(const cv::Mat input_img, int judge, int current_mode);
+recorDing(cv::Mat img_)
   ```
   参数解释：
   |      参数名         |           参数解释             |
@@ -46,7 +46,7 @@ RecordIng(cv::Mat img_)
    * @param judge 是否录制判断
    * @param current_mode 当前模式输入
    */
-  void            visionJudge(const cv::Mat input_img, int judge, int current_mode);
+  void visionRecord(const cv::Mat input_img, int judge, int current_mode);
  ```
  ```cpp
    /**
@@ -54,7 +54,7 @@ RecordIng(cv::Mat img_)
   * @param img_ 传入图像
   * 
   */
-  void RecordIng(cv::Mat img_);
+  void recorDing(cv::Mat img_);
 
   ```
 
