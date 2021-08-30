@@ -33,8 +33,8 @@
   void PnP::solvePnP(int _ballet_speed, int _width, int _height, cv::Rect _rect);
   void PnP::solvePnP(int _ballet_speed, int _armor_type, std::vector<cv::Point2f> _target_2d);
   void PnP::solvePnP(int  _ballet_speed, int _armor_type, cv::Mat&  _src_img, std::vector<cv::Point2f> _target_2d);
-  void PnP::solvePnP(int _ballet_speed, int _armor_type,cv::RotatedRect _rect, int _depth)
-  void PnP::solvePnP(int _ballet_speed, int _armor_type, std::vector<cv::Point2f> _target_2d, int _depth)
+  void PnP::solvePnP(int _ballet_speed, int _armor_type,cv::RotatedRect _rect, int _depth);
+  void PnP::solvePnP(int _ballet_speed, int _armor_type, std::vector<cv::Point2f> _target_2d, int _depth);
 
 
   ```
@@ -43,12 +43,12 @@
   | ------------------ | -----------------------------|
   | `_ballet_speed`    | 子弹发射速度 |
   | `_armor_type`      | 装甲板类型 0 小装甲 1 大装甲 2 能量机关| 
-  | `_src_img`         | 相机输入的图像，如：`src_img`，可删除不进行绘制 |
+  | `_src_img`         | 相机输入的图像，如：`src_img` ，可删除不进行绘制 |
   | `_rect`            | 计算目标旋转矩形或者外接矩形 |
-  | `_width`           | 目标实际宽度，与高度一起可替换`_armor_type` |
-  | `_height`          | 目标实际高度，与宽度一起可替换`_armor_type` | 
+  | `_width`           | 目标实际宽度，与高度一起可替换 `_armor_type` |
+  | `_height`          | 目标实际高度，与宽度一起可替换 `_armor_type` | 
   | `_target_2d`       | 目标2d点可替换 `_rect` |
-  | `_depth`           | 自定义深度，例如：在环形高度，击打哨兵时，深度可以直接进行计算。 |
+  | `_depth`           | 自定义深度，例如：在环形高度，击打哨兵时，深度可以直接进行计算 |
 
 ## 二、自定义函数说明
 
