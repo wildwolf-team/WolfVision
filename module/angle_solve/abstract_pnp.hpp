@@ -101,10 +101,10 @@ class PnP {
 
   ~PnP() = default;
   /**
-   * @brief 初始化目标3d点
+   * @brief 初始化目标 3d 点
    *
-   * @param _armor_type 装甲板类型
-   * @return std::vector<cv::Point3f> 返回目标3d点'
+   * @param _armor_type               装甲板类型
+   * @return std::vector<cv::Point3f> 返回目标 3d 点
    * @author XX
    */
   std::vector<cv::Point3f> initialize3DPoints(int _armor_type) {
@@ -125,11 +125,11 @@ class PnP {
     }
   }
   /**
-   * @brief 初始化目标3d点
+   * @brief 初始化目标 3d 点
    *
-   * @param _width 目标实际宽度
-   * @param _heigth 目标实际高度
-   * @return std::vector<cv::Point3f> 返回目标3d点
+   * @param _width                    目标实际宽度
+   * @param _heigth                   目标实际高度
+   * @return std::vector<cv::Point3f> 返回目标 3d 点
    * @author XX
    */
   std::vector<cv::Point3f> initialize3DPoints(int _width, int _heigth) {
@@ -147,10 +147,10 @@ class PnP {
     return object_3d;
   }
   /**
-   * @brief 初始化目标2d点
+   * @brief 初始化目标 2d 点
    *
-   * @param _rect 目标旋转矩形
-   * @return std::vector<cv::Point2f> 返回目标2d点
+   * @param _rect                     目标旋转矩形
+   * @return std::vector<cv::Point2f> 返回目标 2d 点
    * @author XX
    */
   std::vector<cv::Point2f> initialize2DPoints(cv::RotatedRect _rect) {
@@ -188,10 +188,10 @@ class PnP {
     return target2d;
   }
   /**
-   * @brief 初始化目标2d点
+   * @brief 初始化目标 2d 点
    *
-   * @param _rect 目标外接矩形
-   * @return std::vector<cv::Point2f> 返回目标2d点
+   * @param _rect                     目标外接矩形
+   * @return std::vector<cv::Point2f> 返回目标 2d 点
    * @author XX
    */
   std::vector<cv::Point2f> initialize2DPoints(cv::Rect _rect) {
@@ -202,7 +202,7 @@ class PnP {
   /**
    * @brief 外接矩形转旋转矩形
    *
-   * @param _rect 目标外接矩形
+   * @param _rect            目标外接矩形
    * @return cv::RotatedRect 返回旋转矩形
    * @author XX
    */
@@ -217,7 +217,7 @@ class PnP {
   /**
    * @brief 转换坐标系
    *
-   * @param _t 旋转向量
+   * @param _t       旋转向量
    * @return cv::Mat 返回转化后的旋转向量
    * @author XX
    */
@@ -227,9 +227,9 @@ class PnP {
   /**
    * @brief 绘制坐标系
    *
-   * @param _draw_img 画板
-   * @param _rvec     旋转矩阵
-   * @param _tvec     旋转向量
+   * @param _draw_img     画板
+   * @param _rvec         旋转矩阵
+   * @param _tvec         旋转向量
    * @param _cameraMatrix 相机内参
    * @param _distcoeffs   相机外参
    * @author XX
@@ -256,11 +256,11 @@ class PnP {
   /**
    * @brief 计算子弹下坠
    *
-   * @param _dist 目标深度
-   * @param _tvec_y 目标高度
+   * @param _dist         目标深度
+   * @param _tvec_y       目标高度
    * @param _ballet_speed 子弹速度
-   * @param _company 计算单位
-   * @return float 返回补偿角度
+   * @param _company      计算单位
+   * @return float        返回补偿角度
    * @author XX
    */
   float getPitch(float       _dist,
@@ -295,10 +295,10 @@ class PnP {
   /**
    * @brief 计算云台偏差角度
    *
-   * @param _pos_in_ptz 旋转向量
+   * @param _pos_in_ptz   旋转向量
    * @param _bullet_speed 子弹速度
-   * @param _company 计算子弹下坠单位
-   * @return cv::Point3f 返回Yaw Pitch轴的偏移量和深度（mm）
+   * @param _company      计算子弹下坠单位
+   * @return cv::Point3f  返回 Yaw Pitch 轴的偏移量和深度（mm）
    * @author XX
    */
   cv::Point3f getAngle(const cv::Mat& _pos_in_ptz,
@@ -369,11 +369,11 @@ class PnP {
   /**
    * @brief 计算云台偏差角度
    *
-   * @param _pos_in_ptz 旋转向量
+   * @param _pos_in_ptz   旋转向量
    * @param _bullet_speed 子弹速度
-   * @param _company 子弹下坠单位
-   * @param _depth 距目标的深度
-   * @return cv::Point3f 返回Yaw Pitch轴的偏移量和深度（mm）
+   * @param _company      子弹下坠单位
+   * @param _depth        距目标的深度
+   * @return cv::Point3f  返回 Yaw Pitch 轴的偏移量和深度（mm）
    * @author XX
    */
   cv::Point3f getAngle(const cv::Mat& _pos_in_ptz,

@@ -63,11 +63,19 @@ class firstKalman {
   * @author SHL 
   */
   float run(float _data) {
+<<<<<<< HEAD
     x_pre_ = x_;                                   // x(k|k-1) = AX(k-1|k-1)+BU(k)
     p_pre_ = p_ + Q_;                              // p(k|k-1) = Ap(k-1|k-1)A'+Q
     kg_    = p_pre_ / (p_pre_ + R_);               // kg(k)    = p(k|k-1)H'/(Hp(k|k-1)'+R)
     x_     = x_pre_ + kg_ * (_data - x_pre_);      // x(k|k)   = X(k|k-1)+kg(k)(Z(k)-HX(k|k-1))
     p_     = (1 - kg_) * p_pre_;                   // p(k|k)   = (I-kg(k)H)P(k|k-1)
+=======
+    x_pre_ = x_;                               // x(k|k-1) = AX(k-1|k-1)+BU(k)
+    p_pre_ = p_ + Q_;                          // p(k|k-1) = Ap(k-1|k-1)A'+Q
+    kg_    = p_pre_ / (p_pre_ + R_);           // kg(k)    = p(k|k-1)H'/(Hp(k|k-1)'+R)
+    x_     = x_pre_ + kg_ * (_data - x_pre_);  // x(k|k)   = X(k|k-1)+kg(k)(Z(k)-HX(k|k-1))
+    p_     = (1 - kg_) * p_pre_;               // p(k|k)   = (I-kg(k)H)P(k|k-1)
+>>>>>>> f0158ab07f88c3485e2b0e6dba34c5f907040f01
 
     return x_;
   }
@@ -81,10 +89,17 @@ class firstKalman {
    */
   float mergeRun(float _data1, float _data2) {
     x_pre_ = _data1;
+<<<<<<< HEAD
     p_pre_ = p_ + Q_;                            // p(k|k-1) = Ap(k-1|k-1)A'+Q
     kg_    = p_pre_ / (p_pre_ + R_);             // kg(k)    = p(k|k-1)H'/(Hp(k|k-1)'+R)
     x_     = x_pre_ + kg_ * (_data2 - x_pre_);   // x(k|k)   = X(k|k-1)+kg(k)(Z(k)-HX(k|k-1))
     p_     = (1 - kg_) * p_pre_;                 // p(k|k)   = (I-kg(k)H)P(k|k-1)
+=======
+    p_pre_ = p_ + Q_;                           // p(k|k-1) = Ap(k-1|k-1)A'+Q
+    kg_    = p_pre_ / (p_pre_ + R_);            // kg(k)    = p(k|k-1)H'/(Hp(k|k-1)'+R)
+    x_     = x_pre_ + kg_ * (_data2 - x_pre_);  // x(k|k)   = X(k|k-1)+kg(k)(Z(k)-HX(k|k-1))
+    p_     = (1 - kg_) * p_pre_;                // p(k|k)   = (I-kg(k)H)P(k|k-1)
+>>>>>>> f0158ab07f88c3485e2b0e6dba34c5f907040f01
 
     return x_;
   }
