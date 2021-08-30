@@ -13,7 +13,7 @@
 - `record_path_`为`xml文件`
 - `size` 为 `传入的图像大小`
 ### 步骤三：函数说明
-在录制模式下调用这个函数即可
+在录制模式下调用这个函数即可。
 ```cpp
 visionRecord(const cv::Mat input_img, int judge, int current_mode);
 recorDing(cv::Mat img_);
@@ -27,7 +27,7 @@ recorDing(cv::Mat img_);
 |`img_`| 读取相机输入图像|
 ## 二、自定义函数及参数说明
 ### 相机录制函数
-第二个录制函数直接调用接口
+第二个录制函数直接调用接口。
 
 ```cpp
 /**
@@ -48,4 +48,4 @@ void visionRecord(const cv::Mat input_img, int judge, int current_mode);
 void recorDing(cv::Mat img_);
 ```
 
-ps:本模块功能还在改进完善当中,在赛场并未使用
+ps:本模块功能还在改进完善当中,在赛场并未使用。

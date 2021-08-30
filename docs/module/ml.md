@@ -15,7 +15,7 @@
 - `input_size`为`传入图像的大小(28x28);`
 ### 步骤三：函数说明
 
-在录制模式下调用这个函数即可
+在录制模式下调用这个函数即可。
 
 ```cpp
 inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 3, float probability_threshold = 0, cv::Mat Image_input = cv::Mat::zeros(cv::Size(255, 0), CV_8UC3));
