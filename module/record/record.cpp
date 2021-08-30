@@ -12,10 +12,10 @@
 #include <iostream>
 
 namespace RecordMode {
-ReCord::ReCord() {}
-ReCord::ReCord(std::string path_input, std::string path_in, cv::Size size) {
+Record::Record() {}
+Record::Record(std::string path_input, std::string path_in, cv::Size size) {
     video_save_path_ = path_input;
 }
-ReCord::~ReCord() {}
+Record::~Record() {}
 
 }  // namespace RecordMode
