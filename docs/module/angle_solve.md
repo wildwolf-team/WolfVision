@@ -30,10 +30,8 @@
   void PnP::solvePnP(int _ballet_speed, int _armor_type, cv::RotatedRect _rect);            
   void PnP::solvePnP(int _ballet_speed, int _armor_type, cv::Rect _rect);
   void PnP::solvePnP(int _ballet_speed, int _width, int _height, cv::RotatedRect _rect);
-  void PnP::solvePnP(int _ballet_speed, int _width, int _height, 
-  cv::Rect _rect);
-  void PnP::solvePnP(int _ballet_speed, int _armor_type,
-  std::vector<cv::Point2f> _target_2d);
+  void PnP::solvePnP(int _ballet_speed, int _width, int _height, cv::Rect _rect);
+  void PnP::solvePnP(int _ballet_speed, int _armor_type, std::vector<cv::Point2f> _target_2d);
   void PnP::solvePnP(int  _ballet_speed, int _armor_type, cv::Mat&  _src_img, std::vector<cv::Point2f> _target_2d);
   void PnP::solvePnP(int _ballet_speed, int _armor_type,cv::RotatedRect _rect, int _depth)
   void PnP::solvePnP(int _ballet_speed, int _armor_type, std::vector<cv::Point2f> _target_2d, int _depth)
