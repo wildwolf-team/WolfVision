@@ -27,7 +27,7 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
 参数解释：
 |      参数名         |           参数解释             |
 | ------------------ | -----------------------------|
-| `_src_img`         | 相机输入的图像，如：`src_img`|
+| `_src_img`         | 相机输入的图像，如：`src_img` |
 | `_r_rect`          | 需要 ROI 的范围|
 
 ## 二、 自定义函数说明
@@ -36,18 +36,14 @@ cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_
 ### 保证 ROI 不超过图片范围
 
 ```cpp
-  cv::Rect makeRectSafeFixed(const cv::Mat& _input_img,
-                             const cv::RotatedRect& _r_rect);
-  cv::Rect makeRectSafeTailor(const cv::Mat& _input_img,
-                              const cv::RotatedRect& _r_rect);
-  cv::Rect makeRectSafeTailor(const cv::Mat& _input_img,
-                              const cv::Rect& _r_rect);
-  cv::Rect makeRectSafeThird(const cv::Mat& _input_img,
-                             const cv::RotatedRect& _r_rect);
+  cv::Rect makeRectSafeFixed(const cv::Mat& _input_img, const cv::RotatedRect& _r_rect);
+  cv::Rect makeRectSafeTailor(const cv::Mat& _input_img, const cv::RotatedRect& _r_rect);
+  cv::Rect makeRectSafeTailor(const cv::Mat& _input_img, const cv::Rect& _r_rect);
+  cv::Rect makeRectSafeThird(const cv::Mat& _input_img, const cv::RotatedRect& _r_rect);
 ```
 
   设计思路:  
-  把 ROI 裁剪数值限定到 _input_img 图片边框数值范围内，防止 ROI 裁剪超出 _input_img 的边界而产生的程序错误。  
+  把 ROI 裁剪数值限定到 `_input_img` 图片边框数值范围内，防止 ROI 裁剪超出 `_input_img` 的边界而产生的程序错误。  
 
 ### 返回 ROI 图像
 
