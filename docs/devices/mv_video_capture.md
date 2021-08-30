@@ -31,49 +31,26 @@
 ### 判断工业相机是否在线
 
   ```cpp
-  /**
-   * @brief 判断工业相机是否在线
-   *
-   * @return true   检测到工业相机
-   * @return false  没检测到工业相机
-   */
   bool isindustryimgInput();
   ```
-
+  判断是否工业相机是否在线，并分配内存去储存工业相机在当前的图像。
 ### 清空相机内存
 
   ```cpp
-  /**
-   * @brief 清空相机内存（每次读取相机后进行清空）
-   * 
-   */
   void cameraReleasebuff();
   ```
-
+  读取当前图像后，需要对其内存进行清空，否则会造成无法储存下一次图像
 ### 初始化相机参数
 
   ```cpp
-  /**
-   * @brief 设置相机参数
-   * 
-   * @param _CAMERA_RESOLUTION_COLS  设置相机宽度  
-   * @param _CAMERA_RESOLUTION_ROWS  设置相机高度
-   * @param _CAMERA_EXPOSURETIME     设置相机曝光
-   * @return int 
-   */
   int cameraInit(const int _CAMERA_RESOLUTION_COLS,
                  const int _CAMERA_RESOLUTION_ROWS,
                  const int _CAMERA_EXPOSURETIME);
   ```
-
+  设置当前相机的各种参数，确定读取后图像的大小和曝光时间，来保证在本次代码中读取到的图像效果基本一致。
 ### 返回相机读取图片
 
   ```cpp
-  /**
-   * @brief 返回相机读取图片
-   * 
-   * @return cv::Mat 
-   */
   inline cv::Mat image();
   ```
-
+  返回当前相机读取到的图像
