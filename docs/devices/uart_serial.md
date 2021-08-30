@@ -5,7 +5,7 @@
 
 ### 步骤一：头文件说明
 
-- 包含头文件`uart_serial.hpp`
+- 包含头文件 `uart_serial.hpp`
 
 ### 步骤二：实例化对象
 
@@ -45,7 +45,7 @@
   void updataWriteData(const float _yaw, const float _pitch, const int _depth, const int _data_type = 0, const int _is_shooting = 0);
   ```
   设计思路:  
-  为了提高数据的传输效率, 浮点数类型数据需要传输时，截取两位小数点将浮点数转化为整数类型进行传输，可以缩短数据长度，并且避免浮点数传输时发生异常。例如:`write_data_.yaw_angle = fabs(_write_data.yaw_angle) * 100`;下位机收到的数据除以 100 即可。
+  为了提高数据的传输效率，浮点数类型数据需要传输时，截取两位小数点将浮点数转化为整数类型进行传输，可以缩短数据长度，并且避免浮点数传输时发生异常。例如: `write_data_.yaw_angle = fabs(_write_data.yaw_angle) * 100;` 下位机收到的数据除以 100 即可。
 
 ### 接收数据
 
@@ -55,7 +55,7 @@
   void updateReceiveInformation();
   ```
   设计思路:  
-  为了减少数据接受时的错误, 在接受数据后对收到的数据进行判断。在确保数据为正确的前提下，对数据进行处理。例如:`receive_data_.bullet_velocity = receive_buff_[14] - 2`; 意思为收到的子弹速度 - 2。方便后面进行进一步处理。
+  为了减少数据接受时的错误，在接受数据后对收到的数据进行判断。在确保数据为正确的前提下，对数据进行处理。例如：`receive_data_.bullet_velocity = receive_buff_[14] - 2;` 意思为收到的子弹速度 - 2。方便后面进行进一步处理。
 ### 返回接收到的数据
 
   ```cpp
