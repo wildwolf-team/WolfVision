@@ -434,8 +434,8 @@ class Detector {
 
  private:
   // 卡尔曼滤波器
-  // basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.01f, 0.03f, 1.f, 0.f, 0.f);
-  basic_kalman::Kalman1 buff_filter_ = basic_kalman::Kalman1(0.02f, 0.03f, 1.f, 0.f, 0.f);
+  // basic_kalman::firstKalman buff_filter_ = basic_kalman::firstKalman(0.01f, 0.03f, 1.f, 0.f, 0.f);
+  basic_kalman::firstKalman buff_filter_ = basic_kalman::firstKalman(0.02f, 0.03f, 1.f, 0.f, 0.f);
 
   int   Q                        = 3;
   int   R                        = 2;
