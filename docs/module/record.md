@@ -31,7 +31,7 @@ recorDing(cv::Mat img_)
   | `input_img`         | 相机输入的图像，如：`src_img_`   |
   | `judge`    |判断是否使用录制开关              |
 |`current_mode`| 读取当前模式|
-
+|`img_`| 读取相机输入图像|
 ## 二、自定义函数及参数说明
 
 ---
