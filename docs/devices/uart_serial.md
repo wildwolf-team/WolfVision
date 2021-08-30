@@ -35,7 +35,7 @@
   | `is_shooting`      | 开火命令                       |
   | `_write_data`      | 串口消息发送结构                |
 
-## 二、自定义函数及参数说明
+## 二、自定义函数说明
 
 ### 发送数据
 
@@ -68,5 +68,3 @@
   inline float returnReceivePitch();
   inline float returnReceiveYaw();
   ```
-  设计思路:  
-  接受到的数据进行处理后进行返回。例如:`inline float returnReceivePitch()`返回陀螺仪Pitch轴的数据。可以自己进行修改。
