@@ -17,33 +17,33 @@
 
 在录制模式下调用这个函数即可
 
-  ```cpp
+```cpp
 inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 3, float probability_threshold = 0, cv::Mat Image_input = cv::Mat::zeros(cv::Size(255, 0), CV_8UC3));
-  ```
-  参数解释：
-  |      参数名         |           参数解释             |
-  | ------------------ | -----------------------------|
-  | `hsv_input`         | 传入的二值化图像  |
-  | `median_blur_kernel_size`    |中值滤波size大小默认设置为3          |
-  | `probability_threshold`    |二值化大小设置          |
+```
+参数解释：
+|      参数名         |           参数解释             |
+| ------------------ | -----------------------------|
+| `hsv_input`         | 传入的二值化图像  |
+| `median_blur_kernel_size`    |中值滤波size大小默认设置为3          |
+| `probability_threshold`    |二值化大小设置          |
 | `Image_input`    |原图传入     |
 
 类内调用函数:
-  ```cpp
+```cpp
 model(std::string onnx_model_path, const cv::Size& input_size = cv::Size(28, 28));  // 初始化构造函数加载模型
-  ```
-  参数解释：
-  |      参数名         |           参数解释             |
-  | ------------------ | -----------------------------|
-  | `onnx_model_path`         | 模型路径`./module/ml/mnist-8.onnx`   |
-  | `input_size`    |图像的大小(默认更改为28x28)              |
+```
+参数解释：
+|      参数名         |           参数解释             |
+| ------------------ | -----------------------------|
+| `onnx_model_path`         | 模型路径`./module/ml/mnist-8.onnx`   |
+| `input_size`    |图像的大小(默认更改为28x28)              |
 
 
 ## 二、自定义函数及参数说明
 ### 模型使用函数
 
- ```cpp
- 
+```cpp
+
 /**
 * 
 @brief:  Inferring input image from loaded model, return classified int digit
@@ -54,9 +54,9 @@ model(std::string onnx_model_path, const cv::Size& input_size = cv::Size(28, 28)
 @param:  probability_threshold, the min probability of considerable probability to iterate, determined by the model, mnist-8.onnx has the output array from -1e5 to 1e5, default is 0
 @return: max_probability_idx, the most probable digit classified from input image in int type, -1 means all the probability is out of the threahold
 */
-  inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 3, float probability_threshold = 0, cv::Mat Image_input = cv::Mat::zeros(cv::Size(255, 0), CV_8UC3));
+inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 3, float probability_threshold = 0, cv::Mat Image_input = cv::Mat::zeros(cv::Size(255, 0), CV_8UC3));
 
-  ```
+```
 类内模型调用
 ```cpp
 
@@ -64,5 +64,5 @@ model(std::string onnx_model_path, const cv::Size& input_size = cv::Size(28, 28)
  @brief: Load model from onnx_model_path
 @param: onnx_model_path, the path of the modle on your machine, downloadable at https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx
 */
-  inline void load(std::string onnx_model_path);
+inline void load(std::string onnx_model_path);
 ```
