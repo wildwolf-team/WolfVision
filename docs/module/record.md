@@ -1,4 +1,4 @@
-# record 使用手册
+# Record 使用手册
 ## 一、使用说明
 ### 步骤一：头文件说明
 
@@ -9,7 +9,7 @@
 实例化对象时调用构造函数: `Record(std::string record_path_, std::string path_in, cv::Size size);`
 参数解释:
 - `path_in` 为 `保存路径的变量参数` 的路径地址
-- `record_path_` 为 `xml文件`
+- `record_path_` 为 `xml 文件`
 - `size` 为 `传入的图像大小`
 ### 步骤三：函数说明
 在录制模式下调用这个函数即可。
@@ -31,8 +31,8 @@ void imgRecord(cv::Mat img_);
 ```cpp
 /**
  * @brief  传入图像设置
- * @param input_img    传入图像
- * @param judge        是否录制判断
+ * @param input_img           传入图像
+ * @param judge                     是否录制判断
  * @param current_mode 当前模式输入
  */
 void visionRecord(const cv::Mat input_img, int judge, int current_mode);

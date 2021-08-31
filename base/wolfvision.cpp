@@ -2,6 +2,8 @@
  * @file wolfvision.cpp
  * @author XX (2796393320@qq.com) 
  *         WCJJJ (1767851382@qq.com)
+ *         SMS (2436210442@qq.com)
+ *         SHL (2694359979@qq.com)
  * @brief 主函数
  * @date 2021-08-28
  *
@@ -36,8 +38,8 @@ int main() {
 
   RecordMode::Record record_ = RecordMode::Record(
     fmt::format("{}{}", CONFIG_FILE_PATH, "/record/recordpath_save.yaml"),
-                                                    fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/record.avi"),
-                                                    cv::Size(1280, 800));  // 记得修改分辨率
+        fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/record.avi"),
+        cv::Size(1280, 800));  // 记得修改分辨率
   cv::VideoWriter vw_src;
   cv::FileStorage re_config_get(record_.video_save_path_, cv::FileStorage::READ);
   re_config_get["_PATH"] >> record_.path_;

@@ -41,16 +41,17 @@ class Record {
    * @param judge                        是否录制判断
    * @param current_mode     当前模式输入
    */
-  void visionRecord(const cv::Mat input_img, int judge, int current_mode);
-  cv::VideoWriter vw_image_;           // 录制对象说明
-  int             path_ = 0;                               // 路径计数
-  std::string video_save_path_;       // 路径
+  void            visionRecord(const cv::Mat input_img, int judge, int current_mode);
+  cv::VideoWriter vw_image_;         // 录制对象说明
+  int             path_ = 0;                              // 路径计数
+  int             last_mode_;                         // 记录上次串口模式
+  int             cnt_ = 0;                                 // 记录帧数
+  std::string     video_save_path_;  // 路径
   ModeSet         mode_;
-  int             last_mode_;                        // 记录上次串口模式
-  int             cnt_ = 0;                                // 记录帧数
+
 
  public:
- /**
+  /**
   * @brief 录制函数
   * @param img_                        传入图像
   */
