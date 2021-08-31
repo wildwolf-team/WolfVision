@@ -6,8 +6,7 @@
 - 包含的源文件 `record.cpp`
 ### 步骤二：实例化对象
 
-实例化对象时调用构造函数： `Record(std::string record_path_, std::string path_in, cv::Size size);`
-
+实例化对象时调用构造函数: `Record(std::string record_path_, std::string path_in, cv::Size size);`
 参数解释:
 - `path_in` 为 `保存路径的变量参数` 的路径地址
 - `record_path_` 为 `xml文件`
@@ -23,8 +22,8 @@ void imgRecord(cv::Mat img_);
 | ------------------ | -----------------------------|
 | `input_img`         | 相机输入的图像，如：`src_img_`   |
 | `judge`    |判断是否使用录制开关              |
-|`current_mode`| 读取当前模式|
-|`img_`| 读取相机输入图像|
+| `current_mode`| 读取当前模式|
+| `img_`| 读取相机输入图像|
 ## 二、自定义函数及参数说明
 ### 相机录制函数
 第二个录制函数直接调用接口。
@@ -35,7 +34,6 @@ void imgRecord(cv::Mat img_);
  * @param input_img 传入图像
  * @param judge 是否录制判断
  * @param current_mode 当前模式输入
- * 根据传入的图像和录制视频的判断来进行视频的保存
  */
 void visionRecord(const cv::Mat input_img, int judge, int current_mode);
 ```
@@ -43,7 +41,6 @@ void visionRecord(const cv::Mat input_img, int judge, int current_mode);
 /**
 * @brief 录制函数
 * @param img_ 传入图像
-* 这个函数通过输入的原图像来进行视频的保存
 */ 
 void imgRecord(cv::Mat img_);
 ```
