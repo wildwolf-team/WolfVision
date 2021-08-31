@@ -17,7 +17,7 @@
 void visionRecord(const cv::Mat input_img, int judge, int current_mode);
 void imgRecord(cv::Mat img_);
 ```
-参数解释：
+参数解释： 
 |      参数名         |           参数解释             |
 | ------------------ | -----------------------------|
 | `input_img`         | 相机输入的图像，如: `src_img_`   |
@@ -26,17 +26,13 @@ void imgRecord(cv::Mat img_);
 | `img_`| 读取相机输入图像|
 ## 二、自定义函数说明
 ### 相机录制函数
-第二个录制函数直接调用接口。
-
 ```cpp
-/**
- * @brief  传入图像设置
- * @param input_img           传入图像
- * @param judge                     是否录制判断
- * @param current_mode 当前模式输入
- */
 void visionRecord(const cv::Mat input_img, int judge, int current_mode);
 ```
+设计思路:  
+根据传入的相机原图，录制开关的控制来写保存小电脑读取的视频  。
+
+### 录制函数直接调用接口。
 ```cpp
 /**
 * @brief 录制函数
@@ -44,4 +40,7 @@ void visionRecord(const cv::Mat input_img, int judge, int current_mode);
 */ 
 void imgRecord(cv::Mat img_);
 ```
+设计思路:  
+直接调用这个函数传入相机读取到的原图像进行录制一边便在赛场上测试参数。
+
 ps:本模块功能还在改进完善当中,在赛场并未使用。
