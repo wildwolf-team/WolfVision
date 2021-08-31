@@ -46,4 +46,4 @@ inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size
 inline void load(std::string onnx_model_path);
 ```
 设计思路:  
-输入训练好的模型路径并且加载对传入的装甲板对象进行识别
+输入训练好的模型路径并且加载对传入的装甲板对象进行识别。

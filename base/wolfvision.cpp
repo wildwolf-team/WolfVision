@@ -113,7 +113,7 @@ int main() {
         break;
       // 录制视频
       case uart::RECORD_MODE:
-        vw_src << src_img_;
+      vw_src << src_img_;
         break;
       // 无人机模式（空缺）
       case uart::PLANE_MODE:
