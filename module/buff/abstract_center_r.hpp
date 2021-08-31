@@ -1,6 +1,6 @@
 /**
  * @file abstract_center_r.hpp
- * @author WCJJJ (1767851382@qq.com)
+ * @author WCJ (1767851382@qq.com)
  * @brief 圆心 R 类
  * @date 2021-08-24
  * 
