@@ -66,8 +66,6 @@ class model{
 @param:  probability_threshold, the min probability of considerable probability to iterate, determined by the model, mnist-8.onnx has the output array from -1e5 to 1e5, default is 0
 @return: max_probability_idx, the most probable digit classified from input image in int type, -1 means all the probability is out of the threahold
 */
-/*/ inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 5, const cv::Scalar& hsv_lowerb = cv::Scalar(), 
-                                              const cv::Scalar& hsv_upperb = cv::Scalar(), const float probability_threshold = 0) */
   inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 3, float probability_threshold = 0, cv::Mat image_input = cv::Mat::zeros(cv::Size(255, 0), CV_8UC3)) {
     cv::resize(hsv_input, Image_output, input_size);
     this->Image_showput = image_input.clone();
