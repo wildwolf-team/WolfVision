@@ -1,6 +1,6 @@
 /**
  * @file fan_armor.cpp
- * @author WCJJJ (1767851382@qq.com)
+ * @author WCJ (1767851382@qq.com)
  * @brief 扇叶装甲板类
  * @date 2021-08-24
  * 
