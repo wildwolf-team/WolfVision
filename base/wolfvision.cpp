@@ -39,12 +39,10 @@ int main() {
                                                     fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/1.avi"),
                                                     cv::Size(1280, 800));  // 记得修改分辨率
   cv::VideoWriter vw_src;
-  std::ostringstream   s_src;  // 构造输出流对象
   cv::FileStorage re_config_get(record_.video_save_path_, cv::FileStorage::READ);
   re_config_get["_PATH"] >> record_.path_;
-  s_src << CONFIG_FILE_PATH << "/record/" << ++record_.path_ << ".avi";
-  vw_src.open(s_src.str(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 66, cv::Size(1280, 800), true);
-
+  vw_src.open((CONFIG_FILE_PATH + '/record/' + (record_.path_) + '.avi'), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 66, cv::Size(1280, 800), true);
+  
   basic_roi::RoI save_roi;
   fps::FPS       global_fps_;
 
