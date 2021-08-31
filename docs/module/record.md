@@ -34,10 +34,6 @@ void visionRecord(const cv::Mat input_img, int judge, int current_mode);
 
 ### 录制函数直接调用接口。
 ```cpp
-/**
-* @brief 录制函数
-* @param img_ 传入图像
-*/ 
 void imgRecord(cv::Mat img_);
 ```
 设计思路:  
