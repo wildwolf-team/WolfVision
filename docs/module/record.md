@@ -1,24 +1,42 @@
-### 视频录制文件添加
-------------------------------------
+# Record 使用手册
+## 一、使用说明
+### 步骤一：头文件说明
 
-### 修改步骤
-### 1 修改对应的分辨率
-| 相机 | 小电脑 |
-|   ---   |    ---      |
-| 1280 x 800 | 640 x 480|
+- 包含头文件 ` record.hpp`
+- 包含的源文件 `record.cpp`
+### 步骤二：实例化对象
 
-### 2 打开对应的开关
-#### 打开record.yaml(/config/record/record_mode.yaml)
->RECORD_MODE------------------------------录制模式<br>
->RECORD_SWITCH ---------------------------------开关<br>
->PATH_ ------------------------------------------位置存放<br>
->VISION_ELECTRONIC_LOCK---视觉电控控制开关<br>
+实例化对象时调用构造函数: `Record(std::string record_path_, std::string path_in, cv::Size size);`
+参数解释:
+- `path_in` 为 `保存路径的变量参数` 的路径地址
+- `record_path_` 为 `xml 文件`
+- `size` 为 `传入的图像大小`
+### 步骤三：函数说明
+在录制模式下调用这个函数即可。
+```cpp
+void visionRecord(const cv::Mat input_img, int judge, int current_mode);
+void imgRecord(cv::Mat img_);
+```
+参数解释： 
+|      参数名         |           参数解释             |
+| ------------------ | -----------------------------|
+| `input_img`         | 相机输入的图像，如: `src_img_`   |
+| `judge`    |判断是否使用录制开关              |
+| `current_mode`| 读取当前模式|
+| `img_`| 读取相机输入图像|
+## 二、自定义函数说明
+### 相机录制函数
+```cpp
+void visionRecord(const cv::Mat input_img, int judge, int current_mode);
+```
+设计思路:  
+根据传入的相机原图，录制开关的控制来写保存小电脑读取的视频  。
 
-* **录制的时候默认为1即可**
-### **具体说明**：
-#### 1 串口按键<br> 串口输入<u>5</u>为录制开始，切换为其他的模式可以停止录制
-#### 2 视觉控制按键<br><u>'s'</u> 开始录制 <br><u>'e'</u>结束录制 
+### 录制函数直接调用接口。
+```cpp
+void imgRecord(cv::Mat img_);
+```
+设计思路:  
+直接调用这个函数传入相机读取到的原图像进行录制一边便在赛场上测试参数。
 
-
-### **待修改之处**：
-**Debuging**
+ps:本模块功能还在改进完善当中,在赛场并未使用。

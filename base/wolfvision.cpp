@@ -1,7 +1,9 @@
 /**
  * @file wolfvision.cpp
  * @author XX (2796393320@qq.com) 
- *         WCJJJ (1767851382@qq.com)
+ *         WCJ (1767851382@qq.com)
+ *         SMS (2436210442@qq.com)
+ *         SHL (2694359979@qq.com)
  * @brief 主函数
  * @date 2021-08-28
  *
@@ -34,11 +36,14 @@ int main() {
   onnx_inferring::model model_ = onnx_inferring::model(
     fmt::format("{}{}", SOURCE_PATH, "/module/ml/mnist-8.onnx"));
 
-  Record_mode::Record record_ = Record_mode::Record(
-    fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_mode.yaml"),
-                                                    fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/" + to_string(record_.Path_H) + ".avi"),
-                                                    cv::Size(1280, 800));  // 记得修改分辨率
-
+  RecordMode::Record record_ = RecordMode::Record(
+    fmt::format("{}{}", CONFIG_FILE_PATH, "/record/recordpath_save.yaml"),
+        fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/record.avi"),
+        cv::Size(1280, 800));  // 记得修改分辨率
+  cv::VideoWriter vw_src;
+  cv::FileStorage re_config_get(record_.video_save_path_, cv::FileStorage::READ);
+  re_config_get["_PATH"] >> record_.path_;
+  vw_src.open(CONFIG_FILE_PATH + '/record/' + record_.path_+ '.avi', cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 66, cv::Size(1280, 800), true);
   basic_roi::RoI save_roi;
   fps::FPS       global_fps_;
 
@@ -108,11 +113,10 @@ int main() {
         break;
       // 录制视频
       case uart::RECORD_MODE:
-        record_.Rmode_current = 5;
+      vw_src << src_img_;
         break;
       // 无人机模式（空缺）
       case uart::PLANE_MODE:
-
         break;
       // 哨兵模式（添加数字识别便于区分工程和其他车辆）
       case uart::SENTINEL_AUTONOMOUS_MODE:
@@ -152,7 +156,6 @@ int main() {
         break;
       // 雷达模式
       case uart::RADAR_MODE:
-        record_.RecordIng(src_img_);
         break;
       // 默认进入基础自瞄
       default:
@@ -163,9 +166,10 @@ int main() {
         break;
       }
     }
-    if (record_.Return_switch()) {
-      record_.Vision_judge(src_img_, cv::waitKey(1), serial_.returnReceiveMode());
+    if (record_.last_mode_ != uart::RECORD_MODE && serial_.returnReceiveMode() == uart::RECORD_MODE) {
+      vw_src.release();
     }
+    record_.last_mode_ = serial_.returnReceiveMode();
     // 非击打哨兵模式时初始化
     if (serial_.returnReceiveMode() != uart::SENTRY_STRIKE_MODE) {
       basic_armor_.initializationSentryMode();
@@ -178,7 +182,6 @@ int main() {
     if (cv::waitKey(1) == 'q') {
       return 0;
     }
-
 #else
     usleep(1);
 #endif

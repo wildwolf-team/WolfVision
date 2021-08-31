@@ -40,11 +40,11 @@ class Number_Param{
 };
 class model{
  public:
-  /**
-         @brief: Init model from params
-         @param: onnx_model_path, the path of the modle on your machine, downloadable at https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx
-         @param: input_size, define the input layer size, default to cv::Size(28, 28)
-         */
+/**
+ @brief: Init model from params
+@param: onnx_model_path, the path of the modle on your machine, downloadable at https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx
+@param: input_size, define the input layer size, default to cv::Size(28, 28)
+*/
   inline explicit model(std::string onnx_model_path, const cv::Size& input_size = cv::Size(28, 28)) {
     model::load(onnx_model_path);
     model::layers();
@@ -57,20 +57,18 @@ class model{
                                                   fmt::format("{}{}", CONFIG_FILE_PATH, "/ml/onnx_inferring_config.xml"));
   bool parma_case;
   ~model() {Image_showput.release();}
-  /**
-         @brief:  Inferring input image from loaded model, return classified int digit
-         @param:  input, the image to classify (only 1 digit), const reference from cv::Mat
-         @param:  median_blur_kernel_size, define the kernel size of median blur pre-processing, default to int 5, set 0 to disable
-         @param:  hsv_lowerb, the lower range for hsv image, pixels inside the range equals to 1, otherwise equals to 0, default is the cv::Scalar() default
-         @param:  hsv_upperb, the upper range for hsv image, pixels inside the range equals to 1, otherwise equals to 0, default is the cv::Scalar() default
-         @param:  probability_threshold, the min probability of considerable probability to iterate, determined by the model, mnist-8.onnx has the output array from -1e5 to 1e5, default is 0
-         @return: max_probability_idx, the most probable digit classified from input image in int type, -1 means all the probability is out of the threahold
-         */
-  /*/ inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 5, const cv::Scalar& hsv_lowerb = cv::Scalar(), 
-                                                 const cv::Scalar& hsv_upperb = cv::Scalar(), const float probability_threshold = 0) */
-  inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 3, float probability_threshold = 0, cv::Mat Image_input = cv::Mat::zeros(cv::Size(255, 0), CV_8UC3)) {
+/**
+ @brief:  Inferring input image from loaded model, return classified int digit
+@param:  input, the image to classify (only 1 digit), const reference from cv::Mat
+@param:  median_blur_kernel_size, define the kernel size of median blur pre-processing, default to int 5, set 0 to disable
+@param:  hsv_lowerb, the lower range for hsv image, pixels inside the range equals to 1, otherwise equals to 0, default is the cv::Scalar() default
+@param:  hsv_upperb, the upper range for hsv image, pixels inside the range equals to 1, otherwise equals to 0, default is the cv::Scalar() default
+@param:  probability_threshold, the min probability of considerable probability to iterate, determined by the model, mnist-8.onnx has the output array from -1e5 to 1e5, default is 0
+@return: max_probability_idx, the most probable digit classified from input image in int type, -1 means all the probability is out of the threahold
+*/
+  inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size = 3, float probability_threshold = 0, cv::Mat image_input = cv::Mat::zeros(cv::Size(255, 0), CV_8UC3)) {
     cv::resize(hsv_input, Image_output, input_size);
-    this->Image_showput = Image_input.clone();
+    this->Image_showput = image_input.clone();
     cv::namedWindow("数字number");
     cv::createTrackbar("h_min_num", "数字number", &param_ocr.h_min_num, 255, NULL);
     cv::createTrackbar("s_min_num", "数字number", &param_ocr.s_min_num, 255, NULL);
@@ -121,9 +119,9 @@ class model{
 
  protected:
   /*
-         @brief: Load model from onnx_model_path
-         @param: onnx_model_path, the path of the modle on your machine, downloadable at https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx
-         */
+  @brief: Load model from onnx_model_path
+  @param: onnx_model_path, the path of the modle on your machine, downloadable at https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx
+  */
   inline void load(std::string onnx_model_path) {
     std::cout << "[OOI] opencv version: " << cv::getVersionString() << std::endl;
 
