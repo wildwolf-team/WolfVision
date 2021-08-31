@@ -55,6 +55,6 @@ class Record {
   * @param img_ 传入图像
   * 
   */
-  void recorDing(cv::Mat img_);
+  void imgRecord(cv::Mat img_);
 };
 }  // namespace RecordMode

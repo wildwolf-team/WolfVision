@@ -34,14 +34,15 @@ int main() {
   onnx_inferring::model model_ = onnx_inferring::model(
     fmt::format("{}{}", SOURCE_PATH, "/module/ml/mnist-8.onnx"));
 
-  RecordMode::ReCord record_ = RecordMode::ReCord(
-    fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_mode.yaml"),
+  RecordMode::Record record_ = RecordMode::Record(
+    fmt::format("{}{}", CONFIG_FILE_PATH, "/record/recordpath_save.yaml"),
                                                     fmt::format("{}{}", CONFIG_FILE_PATH, "/record/record_packeg/1.avi"),
                                                     cv::Size(1280, 800));  // 记得修改分辨率
   cv::VideoWriter vw_src;
-  ostringstream   s_src;  // 构造输出流对象
-  vw_src << src_img_;
-  s_src << CONFIG_FILE_PATH <<"/" << ++record_.path_ << ".avi";
+  std::ostringstream   s_src;  // 构造输出流对象
+  cv::FileStorage re_config_get(record_.video_save_path_, cv::FileStorage::READ);
+  re_config_get["_PATH"] >> record_.path_;
+  s_src << CONFIG_FILE_PATH << "/record/" << ++record_.path_ << ".avi";
   vw_src.open(s_src.str(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 66, cv::Size(1280, 800), true);
 
   basic_roi::RoI save_roi;
@@ -117,7 +118,6 @@ int main() {
         break;
       // 无人机模式（空缺）
       case uart::PLANE_MODE:
-
         break;
       // 哨兵模式（添加数字识别便于区分工程和其他车辆）
       case uart::SENTINEL_AUTONOMOUS_MODE:
@@ -169,7 +169,6 @@ int main() {
     }
     if (record_.last_mode_ != uart::RECORD_MODE && serial_.returnReceiveMode() == uart::RECORD_MODE) {
       vw_src.release();
-      fmt::print("VideoWriter ended");
     }
     record_.last_mode_ = serial_.returnReceiveMode();
     // 非击打哨兵模式时初始化
@@ -184,7 +183,6 @@ int main() {
     if (cv::waitKey(1) == 'q') {
       return 0;
     }
-
 #else
     usleep(1);
 #endif
