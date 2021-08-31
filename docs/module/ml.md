@@ -57,8 +57,9 @@ inline int inferring(const cv::Mat& hsv_input, const int median_blur_kernel_size
 ### 模型加载
 ```cpp
 /**
- @brief: Load model from onnx_model_path
-@param: onnx_model_path the path of the modle on your machine, downloadable at https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx
+@brief: Load model from onnx_model_path
+@param: onnx_model_path，
+   the path of the modle on your machine, downloadable at https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx
 */
 inline void load(std::string onnx_model_path);
 ```
