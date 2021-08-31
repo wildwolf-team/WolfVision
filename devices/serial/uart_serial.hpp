@@ -1,7 +1,7 @@
 /**
  * @file uart_serial.hpp
  * @author WCJ(1767851382@qq.com) 
- *         XX（2796393320@qq.com）
+ *         XX (2796393320@qq.com)
  *         HZK
  *         RCX
  * @brief  串口通讯
