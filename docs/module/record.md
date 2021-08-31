@@ -31,8 +31,8 @@ void imgRecord(cv::Mat img_);
 ```cpp
 /**
  * @brief  传入图像设置
- * @param input_img 传入图像
- * @param judge 是否录制判断
+ * @param input_img    传入图像
+ * @param judge        是否录制判断
  * @param current_mode 当前模式输入
  */
 void visionRecord(const cv::Mat input_img, int judge, int current_mode);
