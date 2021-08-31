@@ -4,11 +4,11 @@
 ### 步骤一：头文件说明
 
 - 包含头文件 `onxx_inferring.hpp`
-- 包含的源文件 `onnx-inferring.cpp`
+- 包含的源文件 `onnx_inferring.cpp`
 - 包含的模型 `minist-8.onnx`
 ### 步骤二：实例化对象
 
-实例化对象时调用构造函数：`inline explicit model(std::string onnx_model_path, const cv::Size& input_size = cv::Size(28, 28));`
+实例化对象时调用构造函数：`inline explicit model(std::string onnx_model_path, const cv::Size& input_size = cv::Size(28, 28))`
 
 参数解释:
 - `onnx_model_path` 为 `模型路径` 的路径地址
