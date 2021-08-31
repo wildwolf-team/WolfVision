@@ -1,7 +1,7 @@
 /**
  * @file wolfvision.cpp
  * @author XX (2796393320@qq.com) 
- *         WCJJJ (1767851382@qq.com)
+ *         WCJ (1767851382@qq.com)
  *         SMS (2436210442@qq.com)
  *         SHL (2694359979@qq.com)
  * @brief 主函数
