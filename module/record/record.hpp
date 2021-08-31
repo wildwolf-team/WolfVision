@@ -43,12 +43,12 @@ class Record {
    */
   void visionRecord(const cv::Mat input_img, int judge, int current_mode);
 
-  int             path_ = 0;                             // 路径计数
-  int             last_mode_;                       // 记录上次串口模式
-  int             cnt_ = 0;                                // 记录帧数
-  cv::VideoWriter vw_image_;          // 录制对象说明
-  std::string     video_save_path_;   // 路径
-  ModeSet         mode_;
+  int             path_ = 0;                                       // 路径计数
+  int             last_mode_;                                 // 记录上次串口模式
+  int             cnt_ = 0;                                         // 记录帧数
+  cv::VideoWriter vw_image_;                 // 录制对象说明
+  std::string            video_save_path_;   // 路径
+  ModeSet               mode_;
 
  public:
   /**
