@@ -1,6 +1,6 @@
 /**
  * @file   basic_kalman.hpp
- * @author SHLLL (2694359979@qq.com)
+ * @author SHL (2694359979@qq.com)
  * @brief  卡尔曼滤波类
  * @date   2021-08-28
  * 
