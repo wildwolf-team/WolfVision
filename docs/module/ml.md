@@ -32,7 +32,7 @@ model(std::string onnx_model_path, const cv::Size& input_size = cv::Size(28, 28)
 |      参数名         |           参数解释             |
 | ------------------ | -----------------------------|
 | `onnx_model_path`         | 模型路径 `./module/ml/mnist-8.onnx`   |
-| `input_size`    |图像的大小(默认更改为 28 x 28)              |
+| `input_size`    | 图像的大小(默认更改为 28 x 28 )              |
 ## 二、自定义函数说明
 ### 模型调用函数
 ```cpp
