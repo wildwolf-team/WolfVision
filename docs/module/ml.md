@@ -12,7 +12,7 @@
 
 参数解释:
 - `onnx_model_path` 为 `模型路径` 的路径地址
-- `input_size` 为 `传入图像的大小 (28x28); `
+- `input_size` 为 `传入图像的大小(28x28)`
 ### 步骤三：函数说明
 在录制模式下调用这个函数。
 ```cpp
@@ -34,7 +34,7 @@ model(std::string onnx_model_path, const cv::Size& input_size = cv::Size(28, 28)
 |      参数名         |           参数解释             |
 | ------------------ | -----------------------------|
 | `onnx_model_path`         | 模型路径`./module/ml/mnist-8.onnx`   |
-| `input_size`    |图像的大小(默认更改为 28x28 )              |
+| `input_size`    |图像的大小(默认更改为 28 x 28)              |
 ## 二、自定义函数及参数说明
 ### 模型调用函数
 ```cpp
