@@ -281,7 +281,8 @@ class PnP {
     for (size_t i = 0; i != 20; ++i) {
       a = static_cast<float>(atan2(y_temp, _dist));
       // 子弹飞行时间
-      float t = _dist / _ballet_speed * cos(a);
+      float t =  (float((exp( 0.1 * _dist)-1) / ( 0.1 * _dist * _ballet_speed * cos(a))));
+      // float t = _dist / _ballet_speed * cos(a);
 
       y_actual  = _ballet_speed * sin(a) * t - gravity * t * t / 2;
       dy        = _tvec_y - y_actual;
