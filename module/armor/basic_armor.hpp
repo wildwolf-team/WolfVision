@@ -308,7 +308,9 @@ class Detector {
    * @param _bin_color_img  图片二
    * @return cv::Mat        返回合并后的图片
    */
-  cv::Mat fuseImage(const cv::Mat _bin_gray_img, const cv::Mat _bin_color_img);
+  cv::Mat fuseImage(const cv::Mat _bin_gray_img, const cv::Mat _bin_color_img, const cv::Mat _bin_while_img);
+
+  cv::Mat whilePretreat(const cv::Mat& _src_img);
 
  private:
   // 读取 xml 文件参数
@@ -318,16 +320,20 @@ class Detector {
   Armor_Data   armor_data_;
 
   basic_kalman::firstKalman kalman_ = basic_kalman::firstKalman();
-  cv::Mat frame;
-  cv::Mat draw_img_;
-  cv::Mat gray_img_;
-  cv::Mat hsv_img;
-  cv::Mat bin_gray_img;
-  cv::Mat bin_red_gray_img;
-  cv::Mat bin_blue_gray_img;
-  cv::Mat bin_color_img;
-  cv::Mat bin_red_color_img;
-  cv::Mat bin_blue_color_img;
+  cv::Mat                   frame;
+  cv::Mat                   draw_img_;
+  cv::Mat                   gray_img_;
+  cv::Mat                   while_img_;
+  cv::Mat                   hsv_img;
+  cv::Mat                   bin_gray_img;
+  cv::Mat                   bin_red_gray_img;
+  cv::Mat                   bin_blue_gray_img;
+  cv::Mat                   bin_color_img;
+  cv::Mat                   bin_red_color_img;
+  cv::Mat                   bin_blue_color_img;
+  cv::Mat                   bin_red_green_img;
+  cv::Mat                   bin_blue_green_img;
+  cv::Mat                   gray_while_img_;
   // 滑动条窗口
   const cv::Mat light_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);
   const cv::Mat armor_trackbar_  = cv::Mat::zeros(1, 300, CV_8UC1);

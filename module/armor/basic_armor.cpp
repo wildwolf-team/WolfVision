@@ -524,27 +524,33 @@ int Detector::averageColor() {
   return average_intensity;
 }
 
-void Detector::runImage(const cv::Mat&  _src_img,
-                        const int       _my_color) {
+void Detector::runImage(const cv::Mat& _src_img, const int _my_color) {
   // 选择预处理类型（ BGR / HSV ）
   switch (image_config_.method) {
-    case 0:
-      bin_color_img = fuseImage(grayPretreat(_src_img, _my_color),
-                                bgrPretreat(_src_img, _my_color));
-      break;
-    default:
-      bin_color_img = fuseImage(grayPretreat(_src_img, _my_color),
-                                hsvPretreat(_src_img, _my_color));
-      break;
+  case 0:
+    bin_color_img = fuseImage(grayPretreat(_src_img, _my_color), 
+                              bgrPretreat(_src_img, _my_color), whilePretreat(_src_img));
+    break;
+  default:
+    bin_color_img = fuseImage(grayPretreat(_src_img, _my_color), 
+                              hsvPretreat(_src_img, _my_color), whilePretreat(_src_img));
+    break;
   }
 }
 
-cv::Mat Detector::fuseImage(const cv::Mat _bin_gray_img,
-                            const cv::Mat _bin_color_img) {
+cv::Mat Detector::fuseImage(const cv::Mat _bin_gray_img, const cv::Mat _bin_color_img, const cv::Mat _while_img) {
   cv::bitwise_and(_bin_color_img, _bin_gray_img, _bin_color_img);
+  cv::bitwise_and(_bin_color_img, _while_img, _bin_color_img);
   cv::morphologyEx(_bin_color_img, _bin_color_img, cv::MORPH_DILATE, ele_);
-  cv::medianBlur(_bin_color_img, _bin_color_img, 3);
+  cv::medianBlur(_bin_color_img, _bin_color_img, 5);
   return _bin_color_img;
+}
+
+inline cv::Mat Detector::whilePretreat(const cv::Mat& _src_img) {
+  cv::cvtColor(_src_img, gray_while_img_, cv::COLOR_BGR2GRAY);
+  cv::threshold(gray_while_img_, while_img_, 240, 255, cv::THRESH_BINARY);
+  cv::bitwise_not(while_img_, while_img_);
+  return while_img_;
 }
 
 inline cv::Mat Detector::grayPretreat(const cv::Mat& _src_img,
@@ -603,62 +609,72 @@ inline cv::Mat Detector::grayPretreat(const cv::Mat& _src_img,
   return bin_gray_img;
 }
 
-inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img,
-                                     const int      _my_color) {
+inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img, const int _my_color) {
   static std::vector<cv::Mat> _split;
   static cv::Mat              bin_color_img;
+  static cv::Mat              bin_color_green_img;
 
   cv::split(_src_img, _split);
 
   std::string window_name = {"[basic_armor] brgPretreat() -> color_trackbar"};
   switch (_my_color) {
-    case uart::RED:
-      // my_color 为红色，则处理蓝色的情况
-      cv::subtract(_split[0], _split[2], bin_color_img);
+  case uart::RED:
+    // my_color 为红色，则处理蓝色的情况
+    cv::subtract(_split[0], _split[2], bin_color_img);
+    cv::subtract(_split[0], _split[1], bin_color_green_img);
 
-      if (image_config_.color_edit) {
-        cv::namedWindow(window_name);
-        cv::createTrackbar("blue_color_th", window_name,
-                           &image_config_.blue_armor_color_th, 255, NULL);
-        cv::imshow(window_name, this->bgr_trackbar_);
-      }
+    if (image_config_.color_edit) {
+      cv::namedWindow(window_name);
+      cv::createTrackbar("blue_color_th", window_name,
+                         &image_config_.blue_armor_color_th, 255, NULL);
+      cv::imshow(window_name, this->bgr_trackbar_);
+    }
 
-      cv::threshold(bin_color_img, bin_color_img,
-                    image_config_.blue_armor_color_th, 255, cv::THRESH_BINARY);
-      break;
-    case uart::BLUE:
-      // my_color 为蓝色，则处理红色的情况
-      cv::subtract(_split[2], _split[0], bin_color_img);
+    cv::threshold(bin_color_img, bin_color_img, image_config_.blue_armor_color_th, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_color_green_img, bin_color_green_img, 10, 255, cv::THRESH_BINARY);
+    cv::dilate(bin_color_green_img, bin_color_green_img, ele_);
+    cv::bitwise_and(bin_color_green_img, bin_color_img, bin_color_img);
+    break;
+  case uart::BLUE:
+    // my_color 为蓝色，则处理红色的情况
+    cv::subtract(_split[2], _split[0], bin_color_img);
+    cv::subtract(_split[2], _split[1], bin_color_green_img);
 
-      if (image_config_.color_edit) {
-        cv::namedWindow(window_name);
-        cv::createTrackbar("red_color_th", window_name,
-                           &image_config_.red_armor_color_th, 255, NULL);
-        cv::imshow(window_name, this->bgr_trackbar_);
-      }
+    if (image_config_.color_edit) {
+      cv::namedWindow(window_name);
+      cv::createTrackbar("red_color_th", window_name,
+                         &image_config_.red_armor_color_th, 255, NULL);
+      cv::imshow(window_name, this->bgr_trackbar_);
+    }
 
-      cv::threshold(bin_color_img, bin_color_img,
-                    image_config_.red_armor_color_th, 255, cv::THRESH_BINARY);
-      break;
-    default:
-      // my_color 为默认值，则处理红蓝双色的情况
-      cv::subtract(_split[2], _split[0], bin_red_color_img);
-      cv::subtract(_split[0], _split[2], bin_blue_color_img);
+    cv::threshold(bin_color_img, bin_color_img, image_config_.red_armor_color_th, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_color_green_img, bin_color_green_img, 10, 255, cv::THRESH_BINARY);
+    cv::dilate(bin_color_green_img, bin_color_green_img, ele_);
+    cv::bitwise_and(bin_color_green_img, bin_color_img, bin_color_img);
+    break;
+  default:
+    // my_color 为默认值，则处理红蓝双色的情况
+    cv::subtract(_split[2], _split[0], bin_red_color_img);
+    cv::subtract(_split[0], _split[2], bin_blue_color_img);
+    cv::subtract(_split[2], _split[1], bin_red_green_img);
+    cv::subtract(_split[0], _split[1], bin_blue_green_img);
 
-      if (image_config_.color_edit) {
-        cv::namedWindow(window_name);
-        cv::createTrackbar("red_color_th", window_name,
-                           &image_config_.red_armor_color_th, 255, NULL);
-        cv::createTrackbar("blue_color_th", window_name,
-                           &image_config_.blue_armor_color_th, 255, NULL);
-        cv::imshow(window_name, this->bgr_trackbar_);
-      }
-      cv::threshold(bin_blue_color_img, bin_blue_color_img,
-                    image_config_.blue_armor_color_th, 255, cv::THRESH_BINARY);
-      cv::threshold(bin_red_color_img, bin_red_color_img,
-                    image_config_.red_armor_color_th, 255, cv::THRESH_BINARY);
-      cv::bitwise_or(bin_blue_color_img, bin_red_color_img, bin_color_img);
-      break;
+    if (image_config_.color_edit) {
+      cv::namedWindow(window_name);
+      cv::createTrackbar("red_color_th", window_name,
+                         &image_config_.red_armor_color_th, 255, NULL);
+      cv::createTrackbar("blue_color_th", window_name,
+                         &image_config_.blue_armor_color_th, 255, NULL);
+      cv::imshow(window_name, this->bgr_trackbar_);
+    }
+    cv::threshold(bin_blue_color_img, bin_blue_color_img, image_config_.blue_armor_color_th, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_blue_green_img, bin_blue_green_img, 20, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_red_color_img, bin_red_color_img, image_config_.red_armor_color_th, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_red_green_img, bin_red_green_img, 20, 255, cv::THRESH_BINARY);
+    cv::bitwise_or(bin_blue_color_img, bin_red_color_img, bin_color_img);
+    cv::bitwise_or(bin_blue_green_img, bin_red_green_img, bin_color_green_img);
+    cv::bitwise_and(bin_color_img, bin_color_green_img, bin_color_img);
+    break;
   }
 
   if (image_config_.color_edit) {
