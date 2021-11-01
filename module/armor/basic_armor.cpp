@@ -21,8 +21,10 @@ Detector::Detector(const std::string _armor_config) {
   fs_armor["RED_ARMOR_GRAY_TH"]  >> image_config_.red_armor_gray_th;
 
   if (image_config_.method == 0) {
-    fs_armor["RED_ARMOR_COLOR_TH"]  >> image_config_.red_armor_color_th;
-    fs_armor["BLUE_ARMOR_COLOR_TH"] >> image_config_.blue_armor_color_th;
+    fs_armor["RED_ARMOR_COLOR_TH"]   >> image_config_.red_armor_color_th;
+    fs_armor["BLUE_ARMOR_COLOR_TH"]  >> image_config_.blue_armor_color_th;
+    fs_armor["GREEN_ARMOR_COLOR_TH"] >> image_config_.green_armor_color_th;
+    fs_armor["WHILE_ARMOR_COLOR_TH"] >> image_config_.while_armor_color_th;
   } else {
     fs_armor["H_RED_MIN"] >> image_config_.h_red_min;
     fs_armor["H_RED_MAX"] >> image_config_.h_red_max;
@@ -548,7 +550,7 @@ cv::Mat Detector::fuseImage(const cv::Mat _bin_gray_img, const cv::Mat _bin_colo
 
 inline cv::Mat Detector::whilePretreat(const cv::Mat& _src_img) {
   cv::cvtColor(_src_img, gray_while_img_, cv::COLOR_BGR2GRAY);
-  cv::threshold(gray_while_img_, while_img_, 240, 255, cv::THRESH_BINARY);
+  cv::threshold(gray_while_img_, while_img_, image_config_.while_armor_color_th, 255, cv::THRESH_BINARY);
   cv::bitwise_not(while_img_, while_img_);
   return while_img_;
 }
@@ -631,7 +633,7 @@ inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img, const int _my_colo
     }
 
     cv::threshold(bin_color_img, bin_color_img, image_config_.blue_armor_color_th, 255, cv::THRESH_BINARY);
-    cv::threshold(bin_color_green_img, bin_color_green_img, 10, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_color_green_img, bin_color_green_img, image_config_.green_armor_color_th, 255, cv::THRESH_BINARY);
     cv::dilate(bin_color_green_img, bin_color_green_img, ele_);
     cv::bitwise_and(bin_color_green_img, bin_color_img, bin_color_img);
     break;
@@ -648,7 +650,7 @@ inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img, const int _my_colo
     }
 
     cv::threshold(bin_color_img, bin_color_img, image_config_.red_armor_color_th, 255, cv::THRESH_BINARY);
-    cv::threshold(bin_color_green_img, bin_color_green_img, 10, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_color_green_img, bin_color_green_img, image_config_.green_armor_color_th, 255, cv::THRESH_BINARY);
     cv::dilate(bin_color_green_img, bin_color_green_img, ele_);
     cv::bitwise_and(bin_color_green_img, bin_color_img, bin_color_img);
     break;
@@ -668,9 +670,9 @@ inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img, const int _my_colo
       cv::imshow(window_name, this->bgr_trackbar_);
     }
     cv::threshold(bin_blue_color_img, bin_blue_color_img, image_config_.blue_armor_color_th, 255, cv::THRESH_BINARY);
-    cv::threshold(bin_blue_green_img, bin_blue_green_img, 20, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_blue_green_img, bin_blue_green_img, image_config_.green_armor_color_th, 255, cv::THRESH_BINARY);
     cv::threshold(bin_red_color_img, bin_red_color_img, image_config_.red_armor_color_th, 255, cv::THRESH_BINARY);
-    cv::threshold(bin_red_green_img, bin_red_green_img, 20, 255, cv::THRESH_BINARY);
+    cv::threshold(bin_red_green_img, bin_red_green_img, image_config_.green_armor_color_th, 255, cv::THRESH_BINARY);
     cv::bitwise_or(bin_blue_color_img, bin_red_color_img, bin_color_img);
     cv::bitwise_or(bin_blue_green_img, bin_red_green_img, bin_color_green_img);
     cv::bitwise_and(bin_color_img, bin_color_green_img, bin_color_img);
