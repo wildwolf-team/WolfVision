@@ -31,7 +31,7 @@ auto idntifier_red   = fmt::format(fg(fmt::color::red)   | fmt::emphasis::bold, 
 
 enum BufferLength {
   // The recieve length of the array obtained after decoding
-  REC_INFO_LENGTH   = 16,
+  REC_INFO_LENGTH   = 18,
 
   // The send length of the array for CRC auth code code calculating
   CRC_BUFF_LENGTH   = 11,
@@ -88,7 +88,6 @@ struct Receive_Data {
   int   now_run_mode;
   int   my_robot_id;
   int   bullet_velocity;
-  float acceleration;
 
   // Description of the yaw axis angle of the gyroscope (signed)
   union Receive_Yaw_Angle_Information {
@@ -96,20 +95,32 @@ struct Receive_Data {
     uint8_t arr_yaw_angle[4] = {0};
   } Receive_Yaw_Angle_Info;
 
+  union Receive_Yaw_Velocity_Information
+  {
+    float   yaw_veloctiy;
+    uint8_t arr_yaw_velocity[2] = {0};
+  } Receive_Yaw_Velocity_Info;
+
   // Description of the pitch axis angle of the gyroscope (signed)
   union Receive_Pitch_Angle_Information {
     float   pitch_angle;
     uint8_t arr_pitch_angle[4] = {0};
   } Receive_Pitch_Angle_Info;
 
+  union Receive_Pitch_Velocity_Information {
+    float   pitch_veloctiy;
+    uint8_t arr_pitch_velocity[2] = {0};
+  } Receive_Pitch_Velocity_Info;
+
   Receive_Data() {
-    my_color                             = ALL;
-    now_run_mode                         = SUP_SHOOT;
-    my_robot_id                          = INFANTRY;
-    acceleration                         = 0.f;
-    bullet_velocity                      = 30;
-    Receive_Yaw_Angle_Info.yaw_angle     = 0.f;
-    Receive_Pitch_Angle_Info.pitch_angle = 0.f;
+    my_color                                   = ALL;
+    now_run_mode                               = SUP_SHOOT;
+    my_robot_id                                = INFANTRY;
+    bullet_velocity                            = 30;
+    Receive_Yaw_Angle_Info.yaw_angle           = 0.f;
+    Receive_Yaw_Velocity_Info.yaw_veloctiy     = 0.f;
+    Receive_Pitch_Angle_Info.pitch_angle       = 0.f;
+    Receive_Pitch_Velocity_Info.pitch_veloctiy = 0.f;
   }
 };
 
@@ -152,12 +163,6 @@ class SerialPort {
    */
   inline Receive_Data returnReceive() { return receive_data_; }
   /**
-   * @brief 返回陀螺仪 Yaw 速度或者加速度
-   * @details 或者返回陀螺仪 Yaw 加速度
-   * @return float
-   */
-  inline float returnReceiveAcceleration()   { return receive_data_.acceleration; }
-  /**
    * @brief 返回子弹速度
    * 
    * @return int 
@@ -193,6 +198,19 @@ class SerialPort {
    * @return float 
    */
   inline float returnReceiveYaw()                  { return receive_data_.Receive_Yaw_Angle_Info.yaw_angle; }
+  /**
+   * @brief 返回陀螺仪Yaw轴速度数据
+   * 
+   * @return float 
+   */
+  inline float returnReceiveYawVelocity()          { return receive_data_.Receive_Yaw_Velocity_Info.yaw_veloctiy; }
+  /**
+   * @brief 返回陀螺仪Pitch轴速度数据
+   * 
+   * @return float 
+   */
+  inline float returnReceivePitchVelocity()        { return receive_data_.Receive_Pitch_Velocity_Info.pitch_veloctiy;}
+
   /**
    * @brief 返回高八位数据
    * 
