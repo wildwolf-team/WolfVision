@@ -77,9 +77,10 @@ SerialPort::~SerialPort(void) {
  *  3:      robot_id
  *  4~7:    yaw_angle (union)
  *  8~11:   pitch_angle (union)
- *  12~13:  acceleration (12:high,13:low)
- *  14:     bullet_velocity
- *  15:     'E'
+ *  12~13:  yaw_velocity
+ *  14~15:  pitch_velocity
+ *  16:     bullet_velocity
+ *  17:     'E'
  */
 void SerialPort::receiveData() {
   memset(receive_buff_, '0', REC_INFO_LENGTH * 2);
@@ -360,11 +361,17 @@ void SerialPort::updateReceiveInformation() {
     receive_data_.Receive_Yaw_Angle_Info.arr_yaw_angle[i] = receive_buff_[i + 4];
   }
 
+  for (size_t i = 0; i != sizeof(receive_data_.Receive_Yaw_Velocity_Info.arr_yaw_velocity); ++i) {
+    receive_data_.Receive_Yaw_Angle_Info.arr_yaw_angle[i] = receive_buff_[i + 10];
+  }
+
   for (size_t i = 0; i != sizeof(this->receive_data_.Receive_Pitch_Angle_Info.arr_pitch_angle); ++i) {
     receive_data_.Receive_Pitch_Angle_Info.arr_pitch_angle[i] = receive_buff_[i + 8];
   }
 
-  receive_data_.acceleration = SerialPort::mergeIntoBytes(receive_buff_[12], receive_buff_[13]) / 100.f;
+  for (size_t i = 0; i != sizeof(this->receive_data_.Receive_Pitch_Velocity_Info.arr_pitch_velocity); ++i) {
+    receive_data_.Receive_Pitch_Angle_Info.arr_pitch_angle[i] = receive_buff_[i + 12];
+  }
 }
 
 }  // namespace uart
