@@ -98,7 +98,7 @@ struct Receive_Data {
   union Receive_Yaw_Velocity_Information
   {
     float   yaw_veloctiy;
-    uint8_t arr_yaw_velocity[2] = {0};
+    uint8_t arr_yaw_velocity[4] = {0};
   } Receive_Yaw_Velocity_Info;
 
   // Description of the pitch axis angle of the gyroscope (signed)
@@ -109,7 +109,7 @@ struct Receive_Data {
 
   union Receive_Pitch_Velocity_Information {
     float   pitch_veloctiy;
-    uint8_t arr_pitch_velocity[2] = {0};
+    uint8_t arr_pitch_velocity[4] = {0};
   } Receive_Pitch_Velocity_Info;
 
   Receive_Data() {
