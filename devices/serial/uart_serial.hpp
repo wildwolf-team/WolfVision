@@ -31,7 +31,7 @@ auto idntifier_red   = fmt::format(fg(fmt::color::red)   | fmt::emphasis::bold, 
 
 enum BufferLength {
   // The recieve length of the array obtained after decoding
-  REC_INFO_LENGTH   = 18,
+  REC_INFO_LENGTH   = 22,
 
   // The send length of the array for CRC auth code code calculating
   CRC_BUFF_LENGTH   = 11,

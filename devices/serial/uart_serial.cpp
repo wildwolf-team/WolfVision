@@ -373,5 +373,4 @@ void SerialPort::updateReceiveInformation() {
     receive_data_.Receive_Pitch_Velocity_Info.arr_pitch_velocity[i] = receive_buff_[i + 12];
   }
 }
-
 }  // namespace uart
