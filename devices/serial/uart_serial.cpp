@@ -362,7 +362,7 @@ void SerialPort::updateReceiveInformation() {
   }
 
   for (size_t i = 0; i != sizeof(receive_data_.Receive_Yaw_Velocity_Info.arr_yaw_velocity); ++i) {
-    receive_data_.Receive_Yaw_Angle_Info.arr_yaw_angle[i] = receive_buff_[i + 10];
+    receive_data_.Receive_Yaw_Velocity_Info.arr_yaw_velocity[i] = receive_buff_[i + 10];
   }
 
   for (size_t i = 0; i != sizeof(this->receive_data_.Receive_Pitch_Angle_Info.arr_pitch_angle); ++i) {
@@ -370,8 +370,7 @@ void SerialPort::updateReceiveInformation() {
   }
 
   for (size_t i = 0; i != sizeof(this->receive_data_.Receive_Pitch_Velocity_Info.arr_pitch_velocity); ++i) {
-    receive_data_.Receive_Pitch_Angle_Info.arr_pitch_angle[i] = receive_buff_[i + 12];
+    receive_data_.Receive_Pitch_Velocity_Info.arr_pitch_velocity[i] = receive_buff_[i + 12];
   }
 }
-
 }  // namespace uart
